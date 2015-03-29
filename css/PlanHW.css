@@ -1,6 +1,26 @@
 body {
     padding-top: 100px;
 }
+a {
+    color: #cd4165;
+}
+
+h1 {
+    color: #0D0406;
+}
+h2 {
+    color: #0D0406;
+}
+h3 {
+    color: #0D0406;
+}
+h4 {
+    color: #0D0406;
+}
+h5 {
+    color: #0D0406;
+}
+
 @media screen and (min-width: 768px) {
     .navbar .container {
         padding-bottom: 50px;

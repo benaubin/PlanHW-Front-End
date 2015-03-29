@@ -37,7 +37,6 @@ angular.module('PlanHW', [])
 
         $scope.timeFull = time.format('dddd');
         $scope.timeFromNow = time.fromNow();
-    }).controller('SignupController', function ($scope, $http) {
         $scope.signupErrored = false;
         $scope.student = {};
         $scope.signup = function(student){
@@ -48,17 +47,13 @@ angular.module('PlanHW', [])
                 '&password=' + encodeURI(student.password) +
                 '&password_confirm' + encodeURI(student.password_confirm)
             ).success(function(){
-                alert("Welcome to PlanHW!")
             }).error(function(data, status){
                 $scope.signupErrored = true;
-                console.log('it failed - but worked');
-                console.log(data);
                 if(status === 422){
                     $scope.signupErrors = data['errors'];
                 } else {
                     $scope.signupErrors = ["Something went wrong, try again?"]
                 }
-                console.log($scope.signupErrors)
             });
         };
     });
