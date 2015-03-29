@@ -1,0 +1,31 @@
+body {
+    padding-top: 100px;
+}
+@media screen and (min-width: 768px) {
+    .navbar .container {
+        padding-bottom: 50px;
+    }
+    #landing{
+        height:auto;
+        background: url("/img/desk.jpeg") fixed;
+    }
+    #landing .container {
+        padding-top: 20px;
+        padding-bottom: 15%;
+    }
+    #features .container {
+        padding-top: 20px;
+    }
+    #features .feature {
+        padding-left: 10px;
+    }
+    #pricing{
+        padding-top: 150px;
+    }
+    #signup-build-up{
+        padding-top: 100px;
+    }
+    #signup {
+        padding-top: 150px;
+    }
+}
