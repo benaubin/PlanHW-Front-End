@@ -4,6 +4,7 @@ function toTitleCase(str) {
 
 angular.module('PlanHW', [])
     .controller('IndexCtrl', function ($scope) {
+        $scope.signuplinks = true
         var body = $('body');
         var time = moment().add(1 + Math.floor(Math.random() * 6), 'days');
         var premium = false;
@@ -32,13 +33,14 @@ angular.module('PlanHW', [])
             $scope.$apply();
         });
 
-        body.append('<script src="js/skrollr.min.js"></script>');
+        body.append('<script src="bower_components/scrollr/dist/skrollr.min.js"></script>');
         var s = skrollr.init();
 
         $scope.timeFull = time.format('dddd');
         $scope.timeFromNow = time.fromNow();
+    }).controller('SignupController', function($scope, $http){
         $scope.signupErrored = false;
-        $scope.student = {};
+        $scope.student = {email:'ben@bensites.com'};
         $scope.signup = function(student){
             $http.get('http://localhost:3000/students/new' +
                 '?username=' + encodeURI(student.username) +
@@ -47,6 +49,11 @@ angular.module('PlanHW', [])
                 '&password=' + encodeURI(student.password) +
                 '&password_confirm' + encodeURI(student.password_confirm)
             ).success(function(){
+                alert("Welcome to PlanHW!");
+                http.get('http://localhost:3000/login?username='+ student.username +
+                    'password=' + student.password
+                ).success(function(data){
+                })
             }).error(function(data, status){
                 $scope.signupErrored = true;
                 if(status === 422){
@@ -54,6 +61,18 @@ angular.module('PlanHW', [])
                 } else {
                     $scope.signupErrors = ["Something went wrong, try again?"]
                 }
+                console.log($scope.signupErrors);
             });
         };
-    });
+    }).directive('gravatar', function(){return{
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            size: '@',
+            email: '='
+        },
+        template: '<img alt="Your Avatar" src="https://secure.gravatar.com/avatar/{{ md5(email) }}.png?s={{ size }}&d=monsterid"/>',
+        controller: function($scope){
+            $scope.md5 = md5
+        }
+    }});
