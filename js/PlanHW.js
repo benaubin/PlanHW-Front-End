@@ -40,7 +40,18 @@ angular.module('PlanHW', [])
         $scope.timeFromNow = time.fromNow();
     }).controller('SignupController', function($scope, $http){
         $scope.signupErrored = false;
-        $scope.student = {email:'ben@bensites.com'};
+        $scope.student = {};
+        $scope.gravatarInfo = "";
+        $('#email-field').change(function(){
+            $http.jsonp("http://www.gravatar.com/" + md5($('#email-field').val()) + ".json?callback=JSON_CALLBACK")
+                .success(function(data){
+                    $('#name-field').val(data['entry'][0]['name']['givenName']);
+                    $('#username-field').val(data['entry'][0]['preferredUsername']);
+                    $scope.gravatarInfo = "If you'd like to change this image, log in to Gravatar."
+                }).error(function(data,status){
+                    $scope.gravatarInfo = "If you'd like to change this image, create an account at Gravatar."
+                });
+        });
         $scope.signup = function(student){
             $http.get('http://localhost:3000/students/new' +
                 '?username=' + encodeURI(student.username) +
