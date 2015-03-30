@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>PlanHW • Your new Homework Planner!</title>
-        <link rel="stylesheet" href="css/font-awesome.min.css"/>
-        <link rel="stylesheet" href="css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="css/PlanHW.css"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
@@ -181,7 +181,7 @@
                     </div>
                     <div id="signup" class="col-xs-6 col-xs-offset-3" ng-controller="SignupController">
                         <h1>Sign Up:</h1>
-                        <gravatar-image email={{student.email}} rating="g" size="200" default-image="monster"/>
+                        <gravatar size="200" email="student.email"></gravatar>
                         <form name="signupForm" novalidate ng-submit="signup(student);">
                             <div class="panel panel-danger" ng-show="signupErrored">
                                 <div class="panel-heading">
@@ -218,16 +218,15 @@
                     </div>
                 </div>
             </div>
-        <script src="http://localhost:4200/livereload.js?snipver=2&port=4200"></script>
 
         <!-- Frameworks -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/angular/angular.min.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
         <!-- Libraries and Plugins -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
-        <script src="js/gravatar.min.js"></script>
+        <script src="bower_components/momentjs/min/moment.min.js"></script>
+        <script src="bower_components/blueimp-md5/js/md5.min.js"></script>
 ``
         <!-- Custom -->
         <script src="js/PlanHW.js"></script>
