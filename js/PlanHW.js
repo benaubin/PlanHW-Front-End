@@ -45,25 +45,21 @@ angular.module('PlanHW', [])
         $('#email-field').change(function(){
             $http.jsonp("http://www.gravatar.com/" + md5($('#email-field').val()) + ".json?callback=JSON_CALLBACK")
                 .success(function(data){
-                    $('#name-field').val(data['entry'][0]['name']['givenName']);
-                    $('#username-field').val(data['entry'][0]['preferredUsername']);
+                    $scope.student.name = data['entry'][0]['name']['givenName'];
+                    $scope.student.username = data['entry'][0]['preferredUsername'];
                     $scope.gravatarInfo = "If you'd like to change this image, log in to Gravatar."
                 }).error(function(data,status){
                     $scope.gravatarInfo = "If you'd like to change this image, create an account at Gravatar."
                 });
         });
         $scope.signup = function(student){
-            $http.get('http://localhost:3000/students/new' +
-                '?username=' + encodeURI(student.username) +
-                '&name=' + encodeURI(student.name) +
-                '&email=' + encodeURI(student.email) +
-                '&password=' + encodeURI(student.password) +
-                '&password_confirm' + encodeURI(student.password_confirm)
-            ).success(function(){
+            $http.post('http://localhost:3000/students/', student)
+            .success(function(){
                 alert("Welcome to PlanHW!");
                 http.get('http://localhost:3000/login?username='+ student.username +
                     'password=' + student.password
                 ).success(function(data){
+                    
                 })
             }).error(function(data, status){
                 $scope.signupErrored = true;

@@ -117,7 +117,7 @@
                             <td>√</td>
                         </tr>
                         <tr>
-                            <th>Join Classes &<br>Share Homework</th>
+                            <th>Join Classes &amp;<br>Share Homework</th>
                             <td>√</td>
                             <td>√</td>
                             <td>√</td>
@@ -180,8 +180,8 @@
                         <h3 data-bottom-top="opacity:0" data-bottom="opacity:1">So why not sign up today?</h3>
                     </div>
                     <div id="signup" class="col-xs-6 col-xs-offset-3" ng-controller="SignupController">
-                        <h1>Sign Up:</h1>
-                        <form name="signupForm" novalidate ng-submit="signup(student);">
+                        <h1 class="pad-100b">Sign Up:</h1>
+                        <form id="signupForm" name="signupForm" novalidate ng-submit="signup(student);">
                             <div class="panel panel-danger" ng-show="signupErrored">
                                 <div class="panel-heading">
                                     <h2>Errors:</h2>
@@ -194,20 +194,28 @@
                             </div>
                             <div class="row">
                                 <div class="col-xs-6">
-                                    <div class="input-group">
-                                        <span class="input-group-addon" id="email-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
-                                        <input class="form-control" type="email" ng-model="student.email" id="email-field" placeholder="Email" ng-change="instaSignup(student)"/>
+                                    <div class="pad-10t">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="email-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
+                                            <input class="form-control" type="email" ng-model="student.email" id="email-field" placeholder="Email" ng-change="instaSignup(student)"/>
+                                        </div>
                                     </div>
-                                    <div class="input-group">
-                                        <span class="input-group-addon" id="name-addon"><i class="fa fa-user fa-fw"></i></span>
-                                        <input class="form-control" type="text" ng-model="student.name" id="name-field" placeholder="Name"/>
-                                    </div>
-                                    <div class="input-group">
-                                        <span class="input-group-addon" id="@-addon"><i class="fa fa-fw">@</i></span>
-                                        <input class="form-control" type="text" ng-model="student.username" id="username-field" placeholder="Username"/>
+                                    <div ng-show="student.email">
+                                        <div class="pad-10t">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" id="name-addon"><i class="fa fa-user fa-fw"></i></span>
+                                                <input class="form-control" type="text" ng-model="student.name" id="name-field" placeholder="Name"/>
+                                            </div>
+                                        </div>
+                                        <div class="pad-10t">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" id="@-addon"><i class="fa fa-fw">@</i></span>
+                                                <input class="form-control" type="text" ng-model="student.username" id="username-field" placeholder="Username"/>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-xs-6">
+                                <div class="col-xs-6" ng-show="student.email">
                                     <div class="col-xs-6">
                                         <gravatar size="100" email="student.email"></gravatar>
                                     </div>
@@ -216,21 +224,27 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-6">
+                            <div class="row" ng-show="student.username && student.email">
+                                <div class="col-xs-12 col-sm-6 pad-10t">
                                     <div class="input-group">
                                         <span class="input-group-addon" id="lock-addon"><i class="fa fa-lock fa-fw"></i></span>
                                         <input class="form-control" type="password" ng-model="student.password" placeholder="Password"/>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-6">
+                                <div class="col-xs-12 col-sm-6 pad-10t" ng-show="student.password && student.username && student.email">
                                     <div class="input-group">
                                         <span class="input-group-addon" id="unlock-addon"><i class="fa fa-unlock fa-fw"></i></span>
                                         <input class="form-control" type="password" ng-model="student.password_confirm" placeholder="Confirm"/>
                                     </div>
                                 </div>
                             </div>
-                            <input type="submit" value="Submit" class="btn btn-success">
+                            <div align="center" class="pad-50t" ng-show="student.password_confirm && student.password && student.email && student.name && student.username">
+                                <input type="submit" value="Sign Up" class="btn btn-success" ng-show="agreeToTerms">
+                                <div class="input-group">
+                                    <input ng-hide="agreeToTerms" ng-model="agreeToTerms" type="checkbox"/>
+                                    <label><span ng-hide="agreeToTerms">By checking this box, </span>I agree to the<br ng-show="agreeToTerms"> Terms &amp; Conditions</label>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>

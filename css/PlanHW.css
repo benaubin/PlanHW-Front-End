@@ -49,3 +49,22 @@ h5 {
         padding-top: 150px;
     }
 }
+.pad-100 {
+    padding: 100px, 100px, 100px, 100px;
+}
+
+.pad-100b {
+    padding-bottom: 100px;
+}
+
+.pad-100t {
+    padding-top: 100px;
+}
+
+.pad-50t {
+    padding-top: 50px;
+}
+
+.pad-10t {
+    padding-top: 10px;
+}
