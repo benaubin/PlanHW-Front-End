@@ -2,7 +2,7 @@ function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 
-angular.module('PlanHW', [])
+angular.module('PlanHW', ['ngRoute'])
     .controller('IndexCtrl', function ($scope) {
         $scope.signuplinks = true
         var body = $('body');
@@ -68,9 +68,9 @@ angular.module('PlanHW', [])
                 } else {
                     $scope.signupErrors = ["Something went wrong, try again?"]
                 }
-                console.log($scope.signupErrors);
             });
         };
+        $scope.good_confirm = false;
     }).directive('gravatar', function(){return{
         restrict: 'AE',
         replace: true,
