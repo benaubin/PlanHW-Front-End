@@ -95,7 +95,7 @@ angular.module('PlanHW', ['ngRoute'])
         replace: true,
         scope: {},
         template: '<div ng-include="\'directives/signup_form.html\'"></div>',
-        controller: function($scope, $http){
+        controller: function($scope, $http, $rootScope, $location){
             $scope.signupErrored = false;
             $scope.student = {};
             $scope.gravatarInfo = "";
@@ -112,12 +112,8 @@ angular.module('PlanHW', ['ngRoute'])
             $scope.signup = function(student){
                 $http.post(PlanHWApi+'students/', student)
                 .success(function(){
-                    alert("Welcome to PlanHW!");
-                    http.get(PlanHWApi+'login?username='+ student.username +
-                        'password=' + student.password
-                    ).success(function(data){
-
-                    })
+                    alert("Welcome to PlanHW, please check your email and confirm it.");
+                    $location.path('/signin')
                 }).error(function(data, status){
                     $scope.signupErrored = true;
                     if(status === 422){
