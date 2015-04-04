@@ -1,0 +1,28 @@
+<div class="container">
+    <div class="col-xs-12 col-md-8 col-md-offset-2">
+        <h1 class="pad-100b">Sign In:</h1>
+        <div class="alert alert-danger alert-dismissible" role="alert" ng-show="signinError">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{signinError}}
+        </div>
+        <form id="signupForm" name="signupForm" novalidate ng-submit="signin(username,password)">
+            <div class="row">
+                <div class="col-xs-12 col-sm-5">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="email-addon"><i class="fa fa-user fa-fw"></i></span>
+                        <input class="form-control" type="text" ng-model="username" placeholder="Username"/>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-5">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="lock-addon"><i class="fa fa-lock fa-fw"></i></span>
+                        <input class="form-control" type="password" ng-model="password" placeholder="Password"/>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                    <input type="submit" value="Sign In" class="btn btn-success">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
