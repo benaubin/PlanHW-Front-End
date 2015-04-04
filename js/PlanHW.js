@@ -18,6 +18,10 @@ angular.module('PlanHW', ['ngRoute'])
             templateUrl: 'pages/signin.html',
             controller: 'SigninCtrl'
         })
+        .when('/homework',{
+            templateUrl: 'pages/homework.html',
+            controller: 'HWCtrl'
+        })
         
     }).controller('IndexCtrl', function ($scope) {
         $scope.signuplinks = true
@@ -54,7 +58,14 @@ angular.module('PlanHW', ['ngRoute'])
 
         $scope.timeFull = time.format('dddd');
         $scope.timeFromNow = time.fromNow();
-    }).controller('SigninCtrl', function($scope, $rootScope, $http){
+    }).controller('HWCtrl',function($scope, $rootScope, $http){
+    
+        $http.get(PlanHWApi+'students/'+$rootScope.student_id+'/hw?token='+$rootScope.student_token)
+        .success(function(data){
+            $scope.hw = data['homeworks']
+        })
+        
+    }).controller('SigninCtrl', function($scope, $rootScope, $http, $location){
         $scope.signinError = null;
         $scope.signin = function(username,password){
             $http.get(PlanHWApi+'login?username='+username+'&password='+password)
@@ -64,7 +75,7 @@ angular.module('PlanHW', ['ngRoute'])
                 $http.get(PlanHWApi+"test_login?token="+$rootScope.student_token+"&id="+$rootScope.student_id)
                     .success(function(test){
                         if(test['correct']){
-                            
+                            $location.path('/homework')
                         } else {
                             $scope.signinError("Something went wrong in saving authenication. This should never happen. Check the logs for more info.");
                             console.log(data);
