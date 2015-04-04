@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html ng-app="PlanHW">
+    <head>
+        <meta charset="UTF-8">
+        <title>PlanHW • Your new Homework Planner!</title>
+        <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="css/PlanHW.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <div class="logo hidden-xs">
+                        <a href="/#/" class="navbar-brand">
+                            <img src="img/PlanHWtrans.png" height="75px">
+                        </a>
+                    </div>
+                    <div class="visible-xs">
+                        <a href="/#/">
+                            <h1 class="text-center">PlanHW</h1>
+                        </a>
+                    </div>
+                    <button type="button" class="btn btn-default navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle Navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <ul class="nav navbar-nav navbar-right collapse navbar-collapse nav-list">
+                    <li ng-hide="student_token"><a href="#/signup">Sign Up</a></li>
+                    <li ng-hide="student_token"><a href="#/signin">Sign In</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div ng-view autoscroll="true"></div>
+        
+        <!-- Frameworks -->
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/angular/angular.min.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+        <!-- Libraries and Plugins -->
+        <script src="bower_components/momentjs/min/moment.min.js"></script>
+        <script src="bower_components/blueimp-md5/js/md5.min.js"></script>
+
+        <script src="/bower_components/angular-route/angular-route.js"></script>
+        <!-- Custom -->
+        <script src="js/PlanHW.js"></script>
+    </body>
+</html>
