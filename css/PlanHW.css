@@ -68,3 +68,10 @@ h5 {
 .pad-10t {
     padding-top: 10px;
 }
+.signup {
+    padding-bottom: 500px;
+}
+.complete {
+    opacity: .5;
+    text-decoration: line-through;
+}
