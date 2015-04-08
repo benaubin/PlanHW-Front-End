@@ -5,6 +5,7 @@
         <title>PlanHW • Your new Homework Planner!</title>
         <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css"/>
         <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="css/theme.min.css"/>
         <link rel="stylesheet" href="css/PlanHW.css"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
@@ -33,10 +34,18 @@
                     <li ng-hide="student_token"><a href="#/signup">Sign Up</a></li>
                     <li ng-hide="student_token"><a href="#/signin">Sign In</a></li>
                     <li ng-show="student_token"><a href="#/homework">Homework</a></li>
+                    <li ng-show="student_token"><a ng-click="signout()" href="#/">Sign Out</a></li>
                 </ul>
             </div>
         </div>
-        
+        <div class="container" ng-show="flashesNow[0]">
+            <div ng-repeat="flash in flashesNow">
+                <div class="alert alert-{{flash.class}} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    {{flash.message}}
+                </div>
+            </div>
+        </div>
         <div ng-view autoscroll="true"></div>
         
         <!-- Frameworks -->
