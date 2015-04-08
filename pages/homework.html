@@ -46,14 +46,24 @@
                             <span class="sr-only">Toggle Complete</span>
                         </a>
                     </div>
-                    <div class="media-body">
-                        <h3 class="media-heading">{{homework.homework.title}}</h3>
-                        <p>{{homework.homework.desc}}</p>
+                    <div class="media-body" ng-click="homework.editing = true">
+                        <div ng-hide="homework.editing">
+                            <h3 class="media-heading">{{homework.homework.title}}</h3>
+                            <p>{{homework.homework.description}}</p>
+                        </div>
+                        <div ng-show="homework.editing">
+                            <input type="text" class="form-control" ng-model="homework.homework.title">
+                            <div class="panel-body">
+                                <label>Description</label>
+                                <textarea class="form-control" ng-model="homework.homework.description"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div align="right">
-                    <i class="fa fa-pencil fa-lg" ng-click=""></i>
+                    <i class="fa fa-pencil fa-lg" ng-click="homework.editing = true" ng-hide="homework.editing"></i>
                     <i class="fa fa-trash-o fa-lg" ng-click="delete(homework.homework.id)"></i>
+                    <i class="fa fa-check fa-lg" ng-click="update(homework)" ng-show="homework.editing"></i>
                 </div>
             </div>
         </div>

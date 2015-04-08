@@ -101,6 +101,17 @@ angular.module('PlanHW', ['ngRoute'])
                     $scope.reload();
                 })
         }
+        $scope.update = function(homework){
+            $http.put(PlanHWApi+'students/'+$rootScope.student_id+'/hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
+            .success(function(){
+                homework.editing = false
+                $scope.reload();
+            }).error(function(data){
+                angular.forEach(data['errors'], function(error){
+                    $rootScope.flashesNow.push({class: 'warning',message: error}); 
+                })
+            })
+        }
         $scope.new = function(homework){
             $http.post(PlanHWApi+'students/'+$rootScope.student_id+'/hw?token='+$rootScope.student_token,homework)
             .success(function(){
@@ -108,7 +119,7 @@ angular.module('PlanHW', ['ngRoute'])
                 $scope.homework = null;
             }).error(function(data){
                 angular.forEach(data['message']['errors'], function(error){
-                    $rootScope.flashes.push({class: data['message']['type'],message: error}); 
+                    $rootScope.flashesNow.push({class: data['message']['type'],message: error}); 
                 })
             })
         }
