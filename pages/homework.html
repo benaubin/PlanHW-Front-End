@@ -1,10 +1,68 @@
 <div class="container">
-    <h1>Homework:</h1>
+    <div class="row" style="position: sticky;">
+        <div class="col-sm-4">
+            <h1>Homework:</h1>
+        </div>
+        <div class="col-md-4 pad-10t col-md-offset-4">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default" ng-click="reload()"><i class="fa fa-refresh"></i> Refresh</button>
+              <div class="btn-group" role="group">
+                <button class="btn btn-default dropdown-toggle" type="button" id="showDropdown" data-toggle="dropdown" aria-expanded="true  ">
+                    Show<span ng-show="showing">ing {{showing}}</span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="showDropdown">
+                    <li role="presentation"><a ng-click="show('incomplete')" role="menuitem" tabindex="-1">Incomplete</a></li>
+                    <li role="presentation"><a ng-click="show('complete')" role="menuitem" tabindex="-1">Complete</a></li>
+                    <li role="presentation"><a ng-click="show('all')" role="menuitem" tabindex="-1">All</a></li>
+                </ul>
+              </div>
+            </div>
+            <form id="homework" ng-submit="new(homework)" >
+                <div class="panel panel-default">
+                    <div class="panel-heading input-group">
+                        <input type="text" class="form-control" ng-model="homework.title" placeholder="New Homework...">
+                        <span class="input-group-btn">
+                            <input type="submit" value="Create" class="btn btn-default">
+                        </span>
+                    </div>
+                    <div class="panel-body" ng-show="homework.title">
+                        <label>Description</label>
+                        <textarea class="form-control" ng-model="homework.description"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="col-md-4 col-sm-6 col-xs-12" ng-repeat="homework in hw">
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-class="{'complete': homework.homework.completed}">
             <div class="panel-body">
-                <h3>{{homework.homework.title}}</h3>
-                <p>{{homework.homework.desc}}</p>
+                <div class="media">
+                    <div class="media-left">
+                        <a ng-click="complete(homework.homework)">
+                            <span class="fa-stack fa-3x">
+                                <i ng-show="homework.homework.completed" class="fa fa-check fa-stack"></i>
+                                <i class="fa fa-square-o fa-stack"></i>
+                            </span>
+                            <span class="sr-only">Toggle Complete</span>
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h3 class="media-heading">{{homework.homework.title}}</h3>
+                        <p>{{homework.homework.desc}}</p>
+                    </div>
+                </div>
+                <div align="right">
+                    <i class="fa fa-pencil fa-lg" ng-click=""></i>
+                    <i class="fa fa-trash-o fa-lg" ng-click="delete(homework.homework.id)"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-hide="hw && hw[0]" class="col-md-4 col-md-offset-4">
+        <div class="panel panel-success">
+            <h3 class="panel-heading">You are done!</h3>
+            <div class="panel-body">
+                <p>Great job, {{student.name}}! You finished all your homework here, now go do things and be awesome!</p>
             </div>
         </div>
     </div>
