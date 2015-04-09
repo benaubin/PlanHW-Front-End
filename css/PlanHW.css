@@ -1,25 +1,6 @@
 body {
     padding-top: 100px;
 }
-a {
-    color: #cd4165;
-}
-
-h1 {
-    color: #0D0406;
-}
-h2 {
-    color: #0D0406;
-}
-h3 {
-    color: #0D0406;
-}
-h4 {
-    color: #0D0406;
-}
-h5 {
-    color: #0D0406;
-}
 
 @media screen and (min-width: 768px) {
     .navbar .container {
@@ -49,6 +30,11 @@ h5 {
         padding-top: 150px;
     }
 }
+@media screen and (max-width: 768px) {
+    body {
+        padding-top: 150px;
+    }
+}
 .pad-100 {
     padding: 100px, 100px, 100px, 100px;
 }
@@ -67,6 +53,9 @@ h5 {
 
 .pad-10t {
     padding-top: 10px;
+}
+.pad-20r {
+    padding-right: 20px;
 }
 .signup {
     padding-bottom: 500px;
