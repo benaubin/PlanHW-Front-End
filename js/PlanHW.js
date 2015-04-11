@@ -1,4 +1,4 @@
-function toTitleCase(str) {
+(function(){function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 var PlanHWApi = "http://localhost:3000/"
@@ -80,6 +80,8 @@ angular.module('PlanHW', ['ngRoute'])
                 .success(function(data){
                     $scope.hw = []
                     angular.forEach(data['homeworks'], function(homework){
+                        homework.due_date = moment.unix(homework.homework.due_date).calendar()
+                        
                         if(homework.homework.completed){
                             if($scope.showComplete) $scope.hw.push(homework)
                         } else if ($scope.showIncomplete){
@@ -94,12 +96,47 @@ angular.module('PlanHW', ['ngRoute'])
                 $rootScope.flashes.push({class: "danger", message:"Sign in first!"})
                 $location.path('/signin')
             }}
+        $scope.input = function(homework){
+            var days = ["su", "mo", "tu", "we", "th", "fr", "sa"];
+            
+            homework.title = homework.input
+            homework.description = String(homework.input.match(/\((.*)\)$|about\b(.*)$/i)).split(',')[1]
+            if(homework.description === null || homework.description === ""){
+                homework.description = String(homework.input.match(/\((.*)\)$|about\b(.*)$/i)).split(',')[0]
+            }
+            var match = homework.input.match(/(?:due|by) (.{2})(?:(?:.+?)?)\b(?: at ([1-2]?[1-9]):([0-5][0-9])(?: ?(PM|AM))?)?/i);
+            $scope.day = moment();
+            if (match && match[1]) {
+                $scope.day = $scope.day.day(days.indexOf(match[1].trim().toLowerCase()))
+                if(match[2] && match[3]) {
+                    var hours = parseInt(match[2])
+                    var minutes = parseInt(match[3])
+                    if(match[4]){
+                        if(match[4].trim().toUpperCase() === "PM"){
+                            hours += 12
+                        }
+                    }
+                    if(hours === 12 || hours === 24){
+                        hours -= 12
+                    }
+                    $scope.day = $scope.day.hour(hours).minute(minutes)
+                }
+                if(moment().day() > $scope.day.day()){
+                    $scope.day.add(7,'d');
+                }
+            } else {
+                $scope.day = $scope.day.add(1,'d');
+            }
+            $scope.due_words = $scope.day.calendar();
+            homework.due_date = $scope.day.unix();
+            homework.title = homework.title.replace(/(\s\((.*)\)$|\sabout\b(.*)$)|((?:due|by) (.{2})(?:(?:.+?)?)\b(?: at \S{1,2}:\S\S(?: ?(PM|AM))?)?)/ig, "");
+        }
         $scope.complete = function(homework){
             $http.put(PlanHWApi+"/students/"+$rootScope.student_id+"/hw/"+homework.id+"?token="+$rootScope.student_token,
                       {completed:!(homework.completed)})
                 .success(function(){
                     $scope.reload();
-                })
+            })
         }
         $scope.update = function(homework){
             $http.put(PlanHWApi+'students/'+$rootScope.student_id+'/hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
@@ -153,6 +190,9 @@ angular.module('PlanHW', ['ngRoute'])
             $scope.reload();
         }
         $scope.show()
+        $scope.toMoment = function(unixTime){
+            return moment.unix(unixTime);
+        }
     }).controller('SigninCtrl', function($scope, $rootScope, $http, $location){
         $scope.signinError = null;
         $scope.signin = function(username,password){
@@ -216,3 +256,6 @@ angular.module('PlanHW', ['ngRoute'])
             $scope.good_confirm = false;
         }
     }});
+
+
+var kkeys = [], konami = "38,38,40,40,37,39,37,39,66,65,13";$(document).keydown(function(e){kkeys.push( e.keyCode );if (kkeys.toString().indexOf( konami ) >= 0 ) {$(document).unbind('keydown',arguments.callee);alert("I like potatoes.");$("body").addClass("konami");}});})();

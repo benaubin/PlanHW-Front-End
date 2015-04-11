@@ -64,3 +64,7 @@ body {
     opacity: .5;
     text-decoration: line-through;
 }
+.konami {
+    font-family: 'Comic Sans MS' !important;
+    background-color: #FFF !important;
+}
