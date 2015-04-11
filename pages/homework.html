@@ -21,12 +21,14 @@
             <form id="homework" ng-submit="new(homework)" >
                 <div class="panel panel-default">
                     <div class="panel-heading input-group">
-                        <input type="text" class="form-control" ng-model="homework.title" placeholder="New Homework...">
+                        <input type="text" class="form-control" ng-model="homework.input" ng-change="input(homework)" placeholder="New Homework...">
                         <span class="input-group-btn">
-                            <input type="submit" value="Create" class="btn btn-default">
+                            <input type="submit" id="homework_title" value="Create" class="btn btn-default">
                         </span>
                     </div>
-                    <div class="panel-body" ng-show="homework.title">
+                    <div class="panel-body" ng-show="homework.input">
+                        <h3>{{homework.title}}</h3>
+                        <p>Due: <strong>{{due_words}}</strong></p>
                         <label>Description</label>
                         <textarea class="form-control" ng-model="homework.description"/>
                     </div>
@@ -58,6 +60,8 @@
                             </div>
                         </div>
                     </div>
+                    <hr>
+                    <p align="center">Due: <strong>{{homework.due_date}}</strong></p>
                 </div>
                 <div align="right">
                     <i class="fa fa-pencil fa-lg" ng-click="homework.editing = true" ng-hide="homework.editing"></i>
