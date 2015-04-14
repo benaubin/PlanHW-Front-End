@@ -1,7 +1,7 @@
 (function(){function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-var PlanHWApi = "https://api.planhw.com/"
+var PlanHWApi = "http://localhost:3000"
 angular.module('PlanHW', ['ngRoute'])
     .config(function($routeProvider, $httpProvider) {
         
