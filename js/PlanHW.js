@@ -1,7 +1,7 @@
 (function(){function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-var PlanHWApi = "http://localhost:3000"
+var PlanHWApi = "http://localhost:3000/"
 angular.module('PlanHW', ['ngRoute'])
     .config(function($routeProvider, $httpProvider) {
         
@@ -25,7 +25,27 @@ angular.module('PlanHW', ['ngRoute'])
         .when('/tos',{
             templateUrl: 'pages/tos.html'
         })
+        .when('/profile/:id',{
+            templateUrl: 'pages/student.html',
+            controller: 'ProfileCtrl'
+        })
             
+    }).controller('ProfileCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
+        $http.get(PlanHWApi + 'students/' + $routeParams.id)
+            .success(function(data){
+                $scope.student = data.student
+                $http.jsonp("http://www.gravatar.com/" + md5($scope.student.email) + ".json?callback=JSON_CALLBACK")
+                    .success(function(data){
+                        $scope.bio = $sce.trustAsHtml(data['entry'][0]['aboutMe'])
+                    })
+                    .error(function(){
+                            $http.jsonp("http://www.gravatar.com/" + $scope.student.username + ".json?callback=JSON_CALLBACK")
+                        .success(function(data){
+                            $scope.bio = $sce.trustAsHtml(data['entry'][0]['aboutMe'])
+                        })
+                    })
+                ;
+            })
     }).run(function($rootScope, $location){
         $rootScope.flashes = []
         $rootScope.flashesNow = []
@@ -36,9 +56,10 @@ angular.module('PlanHW', ['ngRoute'])
         $rootScope.signout = function(){
             $rootScope.student_id = null
             $rootScope.student_token = null
+            $rootScope.student = null
             $location.path('/')
         }
-    }).controller('IndexCtrl', function ($scope) {
+    }).controller('IndexCtrl',function($scope){
         $scope.signuplinks = true
         var body = $('body');
         var time = moment().add(1 + Math.floor(Math.random() * 6), 'days');
@@ -100,9 +121,9 @@ angular.module('PlanHW', ['ngRoute'])
             var days = ["su", "mo", "tu", "we", "th", "fr", "sa"];
             
             homework.title = homework.input
-            homework.description = String(homework.input.match(/\((.*)\)$|about\b(.*)$/i)).split(',')[1]
-            if(homework.description === null || homework.description === ""){
-                homework.description = String(homework.input.match(/\((.*)\)$|about\b(.*)$/i)).split(',')[0]
+            homework.description = homework.input.match(/\((.+)\)/i)
+            if(homework.description){
+                homework.description = homework.description[1]
             }
             var match = homework.input.match(/(?:due|by) (.{2})(?:(?:.+?)?)\b(?: at ([1-2]?[1-9]):([0-5][0-9])(?: ?(PM|AM))?)?/i);
             $scope.day = moment();
@@ -129,7 +150,7 @@ angular.module('PlanHW', ['ngRoute'])
             }
             $scope.due_words = $scope.day.calendar();
             homework.due_date = $scope.day.unix();
-            homework.title = homework.title.replace(/(\s\((.*)\)$|\sabout\b(.*)$)|((?:due|by) (.{2})(?:(?:.+?)?)\b(?: at \S{1,2}:\S\S(?: ?(PM|AM))?)?)/ig, "");
+            homework.title = homework.title.replace(/\((.+)\)/i, "").replace(/((?:due|by) (.{2})(?:(?:.+?)?)\b(?: at \S{1,2}:\S\S(?: ?(PM|AM))?)?)/i, "");
         }
         $scope.complete = function(homework){
             $http.put(PlanHWApi+"/students/"+$rootScope.student_id+"/hw/"+homework.id+"?token="+$rootScope.student_token,
