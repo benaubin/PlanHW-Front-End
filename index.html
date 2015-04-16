@@ -34,7 +34,16 @@
                     <li ng-hide="student_token"><a href="#/signup">Sign Up</a></li>
                     <li ng-hide="student_token"><a href="#/signin">Sign In</a></li>
                     <li ng-show="student_token"><a href="#/homework">Homework</a></li>
-                    <li ng-show="student_token"><a ng-click="signout()" href="#/">Sign Out</a></li>
+                    <li ng-show="student">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="" role="button" aria-expanded="false">
+                            {{student.username}} <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a ng-href="#/profile/{{student_id}}">Profile</a></li>
+                            <li role="presentation" class="divider"></li>
+                            <li><a ng-click="signout()" href="#/">Sign Out</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
