@@ -101,8 +101,8 @@ angular.module('PlanHW', ['ngRoute'])
                 .success(function(data){
                     $scope.hw = []
                     angular.forEach(data['homeworks'], function(homework){
-                        homework.due_date = moment.unix(homework.homework.due_date).calendar()
-                        
+                        homework.due_date = moment.utc(homework.homework.due_date).calendar()
+                        console.log(homework.homework.due_date)
                         if(homework.homework.completed){
                             if($scope.showComplete) $scope.hw.push(homework)
                         } else if ($scope.showIncomplete){
@@ -149,7 +149,7 @@ angular.module('PlanHW', ['ngRoute'])
                 $scope.day = $scope.day.add(1,'d');
             }
             $scope.due_words = $scope.day.calendar();
-            homework.due_date = $scope.day.unix();
+            homework.due_date = $scope.day.toISOString();
             homework.title = homework.title.replace(/\((.+)\)/i, "").replace(/((?:due|by) (.{2})(?:(?:.+?)?)\b(?: at \S{1,2}:\S\S(?: ?(PM|AM))?)?)/i, "");
         }
         $scope.complete = function(homework){
@@ -211,9 +211,6 @@ angular.module('PlanHW', ['ngRoute'])
             $scope.reload();
         }
         $scope.show()
-        $scope.toMoment = function(unixTime){
-            return moment.unix(unixTime);
-        }
     }).controller('SigninCtrl', function($scope, $rootScope, $http, $location){
         $scope.signinError = null;
         $scope.signin = function(username,password){
