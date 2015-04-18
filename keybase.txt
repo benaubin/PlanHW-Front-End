@@ -1,0 +1,82 @@
+==================================================================
+https://keybase.io/penne
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://planhw.com
+  * I am penne (https://keybase.io/penne) on keybase.
+  * I have a public key with fingerprint F388 F64C EDFB 1A4E 5858  EBDF B659 E9A8 F31B D679
+
+To do so, I am signing this object:
+
+{
+    "body": {
+        "client": {
+            "name": "keybase.io node.js client",
+            "version": "0.7.3"
+        },
+        "key": {
+            "fingerprint": "f388f64cedfb1a4e5858ebdfb659e9a8f31bd679",
+            "host": "keybase.io",
+            "key_id": "B659E9A8F31BD679",
+            "uid": "1339d4c96dd42dc13567686d7cb1db00",
+            "username": "penne"
+        },
+        "merkle_root": {
+            "ctime": 1429363556,
+            "hash": "7db77bcb3c92594fcf2c71b4b1b244d4e7e597fbd680dae095fbb4bd23871050eb63007d65a155ee59798386c2905fbfb010e9fb3029662ad729e35c9dcf32e5",
+            "seqno": 205592
+        },
+        "service": {
+            "hostname": "planhw.com",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1429363576,
+    "expire_in": 157680000,
+    "prev": "f55734f9ecfa82744dda88e99c898db6ec48fd422417a032698bf00702fd5afc",
+    "seqno": 13,
+    "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1
+
+owFdkmtQVVUUx+9FeiEYE+rgA8PTyGOi23mfvW86pmKICETCBwKEs8/ZB67APZd7
+r8Adw2BCEGoIUImBMoxqkERNhAKlJPFaAzMx6hCEaRoP4YOYlEPJQOeQTo/z6ey1
+fuu/13+tXemzyOBhbE+caJpeNeAy9k4gQwKdlL+XQKrsIsx7CSnLgq1O/c8qZmPC
+TGRiFxId2GRRA62qjE27HYEPmTAiF9sdFtWqUaRJMDFEQZiO68WKxZqO7Ta7Rdci
+FAYAhWclLCuIElnMAQ5gpB14DmIoAoWhkMwLUJPMUB3O/9xKLGimWmQtulnjt8JN
+4BWG2hz+N79nIUExDJRZCfKyzNKyRDEcL/CAlwUJUTIiSR10YPtDSzZstWK92Wxs
+z8zCqXZVXXAsOS16nmJpyPAMx/FaO6IjQ6sQZCQISEKMBGkOsoqk0JJAIRZRiGZZ
+mcUC5qCgaCYAKYuYhJyCtKxMM0CgSI7EiGdIUpB5TqQ4DuswBAzgJRqSGqogkiIx
+VBBD0pDnaVEWaIgZToKypDA05rT+HTjHqhJmmuQ4SBfoZ3uuRcJ63/rMHlnLEq0Z
+eSZJzdZKbHbVqUpqlhbPcDptZt2y02XTuTyMUhcUjkk4FVmssravfy+U0tD/jUPQ
+xoHzbRY7TrXohBYApPbp9+BcfcscJzCsArGkiIAWtLnIIgAYQglAICMeSyxQtP3Q
+LCWIJEPzECBFmwpJKzInKtI/JilGa1RM1zQdlnSr6Nxj19ZV5rHa02D0MDz+mIf+
+ZA1eT/k+esfDeb6GCn6usLnscsgH5Q1BiXUh6ood8yPyurVo/90XV54IONUR2Vy0
+tadsanhtVOOvt5puHC9eb2+4cro/vfH5qcTbh77tTHSX9obltS5dEj7w6bV0o98X
+a1pAk1HtHfV8M+DHbO8zEU5Q/7m7BLnn31r9saGES+vbQb7tHuL8TGbf6uCUivbM
+M3dMEZFDZ10r7xWFfzXZ8kTPjPmPlANRX16KK4gtbUuejj1bOOzyp9Zc/j7v8D5w
+KUh67ei9jm9sO4mZbLjt2dqotBy68J2c6S1Fk+mJpfvsB+9H/dwQWabE1uUmtrhU
+L7Zty+6jaTt95m4uYorJ8fda02QuKCaeio9e+lvnD7XF5zaGdx/pMB5uHekbuzBJ
+znrBpo19LwzimdDxtJNPt/sa/L/+vazyp8m7G5Jru6cKzkVVcREEMHd1qqVVNR/1
+jK04eb4xJWZwcUl0lbCdp166/27DeGBdZn11gndsR9IvH7b0D4G47c0lDxZfjTzi
+Gh07UdHZZX014H336ZrZketq+fLWRnrdZ5Xu4IENFwvWJ12YGz3fk5XpfzHm9nPF
+r0cSNx4ccnhe7x/NXh4X6pPwck3+/CcJx7ZNdDTNR7fEN64KUp+sKPNf1n3Vr+lm
+SUio17WDt5Jb3kjZxSTtn/QCwYPG4wdm/8xd1tjVhtzPlPdL/Xdy+E2nCqojlnwX
+dMV7V1r9Xw==
+=tD7Z
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/penne
+
+==================================================================
