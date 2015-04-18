@@ -1,7 +1,7 @@
 (function(){function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-var PlanHWApi = "https://api.planhw.com/"
+var PlanHWApi = "http://localhost:3000/"
 angular.module('PlanHW', ['ngRoute'])
     .config(function($routeProvider, $httpProvider) {
         
@@ -101,7 +101,7 @@ angular.module('PlanHW', ['ngRoute'])
                 .success(function(data){
                     $scope.hw = []
                     angular.forEach(data['homeworks'], function(homework){
-                        homework.due_date = moment.utc(homework.homework.due_date).calendar()
+                        homework.due_date = moment(homework.homework.due_date).calendar()
                         console.log(homework.homework.due_date)
                         if(homework.homework.completed){
                             if($scope.showComplete) $scope.hw.push(homework)
