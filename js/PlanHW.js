@@ -125,7 +125,7 @@ angular.module('PlanHW', ['ngRoute'])
             if(homework.description){
                 homework.description = homework.description[1]
             }
-            var match = homework.input.match(/(?:due|by) (.{2})(?:(?:.+?)?)\b(?: at ([1-2]?[1-9]):([0-5][0-9])(?: ?(PM|AM))?)?/i);
+            var match = homework.input.match(/due (.{2}).*?\b(?: at ([1-2]?[0-9]):([0-5][0-9]) ?(PM|AM)?)?/i);
             $scope.day = moment();
             if (match && match[1]) {
                 $scope.day = $scope.day.day(days.indexOf(match[1].trim().toLowerCase()))
