@@ -122,29 +122,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
             if(homework.description){
                 homework.description = homework.description[1]
             }
-            var match = homework.input.match(/due (.{2}).*?\b(?: at ([1-2]?[0-9]):([0-5][0-9]) ?(PM|AM)?)?/i);
-            $scope.day = moment();
-            if (match && match[1]) {
-                $scope.day = $scope.day.day(days.indexOf(match[1].trim().toLowerCase()))
-                if(match[2] && match[3]) {
-                    var hours = parseInt(match[2])
-                    var minutes = parseInt(match[3])
-                    if(match[4]){
-                        if(match[4].trim().toUpperCase() === "PM"){
-                            hours += 12
-                        }
-                    }
-                    if(hours === 12 || hours === 24){
-                        hours -= 12
-                    }
-                    $scope.day = $scope.day.hour(hours).minute(minutes)
-                }
-                if(moment().day() > $scope.day.day()){
-                    $scope.day.add(7,'d');
-                }
-            } else {
-                $scope.day = $scope.day.add(1,'d');
-            }
             var date
             chrono.parse(homework.input).forEach(function(match){
                 date = match
@@ -158,7 +135,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
             if(date){
                 homework.title = homework.title.replace("due "+date.text,'').replace(date.text,'');
             }
-            
         }
         $scope.complete = function(homework){
             $http.put(PlanHWApi+"/students/"+$rootScope.student_id+"/hw/"+homework.id+"?token="+$rootScope.student_token,
