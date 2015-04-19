@@ -28,7 +28,19 @@
                     </div>
                     <div class="panel-body" ng-show="homework.input">
                         <h3>{{homework.title}}</h3>
-                        <p>Due: <strong>{{due_words}}</strong></p>
+                        <div class="col-xs-12">
+                            <div class="dropdown">
+                                <a class="dropdown-toggle my-toggle-select" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" data-ng-model="homework.due_date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <datetimepicker data-ng-model="homework.due_date" data-datetimepicker-config="{ dropdownSelector: '.my-toggle-select' }"></datetimepicker>
+                                </ul>
+                            </div>
+                        </div>
                         <label>Description</label>
                         <textarea class="form-control" ng-model="homework.description"/>
                     </div>

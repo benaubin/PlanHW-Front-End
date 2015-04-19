@@ -1,8 +1,8 @@
 (function(){function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-var PlanHWApi = "https://api.planhw.com/"
-angular.module('PlanHW', ['ngRoute'])
+var PlanHWApi = "http://localhost:3000/"
+angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
     .config(function($routeProvider, $httpProvider) {
         
         $routeProvider
@@ -101,8 +101,8 @@ angular.module('PlanHW', ['ngRoute'])
                 .success(function(data){
                     $scope.hw = []
                     angular.forEach(data['homeworks'], function(homework){
-                        homework.due_date = moment.unix(homework.homework.due_date).calendar()
-                        
+                        homework.due_date = moment(homework.homework.due_date).calendar()
+                        console.log(homework.homework.due_date)
                         if(homework.homework.completed){
                             if($scope.showComplete) $scope.hw.push(homework)
                         } else if ($scope.showIncomplete){
@@ -118,13 +118,11 @@ angular.module('PlanHW', ['ngRoute'])
                 $location.path('/signin')
             }}
         $scope.input = function(homework){
-            var days = ["su", "mo", "tu", "we", "th", "fr", "sa"];
-            
-            homework.title = homework.input
             homework.description = homework.input.match(/\((.+)\)/i)
             if(homework.description){
                 homework.description = homework.description[1]
             }
+<<<<<<< HEAD
             var match = homework.input.match(/due (.{2}).*?\b(?: at ([1-2]?[0-9]):([0-5][0-9]) ?(PM|AM)?)?/i);
             $scope.day = moment();
             if (match && match[1]) {
@@ -147,10 +145,22 @@ angular.module('PlanHW', ['ngRoute'])
                 }
             } else {
                 $scope.day = $scope.day.add(1,'d');
+=======
+            var date
+            chrono.parse(homework.input).forEach(function(match){
+                date = match
+            });
+            $scope.day = moment(chrono.parseDate(homework.input));
+            if(!$scope.day.isValid()){                 
+                $scope.day = moment().add('1','d')
             }
-            $scope.due_words = $scope.day.calendar();
-            homework.due_date = $scope.day.unix();
-            homework.title = homework.title.replace(/\((.+)\)/i, "").replace(/((?:due|by) (.{2})(?:(?:.+?)?)\b(?: at \S{1,2}:\S\S(?: ?(PM|AM))?)?)/i, "");
+            homework.due_date = $scope.day.toDate();
+            homework.title = homework.input.replace(/\((.+)\)/i, "")
+            if(date){
+                homework.title = homework.title.replace("due "+date.text,'').replace(date.text,'');
+>>>>>>> dev
+            }
+            
         }
         $scope.complete = function(homework){
             $http.put(PlanHWApi+"/students/"+$rootScope.student_id+"/hw/"+homework.id+"?token="+$rootScope.student_token,
@@ -171,6 +181,8 @@ angular.module('PlanHW', ['ngRoute'])
             })
         }
         $scope.new = function(homework){
+            var temp_date = homework.due_date
+            homework.due_date = homework.due_date.toISOString();
             $http.post(PlanHWApi+'students/'+$rootScope.student_id+'/hw?token='+$rootScope.student_token,homework)
             .success(function(){
                 $scope.reload();
@@ -180,6 +192,7 @@ angular.module('PlanHW', ['ngRoute'])
                     $rootScope.flashesNow.push({class: data['message']['type'],message: error}); 
                 })
             })
+            homework.due_date = temp_date
         }
         $scope.delete = function(id){
             $rootScope.flashesNow.push({class: 'info', message: 'Deleting...'})
@@ -211,9 +224,6 @@ angular.module('PlanHW', ['ngRoute'])
             $scope.reload();
         }
         $scope.show()
-        $scope.toMoment = function(unixTime){
-            return moment.unix(unixTime);
-        }
     }).controller('SigninCtrl', function($scope, $rootScope, $http, $location){
         $scope.signinError = null;
         $scope.signin = function(username,password){
