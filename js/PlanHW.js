@@ -1,7 +1,7 @@
 (function(){function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-var PlanHWApi = "http://localhost:3000/"
+var PlanHWApi = "https://api.planhw.com/"
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
     .config(function($routeProvider, $httpProvider) {
         
@@ -122,7 +122,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
             if(homework.description){
                 homework.description = homework.description[1]
             }
-<<<<<<< HEAD
             var match = homework.input.match(/due (.{2}).*?\b(?: at ([1-2]?[0-9]):([0-5][0-9]) ?(PM|AM)?)?/i);
             $scope.day = moment();
             if (match && match[1]) {
@@ -145,7 +144,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
                 }
             } else {
                 $scope.day = $scope.day.add(1,'d');
-=======
             var date
             chrono.parse(homework.input).forEach(function(match){
                 date = match
@@ -158,7 +156,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
             homework.title = homework.input.replace(/\((.+)\)/i, "")
             if(date){
                 homework.title = homework.title.replace("due "+date.text,'').replace(date.text,'');
->>>>>>> dev
             }
             
         }
