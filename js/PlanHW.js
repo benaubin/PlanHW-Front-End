@@ -144,6 +144,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
                 }
             } else {
                 $scope.day = $scope.day.add(1,'d');
+            }
             var date
             chrono.parse(homework.input).forEach(function(match){
                 date = match
