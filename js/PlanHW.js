@@ -52,6 +52,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
         $rootScope.$on('$routeChangeSuccess', function () {
             $rootScope.flashesNow = $rootScope.flashes
             $rootScope.flashes = []
+            $('.modal').modal('hide');
         });
         $rootScope.signout = function(){
             $rootScope.student_id = null
@@ -201,8 +202,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
         $scope.show()
     }).controller('SigninCtrl', function($scope, $rootScope, $http, $location){
         $scope.signinError = null;
-        $scope.signin = function(username,password){
-            $http.get(PlanHWApi+'login?username='+username+'&password='+encodeURIComponent(password))
+        $scope.signin = function(){
+            $http.get(PlanHWApi+'login?username='+encodeURIComponent($scope.username)+'&password='+encodeURIComponent($scope.password))
             .success(function(data){
                 $rootScope.student_token = data['login']['token']
                 $rootScope.student_id = data['student']['id']
