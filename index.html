@@ -59,58 +59,20 @@
         <div ng-view autoscroll="true"></div>
         
         <!-- Sign in -->
-        <div class="modal fade" id="signin-popup" tabindex="-1" role="dialog" aria-labelledby="Sign In" aria-hidden="true" ng-controller="SigninCtrl">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h3 class="modal-title" id="myModalLabel">Sign in</h3>
-                    </div>
-                    <form id="signupForm" name="signupForm" novalidate ng-submit="signin(username,password)">
-                        <div class="modal-body">
-                            <div class="alert alert-danger alert-dismissible" role="alert" ng-show="signinError">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                {{signinError}}
-                            </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-6">
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="email-addon"><i class="fa fa-user fa-fw"></i></span>
-                                            <input class="form-control" type="text" ng-model="username" placeholder="Username"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6">
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="lock-addon"><i class="fa fa-lock fa-fw"></i></span>
-                                            <input class="form-control" type="password" ng-model="password" placeholder="Password"/>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <input type="submit" value="Sign In" class="btn btn-success">
-                        </div>
-                    </form>
-                </div>
-              </div>
-        </div>
-        
+        <signin></signin>
         
         <!-- Frameworks -->
-        <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="/bower_components/angular/angular.min.js"></script>
-        <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/angular/angular.min.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
         <!-- Libraries and Plugins -->
-        <script src="/bower_components/moment/min/moment.min.js"></script>
-        <script src="/bower_components/blueimp-md5/js/md5.min.js"></script>
-        <script src="/bower_components/chrono/chrono.min.js"></script>
-        <script src="/bower_components/angular-route/angular-route.js"></script>
-        <script type="text/javascript" src="/bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
+        <script src="bower_components/moment/min/moment.min.js"></script>
+        <script src="bower_components/blueimp-md5/js/md5.min.js"></script>
+        <script src="bower_components/chrono/chrono.min.js"></script>
+        <script src="bower_components/angular-route/angular-route.js"></script>
+        <script type="text/javascript" src="bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
         <!-- Custom -->
-        <script src="/js/PlanHW.js"></script>
+        <script src="js/PlanHW.js"></script>
     </body>
 </html>

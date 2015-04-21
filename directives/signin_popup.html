@@ -1,0 +1,35 @@
+<div class="modal fade" id="signin-popup" aria-labelledby="signin-label" aria-hidden="true" data-keyboard="false">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="signin-label">Sign in</h3>
+            </div>
+            <form id="signupForm" name="signupForm" novalidate ng-submit="signin($event)">
+                <div class="modal-body">
+                    <div class="alert alert-danger" role="alert" ng-show="signinError">
+                        {{signinError}}
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-addon" id="email-addon"><i class="fa fa-user fa-fw"></i></span>
+                                <input class="form-control" type="text" ng-model="username" placeholder="Username"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-addon" id="lock-addon"><i class="fa fa-lock fa-fw"></i></span>
+                                <input class="form-control" type="password" ng-model="password" placeholder="Password"/>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <input type="submit" value="Sign In" class="btn btn-success">
+                </div>
+            </form>
+        </div>
+      </div>
+</div>
