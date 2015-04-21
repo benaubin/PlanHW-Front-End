@@ -200,17 +200,25 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
         $scope.show()
     }).controller('SigninCtrl', function($scope, $rootScope, $http, $location){
         $scope.signinError = null;
-        $scope.signin = function(username,password){
-            $http.get(PlanHWApi+'login?username='+username+'&password='+encodeURIComponent(password))
+        console.log("Loading SinginCtrl")
+        $scope.signin = function($event){
+            if($event){
+                $event.preventDefault();
+            }
+            $http.get(PlanHWApi+'login?username='+encodeURIComponent($scope.username)+'&password='+encodeURIComponent($scope.password))
             .success(function(data){
+                $scope.password = null;
                 $rootScope.student_token = data['login']['token']
                 $rootScope.student_id = data['student']['id']
                 $rootScope.student = data['student']
                 $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
-                $location.path('/homework')
+                $('.modal').modal('hide');
+                $location.path('/homework');
             }).error(function(data,status){
                 if(status === 401){
                     $scope.signinError = "Wrong username/password.";
+                } else {
+                    $scope.signinError = "Something went wrong.";
                 }
             });
         };
@@ -260,6 +268,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
             };
             $scope.good_confirm = false;
         }
+    }}).directive('signin',function(){return{
+        restrict: 'E',
+        templateUrl: '/directives/signin_popup.html',
+        controller: 'SigninCtrl'
     }});
 
 
