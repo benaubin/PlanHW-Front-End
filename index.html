@@ -11,22 +11,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body id="skrollr-body">
-        <div class="navbar navbar-default navbar-fixed-top">
+        <div class="navbar navbar-default navbar-fixed-top hidden-xs">
             <div class="container">
                 <div class="navbar-header">
                     <div class="logo">
                         <a href="/#/" class="navbar-brand hidden-xs">
                             <img src="img/PlanHWtrans.png" height="75px">
                         </a>
-                        <div class="visible-xs">
-                            <a href="/#/">
-                                <h3 class="text-center">PlanHW</h3>
-                            </a>
-                        </div>
                     </div>
                 </div>
                 <div class="navbar-right">
-                    <ul class="nav navbar-nav collapse navbar-collapse nav-list">
+                    <ul class="nav navbar-nav nav-list">
                         <li ng-hide="student_token"><a href="#/signup">Sign Up</a></li>
                         <li ng-hide="student_token"><a href="#/signin" onclick="event.preventDefault();" data-toggle="modal" data-target="#signin-popup">Sign In</a></li>
                         <li ng-show="student_token"><a href="#/homework">Homework</a></li>
@@ -44,6 +39,28 @@
                 </div>
             </div>
         </div>
+        
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <div class="container">
+                <ul class="nav nav-pills">
+                    <li><a href="#/"><p class="bold">PlanHW</p></a></li>
+                    <li ng-hide="student_token"><a href="#/signup">Sign Up</a></li>
+                    <li ng-hide="student_token"><a href="#/signin" onclick="event.preventDefault();" data-toggle="modal" data-target="#signin-popup">Sign In</a></li>
+                    <li ng-show="student_token"><a href="#/homework">Homework</a></li>
+                    <li ng-show="student">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="" role="button" aria-expanded="false">
+                            {{student.username}} <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a ng-href="#/profile/{{student_id}}">Profile</a></li>
+                            <li role="presentation" class="divider"></li>
+                            <li><a ng-click="signout()" href="#/">Sign Out</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
         <div class="container" ng-show="flashesNow[0]">
             <div ng-repeat="flash in flashesNow">
                 <div class="alert alert-{{flash.class}} alert-dismissible" role="alert">

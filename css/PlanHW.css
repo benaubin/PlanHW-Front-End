@@ -32,7 +32,7 @@
 }
 @media screen and (max-width: 768px) {
     body {
-        padding-top: 150px;
+        padding-top: 60px;
     }
     .navbar-collapse.collapse {
         display: block!important;
@@ -86,4 +86,8 @@
 .action:hover {
     color: dimgrey;
     cursor: pointer;
+}
+.bold {
+    font-size: 110%;
+     font-weight: bolder;
 }
