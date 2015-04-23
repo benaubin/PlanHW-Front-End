@@ -12,9 +12,9 @@
                 </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="showDropdown">
                     <li role="presentation" class="dropdown-header">Homework:</li>
-                    <li role="presentation"><a ng-click="show('incomplete')" role="menuitem" tabindex="-1">Incomplete</a></li>
-                    <li role="presentation"><a ng-click="show('complete')" role="menuitem" tabindex="-1">Complete</a></li>
-                    <li role="presentation"><a ng-click="show('all')" role="menuitem" tabindex="-1">All</a></li>
+                    <li class="action" role="presentation"><a ng-click="show('incomplete')" role="menuitem" tabindex="-1">Incomplete</a></li>
+                    <li class="action" role="presentation"><a ng-click="show('complete')" role="menuitem" tabindex="-1">Complete</a></li>
+                    <li class="action" role="presentation"><a ng-click="show('all')" role="menuitem" tabindex="-1">All</a></li>
                 </ul>
               </div>
             </div>
@@ -32,7 +32,7 @@
                             <div class="dropdown">
                                 <a class="dropdown-toggle my-toggle-select" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" data-ng-model="homework.due_date">
+                                        <input type="text" class="form-control action" data-ng-model="homework.due_date">
                                         <span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
                                     </div>
                                 </a>
@@ -53,7 +53,7 @@
             <div class="panel-body">
                 <div class="media">
                     <div class="media-left">
-                        <a ng-click="complete(homework.homework)">
+                        <a class="action" ng-click="complete(homework.homework)">
                             <i ng-show="homework.homework.completed" class="fa fa-check-square-o fa-3x fa-fw"></i>
                             <i ng-hide="homework.homework.completed" class="fa fa-square-o fa-3x fa-fw"></i>
                             <span class="sr-only">Toggle Complete</span>
@@ -76,9 +76,9 @@
                     <p align="center">Due: <strong>{{homework.due_date}}</strong></p>
                 </div>
                 <div align="right">
-                    <i class="fa fa-pencil fa-lg" ng-click="homework.editing = true" ng-hide="homework.editing"></i>
-                    <i class="fa fa-trash-o fa-lg" ng-click="delete(homework.homework.id)"></i>
-                    <i class="fa fa-check fa-lg" ng-click="update(homework)" ng-show="homework.editing"></i>
+                    <i class="fa fa-pencil fa-lg action" ng-click="homework.editing = true" ng-hide="homework.editing"></i>
+                    <i class="fa fa-trash-o fa-lg action" ng-click="delete(homework.homework.id)"></i>
+                    <i class="fa fa-check fa-lg action" ng-click="update(homework)" ng-show="homework.editing"></i>
                 </div>
             </div>
         </div>
