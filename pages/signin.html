@@ -1,11 +1,11 @@
-<div class="container">
+<div class="container" ng-init="remember=true">
     <div class="col-xs-12 col-md-8 col-md-offset-2">
         <h1 class="pad-100b">Sign In:</h1>
         <div class="alert alert-danger alert-dismissible" role="alert" ng-show="signinError">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             {{signinError}}
         </div>
-        <form id="signupForm" name="signupForm" novalidate ng-submit="signin()">
+        <form id="signupForm" name="signupForm" novalidate ng-submit="signin(false,remember)">
             <div class="row">
                 <div class="col-xs-12 col-sm-5">
                     <div class="input-group">
@@ -22,6 +22,10 @@
                 <div class="col-xs-12 col-sm-2">
                     <input type="submit" value="Sign In" class="btn btn-success">
                 </div>
+            </div>
+            <div align="right">
+                <label>Remember?</label>
+                <input type="checkbox" ng-model="remember">
             </div>
         </form>
     </div>
