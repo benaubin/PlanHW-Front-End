@@ -2,7 +2,7 @@
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 var PlanHWApi = "https://api.planhw.com/"
-angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
+angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies'])
     .config(function($routeProvider, $httpProvider) {
         
         $routeProvider
@@ -46,18 +46,36 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
                     })
                 ;
             })
-    }).run(function($rootScope, $location){
+    }).run(function($rootScope, $location, $cookieStore, $http){
         $rootScope.flashes = []
         $rootScope.flashesNow = []
         $rootScope.$on('$routeChangeSuccess', function () {
             $rootScope.flashesNow = $rootScope.flashes
             $rootScope.flashes = []
         });
+    
         $rootScope.signout = function(){
             $rootScope.student_id = null
             $rootScope.student_token = null
             $rootScope.student = null
             $location.path('/')
+            $cookieStore.remove('login_data')
+        }
+        var login_data = $cookieStore.get('login_data') 
+        if(login_data){
+            $rootScope.student_token = login_data['login']['token']
+            $rootScope.student_id = login_data['student']['id']
+            $rootScope.student = login_data['student']
+            var working_login;
+            $http.get('https://api.planhw.com/test_login?id=' + $rootScope.student_id + "&token=" + $rootScope.student_token)
+                .success(function(data){
+                    if(data.correct){
+                        $location.path('/homework');
+                    } else {
+                        $rootScope.signout();
+                    }
+                })
+            
         }
     }).controller('IndexCtrl',function($scope){
         $scope.signuplinks = true
@@ -195,19 +213,18 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
             $scope.reload();
         }
         $scope.show()
-    }).controller('SigninCtrl', function($scope, $rootScope, $http, $location){
-        $scope.signinError = null;
-        console.log("Loading SinginCtrl")
-        $scope.signin = function($event){
-            if($event){
-                $event.preventDefault();
-            }
+    }).controller('SigninCtrl', function($scope, $rootScope, $http, $location, $cookieStore){
+        $scope.signinError = null
+        $scope.signin = function($event,remember){
             $http.get(PlanHWApi+'login?username='+encodeURIComponent($scope.username)+'&password='+encodeURIComponent($scope.password))
             .success(function(data){
                 $scope.password = null;
                 $rootScope.student_token = data['login']['token']
                 $rootScope.student_id = data['student']['id']
                 $rootScope.student = data['student']
+                if(remember){
+                    $cookieStore.put('login_data',data)
+                }
                 $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
                 $('.modal').modal('hide');
                 $location.path('/homework');
