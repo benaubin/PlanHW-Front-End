@@ -1,3 +1,28 @@
+section.slide {
+    min-height: 100%;
+    width: 100%;
+}
+
+#dictionary {
+    padding-top:50px;
+    position: fixed;
+}
+
+.fly-card {
+    padding-top:100%;
+}
+#pricing {
+    padding-top: 25%;
+}
+
+section.slide#slide1 {
+    background: url('/img/screenshots/MacOnDesk.png') fixed center center no-repeat;
+    background-size: cover;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+    min-height: 200%;
+}
 
 @media screen and (min-width: 768px) {
     body {
@@ -6,56 +31,18 @@
     .navbar .container {
         padding-bottom: 50px;
     }
-    #landing{
-        height:auto;
-        background: url("/img/desk.jpeg") fixed;
-    }
-    #landing .container {
-        padding-top: 20px;
-        padding-bottom: 15%;
-    }
-    #features .container {
-        padding-top: 20px;
-    }
-    #features .feature {
-        padding-left: 10px;
-    }
-    #pricing{
-        padding-top: 150px;
-    }
-    #signup-build-up{
-        padding-top: 100px;
-    }
-    #signup {
-        padding-top: 150px;
-    }
 }
 @media screen and (max-width: 768px) {
+    section.slide#slide1 {
+        background: url('/img/screenshots/iPhoneOnDesk.png') fixed center no-repeat;
+    }  
     body {
         padding-top:60px;
     }
 }
-.pad-100 {
-    padding: 100px, 100px, 100px, 100px;
-}
-
-.pad-100b {
-    padding-bottom: 100px;
-}
-
-.pad-100t {
-    padding-top: 100px;
-}
-
-.pad-50t {
-    padding-top: 50px;
-}
 
 .pad-10t {
     padding-top: 10px;
-}
-.pad-20r {
-    padding-right: 20px;
 }
 .signup {
     padding-bottom: 500px;
@@ -74,5 +61,5 @@
 }
 .bold {
     font-size: 110%;
-     font-weight: bolder;
+    font-weight: bolder;
 }

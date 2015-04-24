@@ -89,9 +89,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker'])
             $scope.$apply();
         });
 
-        body.append('<script src="bower_components/scrollr/dist/skrollr.min.js"></script>');
-        var s = skrollr.init();
-
         $scope.timeFull = time.format('dddd');
         $scope.timeFromNow = time.fromNow();
     }).controller('HWCtrl',function($scope, $rootScope, $http, $location){
