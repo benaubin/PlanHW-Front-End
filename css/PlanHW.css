@@ -32,7 +32,7 @@
 }
 @media screen and (max-width: 768px) {
     body {
-        padding-top: 60px;
+        padding-top:60px;
     }
     .navbar-collapse.collapse {
         display: block!important;
