@@ -3,11 +3,6 @@ section.slide {
     width: 100%;
 }
 
-#dictionary {
-    padding-top:50px;
-    position: fixed;
-}
-
 #pricing {
     padding-top: 25%;
 }
@@ -23,6 +18,14 @@ footer p {
 @media screen and (min-width: 768px) {
     body {
         padding-top: 100px;
+    }
+    #dictionary {
+        position:absolute;
+        padding-top:300px;
+    }
+    #dictionary.fixed {
+        position:fixed;
+        padding-top:50px;
     }
     .navbar .container {
         padding-bottom: 50px;
@@ -41,6 +44,9 @@ footer p {
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
+    }
+    #fly-card-container{
+        padding-top:500px;
     }
     .fly-card {
         padding-top:100%;

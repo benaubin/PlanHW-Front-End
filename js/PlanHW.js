@@ -1,6 +1,9 @@
-(function(){function toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-}
+(function(){
+    function toTitleCase(str) {
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    }
+$(function(){ })
+       
 var PlanHWApi = "https://api.planhw.com/"
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies'])
     .config(function($routeProvider, $httpProvider) {
@@ -109,6 +112,22 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies'])
 
         $scope.timeFull = time.format('dddd');
         $scope.timeFromNow = time.fromNow();
+        $('.show-slide2').hide();
+        var slide2 = $('#slide2')
+        var slide3 = $('#slide3')
+        $(window).scroll(function(){
+            distance = parseInt($(window).scrollTop())
+            if(250 <= distance){
+                $('#dictionary').addClass('fixed')
+            } else {
+                $('#dictionary').removeClass('fixed')
+            }
+            if (slide2.offset().top <= distance && distance <= slide3.offset().top - 750) {
+                $('.show-slide2').show('slow')
+            } else {
+                $('.show-slide2').hide('fast')
+            }
+        })
     }).controller('HWCtrl',function($scope, $rootScope, $http, $location){
         $scope.reload = function(){
             if($rootScope.sudent_id !== null){
