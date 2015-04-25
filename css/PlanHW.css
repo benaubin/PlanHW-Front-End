@@ -50,7 +50,11 @@ section.slide#slide3 {
 }
 @media screen and (max-width: 768px) {
     section.slide#slide1 {
-        background: url('/img/screenshots/iPhoneOnDesk.png') fixed center no-repeat;
+        background: url('/img/screenshots/small/iPhoneOnDesk.png') fixed center no-repeat;
+        background-size: cover;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
     }  
     body {
         padding-top:60px;
