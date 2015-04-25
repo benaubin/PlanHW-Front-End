@@ -11,8 +11,17 @@ section.slide {
 .fly-card {
     padding-top:100%;
 }
+
 #pricing {
     padding-top: 25%;
+}
+
+footer {
+    background: #000;
+}
+
+footer p {
+    color: #fff;
 }
 
 section.slide#slide1 {
@@ -21,7 +30,14 @@ section.slide#slide1 {
         -webkit-background-size: cover;
         -moz-background-size: cover;
         -o-background-size: cover;
-    min-height: 200%;
+}
+
+section.slide#slide3 {
+    background: url('/img/screenshots/iPhoneInHand.png') fixed center center no-repeat;
+    background-size: cover;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
 }
 
 @media screen and (min-width: 768px) {
@@ -44,6 +60,11 @@ section.slide#slide1 {
 .pad-10t {
     padding-top: 10px;
 }
+
+.pad-50t {
+    padding-top: 50px;
+}
+
 .signup {
     padding-bottom: 500px;
 }
