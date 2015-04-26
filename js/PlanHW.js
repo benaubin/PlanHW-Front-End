@@ -5,7 +5,7 @@ Offline.options = {checks: {xhr: {url: PlanHWApi + 'students'}}};
 function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','webStorageModule'])
+angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','webStorageModule','ngSanitize'])
     .config(function($routeProvider, $httpProvider) {
         
         $routeProvider
@@ -39,12 +39,12 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 $scope.student = data.student
                 $http.jsonp("http://www.gravatar.com/" + md5($scope.student.email) + ".json?callback=JSON_CALLBACK")
                     .success(function(data){
-                        $scope.bio = $sce.trustAsHtml(data['entry'][0]['aboutMe'])
+                        $scope.bio = data['entry'][0]['aboutMe']
                     })
                     .error(function(){
                             $http.jsonp("http://www.gravatar.com/" + $scope.student.username + ".json?callback=JSON_CALLBACK")
                         .success(function(data){
-                            $scope.bio = $sce.trustAsHtml(data['entry'][0]['aboutMe'])
+                            $scope.bio = data['entry'][0]['aboutMe']
                         })
                     })
                 ;
