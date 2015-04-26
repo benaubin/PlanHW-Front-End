@@ -160,11 +160,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             chrono.parse(homework.input).forEach(function(match){
                 date = match
             });
-            $scope.day = moment(chrono.parseDate(homework.input));
-            if(!$scope.day.isValid()){                 
-                $scope.day = moment().add('1','d')
+            homework.due_date = moment(chrono.parseDate(homework.input));
+            if(!homework.due_date.isValid()){                 
+                homework.due_date = moment().add('1','d')
             }
-            homework.due_date = $scope.day.toDate();
             homework.title = homework.input.replace(/\((.+)\)/i, "")
             if(date){
                 homework.title = homework.title.replace("due "+date.text,'').replace(date.text,'');
