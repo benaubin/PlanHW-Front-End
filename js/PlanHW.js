@@ -128,24 +128,24 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies'])
                 $('.show-slide2').hide('fast')
             }
         })
-    }).controller('HWCtrl',function($scope, $rootScope, $http, $location){
+    }).controller('HWCtrl',function($scope, $rootScope, $http, $location, $cookieStore){
         $scope.reload = function(){
             if($rootScope.sudent_id !== null){
                 $http.get(PlanHWApi+'students/'+$rootScope.student_id+'/hw?token='+$rootScope.student_token)
                 .success(function(data){
-                    $scope.hw = []
-                    angular.forEach(data['homeworks'], function(homework){
-                        homework.due_date = moment(homework.homework.due_date).calendar()
-                        console.log(homework.homework.due_date)
-                        if(homework.homework.completed){
-                            if($scope.showComplete) $scope.hw.push(homework)
-                        } else if ($scope.showIncomplete){
-                            $scope.hw.push(homework)
-                        }
-                    })
+                    $cookieStore.put('hw',data['homeworks'])
                 }).error(function(){
-                    $rootScope.flashes.push({class: "danger", message:"Please sign in, again."})
-                    $location.path('/signin')
+                    $rootScope.flashes.push({class: "danger", message:"Couldn't connect, loading offline copy of homework."})
+                })
+                var hw = $cookieStore.get(hw)
+                angular.forEach($cookieStore.get(hw), function(homework){
+                    homework.due_date = moment(homework.homework.due_date).calendar()
+                    console.log(homework.homework.due_date)
+                    if(homework.homework.completed){
+                        if($scope.showComplete) $scope.hw.push(homework)
+                    } else if ($scope.showIncomplete){
+                        $scope.hw.push(homework)
+                    }
                 })
             } else {
                 $rootScope.flashes.push({class: "danger", message:"Sign in first!"})
