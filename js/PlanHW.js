@@ -199,12 +199,12 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             .success(function(){
                 homework.editing = false
             }).error(function(data, status){
-                if(!(data && status)){
-                    homework.editing = false
-                } else {
+                if(data && status){
                     angular.forEach(data['errors'], function(error){
                         $rootScope.flashesNow.push({class: 'warning',message: error}); 
                     })
+                } else {
+                    homework.editing = false
                 }
             })
         }
@@ -222,16 +222,21 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             })
             homework.due_date = temp_date
         }
-        $scope.delete = function(id){
+        $scope.delete = function(homework){
             $rootScope.flashesNow.push({class: 'info', message: 'Deleting...'})
-            $http.delete(PlanHWApi + 'students/'+$rootScope.student_id+'/hw/'+id+'?token='+$rootScope.student_token)
+            $http.delete(PlanHWApi + 'students/'+$rootScope.student_id+'/hw/'+homework.homework.id+'?token='+$rootScope.student_token)
             .success(function(data){
                 $scope.reload();
             }).error(function(data, status){
-                $rootScope.flashesNow.push({class: 'danger', message:'Something went wrong in deleting your homework.'})
-                console.log('Something went wrong in deleting homework with id of ' + id)
-                console.log('Got ' + status + ' response:')
-                console.log(data)
+                if(data && status){
+                    $rootScope.flashesNow.push({class: 'danger', message:'Something went wrong in deleting your homework.'})
+                    console.log('Something went wrong in deleting homework with id of ' + homework.homework.id)
+                    console.log('Got ' + status + ' response:')
+                    console.log(data)
+                } else {
+                    homework = null
+                }
+                
             })
             $rootScope.flashesNow.pop()
         }
