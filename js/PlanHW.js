@@ -1,10 +1,10 @@
-(function(){
-    function toTitleCase(str) {
-        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-    }
-$(function(){ })
-       
 var PlanHWApi = "https://api.planhw.com/"
+Offline.options = {checks: {xhr: {url: 'https://api.planhw.com/students'}}};
+
+(function(){
+function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','webStorageModule'])
     .config(function($routeProvider, $httpProvider) {
         
@@ -128,7 +128,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 $('.show-slide2').hide('fast')
             }
         })
-    }).controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){
+    }).controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage,$cookieStore){
         $scope.reload = function(){
             if($rootScope.sudent_id !== null){
                 var hw = [];
@@ -136,15 +136,18 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 .success(function(data){
                     webStorage.remove('hw')
                     hw = data['homeworks']
-                    console.log(hw)
-                    webStorage.add('hw',hw)
+                    if($cookieStore.get('login_data')) webStorage.add('hw',hw)
                 }).error(function(){
-                    hw = webStorage.get('hw')
+                    if($cookieStore.get('login_data')){
+                        hw = webStorage.get('hw') 
+                    } else {
+                        $rootScope.flashes.push({class:'danger', message: 'Please sign in.'})
+                        $location.path('/signin')
+                    }
                 }).finally(function(){
                     $scope.hw = [];
                     angular.forEach(hw, function(homework){
                         homework.due_date = moment(homework.homework.due_date).calendar()
-                        console.log(homework.homework.due_date)
                         if(homework.homework.completed){
                             if($scope.showComplete) $scope.hw.push(homework)
                         } else if ($scope.showIncomplete){
@@ -153,7 +156,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                     })
                 })
             } else {
-                $rootScope.flashes.push({class: "danger", message:"Sign in first!"})
+                $rootScope.flashes.push({class: "danger", message: "Sign in first!"})
                 $location.path('/signin')
             }}
         $scope.input = function(homework){
@@ -185,7 +188,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             $http.put(PlanHWApi+'students/'+$rootScope.student_id+'/hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
             .success(function(){
                 homework.editing = false
-                $scope.reload();
             }).error(function(data){
                 angular.forEach(data['errors'], function(error){
                     $rootScope.flashesNow.push({class: 'warning',message: error}); 
