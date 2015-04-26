@@ -5,7 +5,7 @@
 $(function(){ })
        
 var PlanHWApi = "https://api.planhw.com/"
-angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies'])
+angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','webStorageModule'])
     .config(function($routeProvider, $httpProvider) {
         
         $routeProvider
@@ -128,17 +128,17 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies'])
                 $('.show-slide2').hide('fast')
             }
         })
-    }).controller('HWCtrl',function($scope, $rootScope, $http, $location, $cookieStore){
+    }).controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){
         $scope.reload = function(){
             if($rootScope.sudent_id !== null){
                 $http.get(PlanHWApi+'students/'+$rootScope.student_id+'/hw?token='+$rootScope.student_token)
                 .success(function(data){
-                    $cookieStore.put('hw',data['homeworks'])
+                    webStorage.add('hw',data['homeworks'])
                 }).error(function(){
                     $rootScope.flashes.push({class: "danger", message:"Couldn't connect, loading offline copy of homework."})
                 })
-                var hw = $cookieStore.get(hw)
-                angular.forEach($cookieStore.get(hw), function(homework){
+                var hw = webStorage.get(hw)
+                angular.forEach(hw, function(homework){
                     homework.due_date = moment(homework.homework.due_date).calendar()
                     console.log(homework.homework.due_date)
                     if(homework.homework.completed){
