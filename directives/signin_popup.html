@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <h3 class="modal-title" id="signin-label">Sign in</h3>
             </div>
-            <form id="signupForm" name="signupForm" novalidate ng-submit="signin($event,remember)">
+            <form id="signupForm" name="signupForm" novalidate ng-submit="signin(remember)">
                 <div class="modal-body">
                     <div class="alert alert-danger" role="alert" ng-show="signinError">
                         {{signinError}}

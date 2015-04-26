@@ -7,11 +7,11 @@ section.slide {
     padding-top: 25%;
 }
 
-footer {
+footer.home-footer {
     background: #000;
 }
 
-footer p {
+footer.home-footer p {
     color: #fff;
 }
 

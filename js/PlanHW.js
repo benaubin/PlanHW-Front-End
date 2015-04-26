@@ -129,7 +129,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             }
         })
     }).controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage,$cookieStore){
-        $scope.reload = function(after){
+        $scope.reload = function(show, after){
             if($rootScope.sudent_id !== null){
                 $scope.hw = []
                 $http.get(PlanHWApi+'students/'+$rootScope.student_id+'/hw?token='+$rootScope.student_token)
@@ -145,17 +145,19 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                         $location.path('/signin')
                     }
                 }).finally(function(){
-                    if(!after){
-                        $scope.toView(true)
+                    $scope.loaded = true
+                    if(show){
+                        $scope.show(show, after)
                     } else {
-                        after()
+                        $scope.toView()
                     }
                 })
             } else {
                 $rootScope.flashes.push({class: "danger", message: "Sign in first!"})
                 $location.path('/signin')
             }}
-        $scope.toView = function(){
+        $scope.toView = function(before){
+            if(before) before();
             angular.forEach($scope.hw, function(homework){
                 homework.due_date = moment(homework.homework.due_date).calendar()
                 if(homework.homework.completed){
@@ -240,7 +242,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             })
             $rootScope.flashesNow.pop()
         }
-        $scope.show = function(type){
+        $scope.show = function(type,after){
             if(type === 'complete'){
                 $scope.showing = "Completed"
                 $scope.showComplete = true
@@ -254,32 +256,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 $scope.showComplete = false
                 $scope.showIncomplete = true
             }
-            $scope.toView();
+            $scope.toView(after);
         }
-        $scope.reload($scope.show);
-    }).controller('SigninCtrl', function($scope, $rootScope, $http, $location, $cookieStore){
+        $scope.reload('incomplete');
+    }).controller('SigninCtrl', function($scope, $signin){
         $scope.signinError = null
-        $scope.signin = function($event,remember){
-            $http.get(PlanHWApi+'login?username='+encodeURIComponent($scope.username)+'&password='+encodeURIComponent($scope.password))
-            .success(function(data){
-                $scope.password = null;
-                $rootScope.student_token = data['login']['token']
-                $rootScope.student_id = data['student']['id']
-                $rootScope.student = data['student']
-                if(remember){
-                    $cookieStore.put('login_data',data)
-                }
-                $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
-                $('.modal').modal('hide');
-                $location.path('/homework');
-            }).error(function(data,status){
-                if(status === 401){
-                    $scope.signinError = "Wrong username/password.";
-                } else {
-                    $scope.signinError = "Something went wrong.";
-                }
-            });
-        };
+        $scope.signin = function(remember){
+            $signin($scope.username, $scope.password, remember)
+        }
     }).directive('gravatar', function(){return{
         restrict: 'AE',
         replace: true,
@@ -296,7 +280,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         replace: true,
         scope: {},
         template: '<div ng-include="\'directives/signup_form.html\'"></div>',
-        controller: function($scope, $http, $rootScope, $location){
+        controller: function($scope, $http, $rootScope, $location, $signin){
             $scope.signupErrored = false;
             $scope.student = {};
             $scope.gravatarInfo = "";
@@ -313,8 +297,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             $scope.signup = function(student){
                 $http.post(PlanHWApi+'students/', student)
                 .success(function(){
-                    alert("Welcome to PlanHW, please check your email and confirm it.");
-                    $location.path('/signin')
+                    $rootScope.firstSignin = true;
+                    $signin(student.username,student.password,false)
                 }).error(function(data, status){
                     $scope.signupErrored = true;
                     if(status === 422){
@@ -330,6 +314,27 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         restrict: 'E',
         templateUrl: '/directives/signin_popup.html',
         controller: 'SigninCtrl'
+    }}).factory('$signin',function($rootScope, $http, $location, $cookieStore){
+        return function(username, password, remember) {
+        $http.get(PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password))
+            .success(function(data){
+                password = null;
+                $rootScope.student_token = data['login']['token']
+                $rootScope.student_id = data['student']['id']
+                $rootScope.student = data['student']
+                if(remember){
+                    $cookieStore.put('login_data',data)
+                }
+                $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
+                $('.modal').modal('hide');
+                $location.path('/homework');
+            }).error(function(data,status){
+                if(status === 401){
+                    $rootScope.flashesNow.push({message: "Wrong username/password.", class: 'danger'})
+                } else {
+                    $rootScope.flashesNow.push({message: "Something went wrong.", class: 'danger'})
+                }
+            });
     }});
 
 
