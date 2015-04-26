@@ -188,10 +188,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             $http.put(PlanHWApi+'students/'+$rootScope.student_id+'/hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
             .success(function(){
                 homework.editing = false
-            }).error(function(data){
-                angular.forEach(data['errors'], function(error){
-                    $rootScope.flashesNow.push({class: 'warning',message: error}); 
-                })
+            }).error(function(data, status){
+                if(!(data && status)){
+                    homework.editing = false
+                } else {
+                    angular.forEach(data['errors'], function(error){
+                        $rootScope.flashesNow.push({class: 'warning',message: error}); 
+                    })
+                }
             })
         }
         $scope.new = function(homework){
