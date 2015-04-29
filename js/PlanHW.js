@@ -38,23 +38,18 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         })
             
     }).controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
-        $http.get(PlanHWApi + 'students/' + $rootScope.student_id)
+        $http.jsonp("http://www.gravatar.com/" + md5($rootScope.student.email) + ".json?callback=JSON_CALLBACK")
             .success(function(data){
-                $scope.student = data.student
-                $http.jsonp("http://www.gravatar.com/" + md5($scope.student.email) + ".json?callback=JSON_CALLBACK")
+                $rootScope.student.bio = data['entry'][0]['aboutMe']
+            })
+            .error(function(){
+                $http.jsonp("http://www.gravatar.com/" + $rootScope.student.username + ".json?callback=JSON_CALLBACK")
                     .success(function(data){
-                        $scope.student.bio = data['entry'][0]['aboutMe']
-                        $scope.show('profile')
-                    })
-                    .error(function(){
-                            $http.jsonp("http://www.gravatar.com/" + $scope.student.username + ".json?callback=JSON_CALLBACK")
-                        .success(function(data){
-                            $scope.student.bio = data['entry'][0]['aboutMe']
-                            $scope.show('profile')
-                        })
+                        $rootScope.student.bio = data['entry'][0]['aboutMe']
                     })
                 ;
-            });
+            })
+        ;
         $scope.show = function(section){
             $scope.profile = false, $scope.security = false, $scope.schedule = false
             if(section === 'profile') $scope.profile = true
@@ -66,10 +61,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 .success(function(data){
                     $rootScope.flashesNow.push({class:'success',message:'Changes saved.'})
                     student.password = null, student.password_confirm = null
-                    
                 })
             ;
         }
+        $scope.show('profile');
     }).controller('ProfileCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
         $http.get(PlanHWApi + 'students/' + $routeParams.id)
             .success(function(data){
