@@ -15,6 +15,18 @@ footer.home-footer p {
     color: #fff;
 }
 
+.a-unstyled { color: inherit; }
+.a-unstyled:link { color: inherit; }
+.a-unstyled:visited { color: inherit; }
+.a-unstyled:hover { color: inherit; }
+.a-unstyled:active { color: inherit; }
+
+.navbar-inverse .a-unstyled { color: inherit; }
+.navbar-inverse .a-unstyled:link { color: inherit; }
+.navbar-inverse .a-unstyled:visited { color: inherit; }
+.navbar-inverse .a-unstyled:hover { color: inherit; }
+.navbar-inverse .a-unstyled:active { color: inherit; }
+
 @media screen and (min-width: 768px) {
     body {
         padding-top: 100px;
@@ -69,6 +81,10 @@ footer.home-footer p {
     padding-top: 50px;
 }
 
+.pad-40t {
+    padding-top: 40px;
+}
+
 .signup {
     padding-bottom: 500px;
 }
@@ -87,4 +103,7 @@ footer.home-footer p {
 .bold {
     font-size: 110%;
     font-weight: bolder;
+}
+#settings-main {
+    border-left: 1px solid #DEDEDE;
 }

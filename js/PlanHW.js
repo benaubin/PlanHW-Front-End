@@ -32,7 +32,39 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             templateUrl: 'pages/student.html',
             controller: 'ProfileCtrl'
         })
+        .when('/settings',{
+            templateUrl: 'pages/settings.html',
+            controller: 'SettingsCtrl'
+        })
             
+    }).controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
+        $http.jsonp("http://www.gravatar.com/" + md5($rootScope.student.email) + ".json?callback=JSON_CALLBACK")
+            .success(function(data){
+                $rootScope.student.bio = data['entry'][0]['aboutMe']
+            })
+            .error(function(){
+                $http.jsonp("http://www.gravatar.com/" + $rootScope.student.username + ".json?callback=JSON_CALLBACK")
+                    .success(function(data){
+                        $rootScope.student.bio = data['entry'][0]['aboutMe']
+                    })
+                ;
+            })
+        ;
+        $scope.show = function(section){
+            $scope.profile = false, $scope.security = false, $scope.schedule = false
+            if(section === 'profile') $scope.profile = true
+            if(section === 'security') $scope.security = true
+            if(section === 'schedule') $scope.schedule = true
+        }
+        $scope.update = function(student){
+            $http.put(PlanHWApi + 'students/' + $rootScope.student_id + '?token=' + $rootScope.student_token, student)
+                .success(function(data){
+                    $rootScope.flashesNow.push({class:'success',message:'Changes saved.'})
+                    student.password = null, student.password_confirm = null
+                })
+            ;
+        }
+        $scope.show('profile');
     }).controller('ProfileCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
         $http.get(PlanHWApi + 'students/' + $routeParams.id)
             .success(function(data){
@@ -72,9 +104,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             var working_login;
             $http.get(PlanHWApi + '/test_login?id=' + $rootScope.student_id + "&token=" + $rootScope.student_token)
                 .success(function(data){
-                    if(data.correct){
-                        $location.path('/homework');
-                    } else {
+                    if(!data.correct){
                         $rootScope.signout();
                     }
                 })
