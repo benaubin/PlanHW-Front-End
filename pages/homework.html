@@ -4,7 +4,7 @@
             <h1>Homework:</h1>
         </div>
         <div class="col-md-4 pad-10t col-md-offset-4 col-sm-8">
-            <div class="btn-group" role="group">
+            <div class="btn-group" role="group" ng-show="cards">
               <button type="button" class="btn btn-default" ng-click="reload()"><i class="fa fa-refresh"></i> Refresh</button>
               <div class="btn-group" role="group">
                 <button class="btn btn-default dropdown-toggle" type="button" id="showDropdown" data-toggle="dropdown" aria-expanded="true  ">
@@ -17,6 +17,15 @@
                     <li class="action" role="presentation"><a ng-click="show('all')" role="menuitem" tabindex="-1">All</a></li>
                 </ul>
               </div>
+              <div class="btn-group" role="group">
+                <button class="btn btn-default dropdown-toggle" type="button" id="showDropdown" data-toggle="dropdown" aria-expanded="true  ">
+                    {{view}} View <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="showDropdown">
+                    <li role="presentation"><a class="action" ng-click="chooseView('Cards')">Cards</a></li>
+                    <li role="presentation"><a class="action hidden-xs" ng-click="chooseView('List')">List</a></li>
+                </ul>
+              </div>
             </div>
             <form id="homework" ng-submit="new(homework)" >
                 <div class="panel panel-default">
@@ -26,7 +35,7 @@
                             <input type="submit" id="homework_title" value="Create" class="btn btn-default">
                         </span>
                     </div>
-                    <div class="panel-body" ng-show="homework.input">
+                    <div class="panel-body" ng-show="homework.input" id="hwpreview">
                         <h3>{{homework.title}}</h3>
                         <div class="col-xs-12">
                             <div class="dropdown">
@@ -48,23 +57,81 @@
             </form>
         </div>
     </div>
-    <div ng-repeat="homework in hw">
-        <div class="col-md-4 col-sm-6 col-xs-12" ng-show="homework.show">
-            <div class="panel panel-default" ng-class="{'complete': homework.homework.completed}">
-                <div class="panel-body">
-                    <div class="media">
-                        <div class="media-left">
-                            <a class="action" ng-click="complete(homework)">
-                                <i ng-show="homework.homework.completed" class="fa fa-check-square-o fa-3x fa-fw"></i>
-                                <i ng-hide="homework.homework.completed" class="fa fa-square-o fa-3x fa-fw"></i>
-                                <span class="sr-only">Toggle Complete</span>
-                            </a>
-                        </div>
-                        <div class="media-body" ng-click="homework.editing = true">
-                            <div ng-hide="homework.editing">
-                                <h3 class="media-heading">{{homework.homework.title}}</h3>
-                                <p>{{homework.homework.description}}</p>
+    <div ng-show="cards">
+        <div ng-repeat="homework in hw">
+            <div class="col-md-4 col-sm-6 col-xs-12" ng-show="homework.show">
+                <div class="panel panel-default" ng-class="{'complete': homework.homework.completed}">
+                    <div class="panel-body">
+                        <div class="media">
+                            <div class="media-left">
+                                <a class="action" ng-click="complete(homework)">
+                                    <i ng-show="homework.homework.completed" class="fa fa-check-square-o fa-3x fa-fw"></i>
+                                    <i ng-hide="homework.homework.completed" class="fa fa-square-o fa-3x fa-fw"></i>
+                                    <span class="sr-only">Toggle Complete</span>
+                                </a>
                             </div>
+                            <div class="media-body" ng-click="homework.editing = true">
+                                <div ng-hide="homework.editing">
+                                    <h3 class="media-heading">{{homework.homework.title}}</h3>
+                                    <p>{{homework.homework.description}}</p>
+                                </div>
+                                <div ng-show="homework.editing">
+                                    <input type="text" class="form-control" ng-model="homework.homework.title">
+                                    <div class="panel-body">
+                                        <label>Description</label>
+                                        <textarea class="form-control" ng-model="homework.homework.description"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <p align="center">Due: <strong>{{homework.due_date}}</strong></p>
+                        </div>
+                        <div align="right">
+                            <i class="fa fa-pencil fa-lg action" ng-click="homework.editing = true" ng-hide="homework.editing"></i>
+                            <i class="fa fa-trash-o fa-lg action" ng-click="delete(homework)"></i>
+                            <i class="fa fa-check fa-lg action" ng-click="update(homework)" ng-show="homework.editing"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div ng-show="list">
+        <div class="col-md-2 col-sm-3 col-offset-1 col-xs-12">
+            <button type="button" class="btn btn-default col-xs-12" ng-click="reload()">
+                <i class="fa fa-refresh"></i> Refresh
+            </button>
+            <hr>
+            <ul class="nav nav-pills nav-stacked text-center">
+                <li role="presentation"><p class="bold">Show:</p></li>
+                <li class="action" ng-class="{active: showAll}" role="presentation"><a ng-click="show('all')" role="menuitem" tabindex="-1">All</a></li>
+                <li class="action" ng-class="{active: showIncomplete}" role="presentation"><a ng-click="show('incomplete')" role="menuitem" tabindex="-1">Incomplete</a></li>
+                <li class="action" ng-class="{active: showComplete}" role="presentation"><a ng-click="show('complete')" role="menuitem" tabindex="-1">Complete</a></li>
+                
+                <hr>
+                <li role="presentation"><p class="bold">View as:</p></li>
+                <li role="presentation"><a class="action" ng-click="chooseView('Cards')">Cards</a></li>
+                <li role="presentation" class="active"><a>List</a></li>
+                <hr>
+            </ul>
+        </div>
+        <div class="col-sm-8 col-md-offset-1">
+            <div ng-repeat="homework in hw" ng-show="homework.show" ng-class="{'complete': homework.homework.completed}">
+                <div class="media">
+                    <div class="media-left">
+                        <a class="action" ng-click="complete(homework)">
+                            <i ng-show="homework.homework.completed" class="fa fa-check-square-o fa-2x fa-fw"></i>
+                            <i ng-hide="homework.homework.completed" class="fa fa-square-o fa-2x fa-fw"></i>
+                            <span class="sr-only">Toggle Complete</span>
+                        </a>
+                    </div>
+                    <div class="media-body" ng-click="homework.editing = true">
+                        <div class="col-md-7">
+                                <div ng-hide="homework.editing">
+                                    <p class="bold">{{homework.homework.title}}</p>
+                                    <p>{{homework.homework.description}}</p>
+                                </div>
                             <div ng-show="homework.editing">
                                 <input type="text" class="form-control" ng-model="homework.homework.title">
                                 <div class="panel-body">
@@ -73,18 +140,27 @@
                                 </div>
                             </div>
                         </div>
-                        <hr>
-                        <p align="center">Due: <strong>{{homework.due_date}}</strong></p>
+                        <div class="col-md-5">
+                            <div class="pull-right">
+                                <i class="fa fa-pencil fa-lg action" ng-click="homework.editing = true" ng-hide="homework.editing"></i>
+                                <br>
+                                <i class="fa fa-trash-o fa-lg action" ng-click="delete(homework)"></i>
+                                <br>
+                                <i class="fa fa-check fa-lg action" ng-click="update(homework)" ng-show="homework.editing"></i>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="pull-right">
+                                <p>Due: <strong>{{homework.due_date}}</strong></p>
+                            </div>
+                        </div>
                     </div>
-                    <div align="right">
-                        <i class="fa fa-pencil fa-lg action" ng-click="homework.editing = true" ng-hide="homework.editing"></i>
-                        <i class="fa fa-trash-o fa-lg action" ng-click="delete(homework)"></i>
-                        <i class="fa fa-check fa-lg action" ng-click="update(homework)" ng-show="homework.editing"></i>
-                    </div>
-                </div>
+                </div> 
+                <hr>
             </div>
         </div>
     </div>
+    
     <div ng-hide="hw && hw[0] || !loaded" class="col-md-4 col-md-offset-4">
         <div class="panel panel-success">
             <h3 class="panel-heading">You are done!</h3>
