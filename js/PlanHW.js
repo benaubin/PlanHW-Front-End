@@ -65,7 +65,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             ;
         }
         $scope.show('profile');
-    }).controller('ProfileCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
+    })
+    .controller('ProfileCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
         $http.get(PlanHWApi + 'students/' + $routeParams.id)
             .success(function(data){
                 $scope.student = data.student
@@ -81,14 +82,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                     })
                 ;
             })
-    }).run(function($rootScope, $location, $cookieStore, $http){
+    })
+    .run(function($rootScope, $location, $cookieStore, $http){
         $rootScope.flashes = []
         $rootScope.flashesNow = []
         $rootScope.$on('$routeChangeSuccess', function () {
             $rootScope.flashesNow = $rootScope.flashes
             $rootScope.flashes = []
         });
-    
         $rootScope.signout = function(){
             $rootScope.student_id = null
             $rootScope.student_token = null
@@ -110,7 +111,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 })
             
         }
-    }).controller('IndexCtrl',function($scope){
+    })
+    .controller('IndexCtrl',function($scope){
         $scope.signuplinks = true
         var body = $('body');
         var time = moment().add(1 + Math.floor(Math.random() * 6), 'days');
@@ -158,7 +160,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 $('.show-slide2').hide('fast')
             }
         })
-    }).controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage,$cookieStore){
+    })
+    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage,$cookieStore){
         $scope.reload = function(show, after){
             if($rootScope.sudent_id !== null){
                 $scope.hw = []
@@ -277,24 +280,35 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 $scope.showing = "Completed"
                 $scope.showComplete = true
                 $scope.showIncomplete = false
+                $scope.showAll = false
             } else if (type === 'all'){
                 $scope.showing = "Everything"
                 $scope.showComplete = true
                 $scope.showIncomplete = true
+                $scope.showAll = true
             } else {
                 $scope.showing = null
                 $scope.showComplete = false
                 $scope.showIncomplete = true
+                $scope.showAll = false
             }
             $scope.toView(after);
         }
-        $scope.reload('incomplete');
-    }).controller('SigninCtrl', function($scope, $signin){
+        $scope.chooseView = function(view){
+            $scope.view = toTitleCase(view)
+            view = view.toLowerCase();
+            $scope.cards = view === 'cards'
+            $scope.list = view === 'list'
+        }
+        $scope.reload('incomplete',function(){$scope.chooseView('Cards')});
+    })
+    .controller('SigninCtrl', function($scope, $signin){
         $scope.signinError = null
         $scope.signin = function(remember){
             $signin($scope.username, $scope.password, remember)
         }
-    }).directive('gravatar', function(){return{
+    })
+    .directive('gravatar', function(){return{
         restrict: 'AE',
         replace: true,
         scope: {
@@ -305,7 +319,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         controller: function($scope){
             $scope.md5 = md5
         }
-    }}).directive('signup', function(){return{
+    }})
+    .directive('signup', function(){return{
         restrict: 'AE',
         replace: true,
         scope: {},
@@ -340,11 +355,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             };
             $scope.good_confirm = false;
         }
-    }}).directive('signin',function(){return{
+    }})
+    .directive('signin',function(){return{
         restrict: 'E',
         templateUrl: '/directives/signin_popup.html',
         controller: 'SigninCtrl'
-    }}).factory('$signin',function($rootScope, $http, $location, $cookieStore){
+    }})
+    .factory('$signin',function($rootScope, $http, $location, $cookieStore){
         return function(username, password, remember) {
         $http.get(PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password))
             .success(function(data){

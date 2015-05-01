@@ -107,3 +107,10 @@ footer.home-footer p {
 #settings-main {
     border-left: 1px solid #DEDEDE;
 }
+
+#hwpreview {
+    background-color: white;
+    position: absolute;
+    z-index: 2;
+    border: solid 1px #EBEBEB;
+}
