@@ -199,6 +199,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                     homework.show = $scope.showIncomplete
                 }
             })
+            $scope.hw = $scope.hw.sort(function(x, y) {
+                x = x.homework.completed
+                y = y.homework.completed
+                return (x === y)? 0 : x? 1 : -1;
+            });
         }
         $scope.input = function(homework){
             homework.description = homework.input.match(/\((.+)\)/i)
@@ -300,7 +305,16 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             $scope.cards = view === 'cards'
             $scope.list = view === 'list'
         }
-        $scope.reload('incomplete',function(){$scope.chooseView('Cards')});
+        $scope.reload('incomplete',function(){
+            $scope.chooseView('Cards')
+        });
+        $( window ).resize(function(){
+            console.log($(window).width())
+            if(768 >= $(window).width()){
+                $scope.chooseView('Cards')
+                $scope.$apply()
+            }
+        })
     })
     .controller('SigninCtrl', function($scope, $signin){
         $scope.signinError = null

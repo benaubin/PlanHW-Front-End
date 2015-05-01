@@ -1,10 +1,10 @@
 <div class="container">
-    <div class="row" style="position: sticky;">
+    <div class="row">
         <div class="col-sm-4">
             <h1>Homework:</h1>
         </div>
         <div class="col-md-4 pad-10t col-md-offset-4 col-sm-8">
-            <div class="btn-group" role="group" ng-show="cards">
+            <div ng-show="cards" class="btn-group" role="group">
               <button type="button" class="btn btn-default" ng-click="reload()"><i class="fa fa-refresh"></i> Refresh</button>
               <div class="btn-group" role="group">
                 <button class="btn btn-default dropdown-toggle" type="button" id="showDropdown" data-toggle="dropdown" aria-expanded="true  ">
@@ -23,7 +23,7 @@
                 </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="showDropdown">
                     <li role="presentation"><a class="action" ng-click="chooseView('Cards')">Cards</a></li>
-                    <li role="presentation"><a class="action hidden-xs" ng-click="chooseView('List')">List</a></li>
+                    <li role="presentation" class="hidden-xs"><a class="action" ng-click="chooseView('List')">List</a></li>
                 </ul>
               </div>
             </div>
@@ -98,29 +98,32 @@
     </div>
     
     <div ng-show="list">
-        <div class="visible-xs">
-            <p class="text-center">
-                <a class="action" ng-click="chooseView('Cards')">Please switch to the cards view on mobile.</a>
-            </p>
-        </div>
-        <div class="hidden-xs">
+        <div>
             <div class="col-md-2 col-sm-3 col-offset-1 col-xs-12">
-                <button type="button" class="btn btn-default col-xs-12" ng-click="reload()">
-                    <i class="fa fa-refresh"></i> Refresh
-                </button>
-                <hr>
-                <ul class="nav nav-pills nav-stacked text-center">
-                    <li role="presentation"><p class="bold">Show:</p></li>
-                    <li class="action" ng-class="{active: showAll}" role="presentation"><a ng-click="show('all')" role="menuitem" tabindex="-1">All</a></li>
-                    <li class="action" ng-class="{active: showIncomplete}" role="presentation"><a ng-click="show('incomplete')" role="menuitem" tabindex="-1">Incomplete</a></li>
-                    <li class="action" ng-class="{active: showComplete}" role="presentation"><a ng-click="show('complete')" role="menuitem" tabindex="-1">Complete</a></li>
+                <div class="hidden-xs">
+                    <button type="button" class="btn btn-default col-xs-12" ng-click="reload()">
+                        <i class="fa fa-refresh"></i> Refresh
+                    </button>
+                    <ul class="nav nav-pills nav-stacked text-center">
+                        <hr>
+                        <li role="presentation"><p class="bold">Show:</p></li>
+                        <li class="action" ng-class="{active: showAll}" role="presentation">
+                            <a ng-click="show('all')" role="menuitem" tabindex="-1">All</a>
+                        </li>
+                        <li class="action" ng-class="{active: showIncomplete}" role="presentation">
+                            <a ng-click="show('incomplete')" role="menuitem" tabindex="-1">Incomplete</a>
+                        </li>
+                        <li class="action" ng-class="{active: showComplete}" role="presentation">
+                            <a ng-click="show('complete')" role="menuitem" tabindex="-1">Complete</a>
+                        </li>
 
-                    <hr>
-                    <li role="presentation"><p class="bold">View as:</p></li>
-                    <li role="presentation"><a class="action" ng-click="chooseView('Cards')">Cards</a></li>
-                    <li role="presentation" class="active"><a>List</a></li>
-                    <hr>
-                </ul>
+                        <hr>
+                        <li role="presentation"><p class="bold">View as:</p></li>
+                        <li role="presentation"><a class="action" ng-click="chooseView('Cards')">Cards</a></li>
+                        <li role="presentation" class="active"><a>List</a></li>
+                        <hr>
+                    </ul>
+                </div>
             </div>
             <div class="col-sm-8 col-md-offset-1">
             <div ng-repeat="homework in hw" ng-show="homework.show" ng-class="{'complete': homework.homework.completed}">
