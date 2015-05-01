@@ -17,13 +17,13 @@
                     <li class="action" role="presentation"><a ng-click="show('all')" role="menuitem" tabindex="-1">All</a></li>
                 </ul>
               </div>
-              <div class="btn-group" role="group">
+              <div class="btn-group hidden-xs" role="group">
                 <button class="btn btn-default dropdown-toggle" type="button" id="showDropdown" data-toggle="dropdown" aria-expanded="true  ">
                     {{view}} View <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="showDropdown">
                     <li role="presentation"><a class="action" ng-click="chooseView('Cards')">Cards</a></li>
-                    <li role="presentation" class="hidden-xs"><a class="action" ng-click="chooseView('List')">List</a></li>
+                    <li role="presentation"><a class="action" ng-click="chooseView('List')">List</a></li>
                 </ul>
               </div>
             </div>
