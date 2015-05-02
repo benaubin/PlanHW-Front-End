@@ -1,4 +1,4 @@
-var PlanHWApi = "http://localhost:3000/"
+var PlanHWApi = "https://api.planhw.com/"
 Offline.options = {checks: {xhr: {url: PlanHWApi + 'students'}}};
 
 (function(){
