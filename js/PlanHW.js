@@ -102,14 +102,15 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             $rootScope.student_token = login_data['login']['token']
             $rootScope.student_id = login_data['student']['id']
             $rootScope.student = login_data['student']
-            var working_login;
-            $http.get(PlanHWApi + '/test_login?id=' + $rootScope.student_id + "&token=" + $rootScope.student_token)
-                .success(function(data){
-                    if(!data.correct){
-                        $rootScope.signout();
-                    }
-                })
             
+            var login_data = $cookieStore.get('login_data')
+            if(login_data['login']['jwt']){
+                $http.get(PlanHWApi + 'login?jwt=' + login_data['login']['jwt'])
+                    .success(function(data){
+                        $rootScope.student_token = data['login']['token']
+                    })
+                ;
+            }  
         }
     })
     .controller('IndexCtrl',function($scope){
@@ -377,7 +378,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
     }})
     .factory('$signin',function($rootScope, $http, $location, $cookieStore){
         return function(username, password, remember) {
-        $http.get(PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password))
+        url = PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password)
+        if(remember) url = url + '&new_jwt=true'
+        $http.get(url)
             .success(function(data){
                 password = null;
                 $rootScope.student_token = data['login']['token']
