@@ -1,5 +1,5 @@
 var PlanHWApi = "https://api.planhw.com/"
-Offline.options = {checks: {xhr: {url: PlanHWApi + 'students'}}};
+Offline.options = {checks: {xhr: {url: PlanHWApi}}};
 
 (function(){
 function toTitleCase(str) {
