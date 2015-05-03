@@ -14,6 +14,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             templateUrl: 'pages/landing.html',
             controller: 'IndexCtrl'
         })
+        .when('/flash/:message/:page',{
+            templateUrl: 'pages/landing.html',
+            controller: 'FlashCtrl'
+        })
         .when('/signup',{
             templateUrl: 'pages/signup.html'
         })
@@ -37,7 +41,16 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             controller: 'SettingsCtrl'
         })
             
-    }).controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
+    }).controller('FlashCtrl',function($rootScope,$routeParams,$location){
+        var message = decodeURIComponent($routeParams.message)
+        console.log(message)
+        $rootScope.flashes.push({class:'info', message: message})
+        var page = decodeURIComponent($routeParams.page)
+        console.log(page)
+        if(page === 'root') page = ''
+        $location.path('/' + page)
+    })
+    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
         $http.jsonp("http://www.gravatar.com/" + md5($rootScope.student.email) + ".json?callback=JSON_CALLBACK")
             .success(function(data){
                 $rootScope.student.bio = data['entry'][0]['aboutMe']
