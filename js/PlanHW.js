@@ -64,10 +64,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             })
         ;
         $scope.show = function(section){
-            $scope.profile = false, $scope.security = false, $scope.schedule = false
-            if(section === 'profile') $scope.profile = true
-            if(section === 'security') $scope.security = true
-            if(section === 'schedule') $scope.schedule = true
+            $scope.profile = section === 'profile'
+            $scope.security = section === 'security'
+            $scope.schedule = section === 'schedule'
+            $scope.pro = section === 'pro'
         }
         $scope.update = function(student){
             $http.put(PlanHWApi + 'students/' + $rootScope.student_id + '?token=' + $rootScope.student_token, student)
@@ -192,7 +192,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                         $location.path('/signin')
                     }
                 }).finally(function(){
-                    $scope.loaded = true
                     if(show){
                         $scope.show(show, after)
                     } else {
@@ -212,6 +211,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 } else {
                     homework.show = $scope.showIncomplete
                 }
+                console.log(homework)
             })
             $scope.hw = $scope.hw.sort(function(x, y) {
                 x = x.homework.completed
@@ -321,6 +321,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         }
         $scope.reload('incomplete',function(){
             $scope.chooseView('Cards')
+            $scope.loaded = true
         });
         $( window ).resize(function(){
             console.log($(window).width())

@@ -35,6 +35,9 @@
                                 <li role="presentation" ng-class="{active: security}">
                                     <a class="action" ng-click="show('security')">Security</a>
                                 </li>
+                                <li role="presentation" ng-class="{active: pro}">
+                                    <a class="action" ng-click="show('pro')">Pro</a>
+                                </li>
                                 <li role="presentation" ng-class="{active: schedule}">
                                     <a class="action" ng-click="show('schedule')">Schedule</a>
                                 </li>
@@ -74,33 +77,41 @@
                                 <div ng-if="security">
                                     <h2 class="text-center">Password</h2>
                                     <div class="row">
-                                    <div class="col-md-10 col-md-offset-1">
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <div class="input-group">
-                                                    <i class="input-group-addon fa fa-lock fa-fw"></i>
-                                                    <input type="password" class="form-control" placeholder="New Password" ng-model="student.password">
+                                        <div class="col-md-10 col-md-offset-1">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="input-group">
+                                                        <i class="input-group-addon fa fa-lock fa-fw"></i>
+                                                        <input type="password" class="form-control" placeholder="New Password" ng-model="student.password">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="input-group">
-                                                    <i class="input-group-addon fa fa-unlock fa-fw"></i>
-                                                    <input type="password" class="form-control" placeholder="Confirm" ng-model="student.password_confirm">
+                                                <div class="col-sm-6">
+                                                    <div class="input-group">
+                                                        <i class="input-group-addon fa fa-unlock fa-fw"></i>
+                                                        <input type="password" class="form-control" placeholder="Confirm" ng-model="student.password_confirm">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <p class="text-center pad-50t small col-xs-10 col-xs-offset-1">
+                                                <i>
+                                                    We might be adding more security (2-Step auth, etc) options soon.
+                                                </i>
+                                            </p>
+                                        </div>
                                     </div>
+                                </div>
+                                <div ng-if="pro">
                                     <div class="row">
-                                        <p class="text-center pad-50t small col-xs-10 col-xs-offset-1">
-                                            <i>
-                                                We might be adding more security (2-Step auth, etc) options soon.
-                                            </i>
+                                        <p class="text-center pad-50t small">
+                                            Want to get smart reminders and more features <sup>All Coming soon</sup>, while helping support PlanHW's development? Buy a Pro Plan for only $2.50 (paid annually at $30, normally $3/month)! 
                                         </p>
                                     </div>
                                 </div>
                                 <div ng-if="schedule">
                                     <div class="row">
-                                        <p class="text-center pad-50t small">
+                                        <p class="text-center pad-50t">
                                             We will be adding ways to automaticly schedule when homework is due based on when your class schedule.
                                             When we do, you'll be able to set your schedule here (until better systems are implimented). 
                                         </p>
