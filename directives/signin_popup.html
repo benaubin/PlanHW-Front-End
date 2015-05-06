@@ -3,6 +3,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="signin-label">Sign in</h3>
+                <div ng-show="flashesNow[0]">
+                    <div ng-repeat="flash in flashesNow">
+                        <div class="alert alert-{{flash.class}} alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                            {{flash.message}}
+                        </div>
+                    </div>
+                </div>
             </div>
             <form id="signupForm" name="signupForm" novalidate ng-submit="signin(remember)">
                 <div class="modal-body">
