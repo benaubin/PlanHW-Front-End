@@ -1,4 +1,4 @@
-var PlanHWApi = "https://api.planhw.com/"
+var PlanHWApi = "http://localhost:3000/"
 Offline.options = {checks: {xhr: {url: PlanHWApi}}};
 
 (function(){
@@ -43,14 +43,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             
     }).controller('FlashCtrl',function($rootScope,$routeParams,$location){
         var message = decodeURIComponent($routeParams.message)
-        console.log(message)
         $rootScope.flashes.push({class:'info', message: message})
         var page = decodeURIComponent($routeParams.page)
-        console.log(page)
         if(page === 'root') page = ''
         $location.path('/' + page)
     })
     .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
+        
         $http.jsonp("http://www.gravatar.com/" + md5($rootScope.student.email) + ".json?callback=JSON_CALLBACK")
             .success(function(data){
                 $rootScope.student.bio = data['entry'][0]['aboutMe']
@@ -70,10 +69,16 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             $scope.pro = section === 'pro'
         }
         $scope.update = function(student){
-            $http.put(PlanHWApi + 'students/' + $rootScope.student_id + '?token=' + $rootScope.student_token, student)
+            $http.put(PlanHWApi + 'students?token=' + $rootScope.student_token, student)
                 .success(function(data){
-                    $rootScope.flashesNow.push({class:'success',message:'Changes saved.'})
+                    
                     student.password = null, student.password_confirm = null
+                    if($scope.profile || $scope.security){
+                        $rootScope.flashes.push({class:'success',message:'Changes saved.'})
+                        $rootScope.signout()
+                    } else {
+                        $rootScope.flashesNow.push({class:'success',message:'Changes saved.'})
+                    } 
                 })
             ;
         }
@@ -112,18 +117,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         }
         var login_data = $cookieStore.get('login_data') 
         if(login_data){
-            $rootScope.student_token = login_data['login']['token']
+            $rootScope.student_token = login_data['token']
             $rootScope.student_id = login_data['student']['id']
-            $rootScope.student = login_data['student']
-            
-            var login_data = $cookieStore.get('login_data')
-            if(login_data['login']['jwt']){
-                $http.get(PlanHWApi + 'login?jwt=' + login_data['login']['jwt'])
-                    .success(function(data){
-                        $rootScope.student_token = data['login']['token']
-                    })
-                ;
-            }  
+            $rootScope.student = login_data['student'] 
         }
     })
     .controller('IndexCtrl',function($scope){
@@ -175,17 +171,17 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             }
         })
     })
-    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage,$cookieStore){
+    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage, $cookieStore){
         $scope.reload = function(show, after){
             if($rootScope.sudent_id !== null){
                 $scope.hw = []
-                $http.get(PlanHWApi+'students/'+$rootScope.student_id+'/hw?token='+$rootScope.student_token)
+                $http.get(PlanHWApi+'hw?token='+$rootScope.student_token)
                 .success(function(data){
                     webStorage.remove('hw')
                     $scope.hw = data['homeworks']
                     if($cookieStore.get('login_data')) webStorage.add('hw',$scope.hw)
-                }).error(function(){
-                    if($cookieStore.get('login_data')){
+                }).error(function(data,status){
+                    if(webStorage.get('hw')){
                         $scope.hw = webStorage.get('hw') 
                     } else {
                         $rootScope.flashes.push({class:'danger', message: 'Please sign in.'})
@@ -249,7 +245,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             })
         }
         $scope.update = function(homework){
-            $http.put(PlanHWApi+'students/'+$rootScope.student_id+'/hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
+            $http.put(PlanHWApi+'hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
             .success(function(){
                 homework.editing = false
             }).error(function(data, status){
@@ -265,7 +261,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         $scope.new = function(homework){
             var temp_date = homework.due_date
             homework.due_date = homework.due_date.toISOString();
-            $http.post(PlanHWApi+'students/'+$rootScope.student_id+'/hw?token='+$rootScope.student_token,homework)
+            $http.post(PlanHWApi+'hw?token='+$rootScope.student_token,homework)
             .success(function(){
                 $scope.reload();
                 $scope.homework = null;
@@ -278,7 +274,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         }
         $scope.delete = function(homework){
             $rootScope.flashesNow.push({class: 'info', message: 'Deleting...'})
-            $http.delete(PlanHWApi + 'students/'+$rootScope.student_id+'/hw/'+homework.homework.id+'?token='+$rootScope.student_token)
+            $http.delete(PlanHWApi + 'hw/'+homework.homework.id+'?token='+$rootScope.student_token)
             .success(function(data){
                 $scope.reload();
             }).error(function(data, status){
@@ -335,6 +331,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         $scope.signinError = null
         $scope.signin = function(remember){
             $signin($scope.username, $scope.password, remember)
+            $scope.username = null
+            $scope.password = null
         }
     })
     .directive('gravatar', function(){return{
@@ -393,11 +391,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
     .factory('$signin',function($rootScope, $http, $location, $cookieStore){
         return function(username, password, remember) {
         url = PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password)
-        if(remember) url = url + '&new_jwt=true'
         $http.get(url)
             .success(function(data){
                 password = null;
-                $rootScope.student_token = data['login']['token']
+                $rootScope.student_token = data['token']
+                console.log(data)
                 $rootScope.student_id = data['student']['id']
                 $rootScope.student = data['student']
                 if(remember){
