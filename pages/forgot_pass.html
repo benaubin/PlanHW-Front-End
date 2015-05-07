@@ -1,0 +1,38 @@
+<div class="container pad-50t">
+    <h1>Forgot your password?</h1>
+    <p class="lead">No worries! We'll help you change it.</p>
+    
+    <form ng-submit="changePass()" class="col-md-offset-2 col-md-8">
+        <div class="col-xs-12 col-sm-6">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                <input class="form-control" type="text" ng-model="username" placeholder="Username"/>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <i class="fa fa-lock fa-fw"></i>
+                </span>
+                <input ng-change="showConfirm()" class="form-control" type="password" ng-model="password" placeholder="Password"/>
+            </div>
+            <div ng-show="password">
+                <div class="popover bottom" id="confirm-popover">
+                    <div class="arrow"></div>
+                    <h3>Confirm Your Password</h3>
+                    <div>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="lock-addon">
+                                <i class="fa fa-lock fa-fw"></i>
+                            </span>
+                            <input class="form-control" type="password" ng-model="password_confirm" placeholder="Password"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pull-right pad-50t">
+            <input type="submit" class="btn btn-success" ng-show="password && password_confirm && password === password_confirm && username" value="Change">
+        </div>
+    </form>
+</div>

@@ -40,6 +40,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             templateUrl: 'pages/settings.html',
             controller: 'SettingsCtrl'
         })
+        .when('/forgotpass',{
+            templateUrl: 'pages/forgot_pass.html',
+            controller: 'ForgotPassCtrl'
+        })
             
     }).controller('FlashCtrl',function($rootScope,$routeParams,$location){
         var message = decodeURIComponent($routeParams.message)
@@ -107,6 +111,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         $rootScope.$on('$routeChangeSuccess', function () {
             $rootScope.flashesNow = $rootScope.flashes
             $rootScope.flashes = []
+            $('.modal').modal('hide');
         });
         $rootScope.signout = function(){
             $rootScope.student_id = null
@@ -335,6 +340,19 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             $scope.password = null
         }
     })
+    .controller('ForgotPassCtrl',function($scope, $http, $rootScope, $location){
+        $scope.changePass = function(){
+            console.log({password: $scope.password, password_confirmation: $scope.password_confirm})
+            $http.post(PlanHWApi + 'reset_password/' + $scope.username, {password: $scope.password, password_confirmation: $scope.password_confirm})
+            .success(function(data,status){
+                $rootScope.flashes.push({class: 'success', message: data})
+                $location.path('/signin')
+            })
+            .error(function(data,status){
+                $rootScope.flashesNow.push({class: 'info', message: data})
+            })
+        }
+    })
     .directive('gravatar', function(){return{
         restrict: 'AE',
         replace: true,
@@ -402,7 +420,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                     $cookieStore.put('login_data',data)
                 }
                 $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
-                $('.modal').modal('hide');
                 $location.path('/homework');
             }).error(function(data,status){
                 if(status === 401){

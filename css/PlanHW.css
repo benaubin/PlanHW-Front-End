@@ -85,6 +85,13 @@ footer.home-footer p {
     padding-top: 40px;
 }
 
+#confirm-popover {
+    position: absolute;
+    top: 50px;
+    z-index: 3;
+    display: block;
+}
+
 .signup {
     padding-bottom: 500px;
 }
