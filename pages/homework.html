@@ -33,6 +33,7 @@
                         <input type="text" class="form-control" ng-model="homework.input" ng-change="input(homework)" placeholder="New Homework...">
                         <span class="input-group-btn">
                             <input type="submit" id="homework_title" value="Create" class="btn btn-default">
+                            <button type="button" ng-click="share(homework)" class="btn btn-info"><i class="fa fa-share-square-o"></i></button>
                         </span>
                     </div>
                     <div class="panel-body" ng-show="homework.input" id="hwpreview">
