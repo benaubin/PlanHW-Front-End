@@ -235,7 +235,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         }
         $scope.complete = function(homework){
             homework.homework.completed = !homework.homework.completed
-            $http.put(PlanHWApi+'students/'+$rootScope.student_id+'/hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
+            $http.put(PlanHWApi + 'hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
             .success(function(){
                 $scope.toView();
             }).error(function(data, status){
