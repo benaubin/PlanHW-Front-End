@@ -1,4 +1,4 @@
-var PlanHWApi = "https://api.planhw.com/"
+var PlanHWApi = "http://localhost:3000/"
 Offline.options = {checks: {xhr: {url: PlanHWApi}}};
 
 (function(){
@@ -177,6 +177,20 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         })
     })
     .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage, $cookieStore){
+        $scope.share = function(homework,student){
+            
+            var temp_date = homework.due_date
+            homework.due_date = homework.due_date.toISOString();
+            $http.post(PlanHWApi+'hw?token='+$rootScope.student_token+'&friend_id='+student.id,homework)
+            .success(function(){
+                $rootScope.flashesNow.push({class: 'success',message: 'Sent to ' + student.name});
+            }).error(function(data){
+                angular.forEach(data['message']['errors'], function(error){
+                    $rootScope.flashesNow.push({class: data['message']['type'],message: error}); 
+                })
+            })
+            homework.due_date = temp_date
+        }
         $scope.reload = function(show, after){
             if($rootScope.sudent_id !== null){
                 $scope.hw = []

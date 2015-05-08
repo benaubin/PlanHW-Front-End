@@ -33,7 +33,28 @@
                         <input type="text" class="form-control" ng-model="homework.input" ng-change="input(homework)" placeholder="New Homework...">
                         <span class="input-group-btn">
                             <input type="submit" id="homework_title" value="Create" class="btn btn-default">
+                            <button ng-show="homework.input" type="button" ng-click="showShare = !showShare" class="btn btn-info">
+                                <i class="fa fa-share-square-o"></i>
+                            </button>
                         </span>
+                        <div ng-show="showShare">
+                            <div class="popover bottom" id="share-popover">
+                                <div class="arrow"></div>
+                                <h3>Share:</h3>
+                                <p class="lead">Share homework with your friends!</p>
+                                <div ng-repeat="friend in student.friends" class="back-action" ng-click="share(homework,friend.student)">
+                                    <hr>
+                                    <div>
+                                        <img class="pull-left pad-25r" ng-src="{{friend.student.avatar.size50}}">
+                                        <div class="pull-right" ng-show="friend.student.sent_homework">
+                                            <i class="fa fa-check fa-3x"></i>
+                                        </div>
+                                        <p class="bold bigger"> {{friend.student.name}}</p>
+                                        <p>({{friend.student.username}})</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="panel-body" ng-show="homework.input" id="hwpreview">
                         <h3>{{homework.title}}</h3>
