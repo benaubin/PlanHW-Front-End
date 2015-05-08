@@ -85,7 +85,11 @@ footer.home-footer p {
     padding-top: 40px;
 }
 
-#confirm-popover {
+.pad-25r {
+    padding-right: 25px;
+}
+
+#confirm-popover, #share-popover {
     position: absolute;
     top: 50px;
     z-index: 3;
@@ -107,6 +111,11 @@ footer.home-footer p {
     color: dimgrey;
     cursor: pointer;
 }
+.back-action:hover {
+    background-color: #E8E8E8;
+    cursor: pointer;
+}
+
 .bold {
     font-size: 110%;
     font-weight: bolder;
@@ -120,4 +129,7 @@ footer.home-footer p {
     position: absolute;
     z-index: 2;
     border: solid 1px #EBEBEB;
+}
+.bigger {
+    font-size: 175%;
 }
