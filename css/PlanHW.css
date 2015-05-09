@@ -88,6 +88,10 @@ footer.home-footer p {
 .pad-25r {
     padding-right: 25px;
 }
+.pad-25l {
+    padding-left: 25px;
+}
+
 
 #confirm-popover, #share-popover {
     position: absolute;
