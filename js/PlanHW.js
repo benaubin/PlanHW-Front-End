@@ -5,6 +5,9 @@ Offline.options = {checks: {xhr: {url: PlanHWApi}}};
 function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','webStorageModule','ngSanitize'])
     .config(function($routeProvider, $httpProvider) {
         
@@ -52,7 +55,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         if(page === 'root') page = ''
         $location.path('/' + page)
     })
-    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
+    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$refreshStudent){
+        console.log($refreshStudent())
         
         $http.jsonp("http://www.gravatar.com/" + md5($rootScope.student.email) + ".json?callback=JSON_CALLBACK")
             .success(function(data){
@@ -71,22 +75,60 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             $scope.security = section === 'security'
             $scope.schedule = section === 'schedule'
             $scope.pro = section === 'pro'
+            $scope.showFriends = section === 'friends'
+            if($scope.showFriends) $scope.loadStudents()
         }
         $scope.update = function(student){
             $http.put(PlanHWApi + 'students?token=' + $rootScope.student_token, student)
                 .success(function(data){
-                    
                     student.password = null, student.password_confirm = null
-                    if($scope.profile || $scope.security){
-                        $rootScope.flashes.push({class:'success',message:'Changes saved.'})
-                        $rootScope.signout()
-                    } else {
-                        $rootScope.flashesNow.push({class:'success',message:'Changes saved.'})
-                    } 
+                    $refreshStudent()
                 })
             ;
         }
+        $scope.friendRequest = function(friend){
+            $http.get('https://api.planhw.com/friend/'+friend+'?token=' + $rootScope.student_token)
+                .success(function(data){
+                    data = data || 'Sent friend request!'
+                    $rootScope.flashesNow.push({class:'success',message:data})
+                })
+                .error(function(data){
+                    data[1][0] = data[1][0] || 'Something went wrong'
+                    $rootScope.flashesNow.push({class:'danger',message:data[1][0]})
+                })
+        }
+        
+        $scope.loadStudents = function(){
+            var allStudents;
+            $http.get('https://api.planhw.com/students')
+                .success(function(data) {
+                    data = data.students
+                    data.forEach(function(student, index){
+                        data[index] = student.student
+                    })
+                    $(function(){
+                        $('#add-friend').selectize({
+                            create: true,
+                            valueField: 'id',
+                            searchField: 'username',
+                            options: data,
+                            render: {
+                                item: function(item, escape) {
+                                    return '<div>' + escape(item.username) + '</div>'
+                                },
+                                option: function(item, escape) {
+                                    return '<div>' +
+                                        '<span class="bold">' + escape(item.name) + '</span>' + 
+                                        '<span class="caption"> ('+ escape(item.username) +  ')</span>' +
+                                    '</div>'
+                                }
+                            }
+                        });
+                    })
+                });
+        }
         $scope.show('profile');
+
     })
     .controller('ProfileCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
         $http.get(PlanHWApi + 'students/' + $routeParams.id)
@@ -226,7 +268,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 } else {
                     homework.show = $scope.showIncomplete
                 }
-                console.log(homework)
             })
             $scope.hw = $scope.hw.sort(function(x, y) {
                 x = x.homework.completed
@@ -441,6 +482,17 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 } else {
                     $rootScope.flashesNow.push({message: "Something went wrong.", class: 'danger'})
                 }
+            });
+    }})
+    .factory('$refreshStudent',function($rootScope, $http){
+        return function(){
+            $http.get(PlanHWApi + 'students/' + $rootScope.student_id + '?token=' + $rootScope.student_token)
+            .success(function(data){
+                $rootScope.student = data.student
+                return true;
+            }).error(function(data,status){
+                $rootScope.flashesNow.push({message: "Could not refresh your info.", class: 'danger'})
+                return false;
             });
     }});
 

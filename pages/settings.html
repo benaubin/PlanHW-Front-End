@@ -35,6 +35,9 @@
                                 <li role="presentation" ng-class="{active: security}">
                                     <a class="action" ng-click="show('security')">Security</a>
                                 </li>
+                                <li role="presentation" ng-class="{active: showFriends}">
+                                    <a class="action" ng-click="show('friends')">Friends</a>
+                                </li>
                                 <li role="presentation" ng-class="{active: pro}">
                                     <a class="action" ng-click="show('pro')">Pro</a>
                                 </li>
@@ -79,7 +82,7 @@
                                     <div class="row">
                                         <div class="col-md-10 col-md-offset-1">
                                             <div class="row">
-                                                <div class="" ng-class="{col-sm-6: student.password}">
+                                                <div ng-class="{'col-sm-6': student.password}">
                                                     <div class="input-group">
                                                         <i class="input-group-addon fa fa-lock fa-fw"></i>
                                                         <input type="password" class="form-control" placeholder="New Password" ng-model="student.password">
@@ -99,6 +102,38 @@
                                                     We might be adding more security (2-Step auth, etc) options soon.
                                                 </i>
                                             </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="showFriends">
+                                    <div class="row">
+                                        <h2 class="text-center">Friends</h2>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <select id="add-friend" placeholder="Add Friend" ng-model="friendID"></select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button class="btn btn-info" type="button" ng-click="friendRequest(friendID)">Add Friend</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div ng-repeat="friend in student.friends">
+                                            <hr>
+                                            <div class="pad-25l pad-25r">
+                                                <img class="pull-left pad-25r" ng-src="{{friend.student.avatar.size50}}">
+                                                <div class="pull-right">
+                                                    <i class="fa fa-minus-square-o fa-2x"
+                                                       data-toggle="tooltip" data-placement="bottom" title="Remove {{friend.student.name}}">
+                                                    </i>
+                                                    <i class="fa fa-times-circle-o fa-2x"
+                                                       data-toggle="tooltip" data-placement="bottom" title="Block (prevents {{friend.student.name}} from sending friend requests)">
+                                                    </i>
+                                                </div>
+                                                <p class="bold bigger text-center">{{friend.student.name}}</p>
+                                                <p class="text-center">({{friend.student.username}})</p>
+                                                
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
