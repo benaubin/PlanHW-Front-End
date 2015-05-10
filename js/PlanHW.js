@@ -8,7 +8,7 @@ function toTitleCase(str) {
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
-var addtohome = addToHomescreen();
+addToHomescreen();
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','webStorageModule','ngSanitize'])
     .config(function($routeProvider, $httpProvider) {
         
