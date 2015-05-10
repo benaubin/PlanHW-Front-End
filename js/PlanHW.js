@@ -8,6 +8,7 @@ function toTitleCase(str) {
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
+var addtohome = addToHomescreen();
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','webStorageModule','ngSanitize'])
     .config(function($routeProvider, $httpProvider) {
         
@@ -218,7 +219,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             }
         })
     })
-    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage, $cookieStore){
+    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage, $cookieStore){    
         $scope.share = function(homework,student){
             
             var temp_date = homework.due_date
