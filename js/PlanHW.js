@@ -9,7 +9,7 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 addToHomescreen();
-angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','webStorageModule','ngSanitize'])
+angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize'])
     .config(function($routeProvider, $httpProvider) {
         
         $routeProvider
@@ -148,7 +148,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 ;
             })
     })
-    .run(function($rootScope, $location, $cookieStore, $http){
+    .run(function($rootScope, $location, webStorage, $http){
         $rootScope.flashes = []
         $rootScope.flashesNow = []
         $rootScope.$on('$routeChangeSuccess', function () {
@@ -161,9 +161,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             $rootScope.student_token = null
             $rootScope.student = null
             $location.path('/')
-            $cookieStore.remove('login_data')
+            webStorage.remove('login_data')
         }
-        var login_data = $cookieStore.get('login_data') 
+        var login_data = webStorage.get('login_data') 
         if(login_data){
             $rootScope.student_token = login_data['token']
             $rootScope.student_id = login_data['student']['id']
@@ -219,7 +219,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
             }
         })
     })
-    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage, $cookieStore){    
+    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){    
         $scope.share = function(homework,student){
             
             var temp_date = homework.due_date
@@ -241,7 +241,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 .success(function(data){
                     webStorage.remove('hw')
                     $scope.hw = data['homeworks']
-                    if($cookieStore.get('login_data')) webStorage.add('hw',$scope.hw)
+                    if(webStorage.get('login_data')) webStorage.add('hw',$scope.hw)
                 }).error(function(data,status){
                     if(webStorage.get('hw')){
                         $scope.hw = webStorage.get('hw') 
@@ -462,7 +462,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
         templateUrl: '/directives/signin_popup.html',
         controller: 'SigninCtrl'
     }})
-    .factory('$signin',function($rootScope, $http, $location, $cookieStore){
+    .factory('$signin',function($rootScope, $http, $location, webStorage){
         return function(username, password, remember) {
         url = PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password)
         $http.get(url)
@@ -473,7 +473,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','ngCookies','w
                 $rootScope.student_id = data['student']['id']
                 $rootScope.student = data['student']
                 if(remember){
-                    $cookieStore.put('login_data',data)
+                    webStorage.remove('login_data')
+                    webStorage.add('login_data',data)
                 }
                 $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
                 $location.path('/homework');
