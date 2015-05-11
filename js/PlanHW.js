@@ -324,7 +324,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                         limit: 1
                     });
                     var result = results.items[0]
-                    if(result && result.score >= .45 && word.length > 3){
+                    if(result && result.score >= .45 && (word.length > 3 || word === friends[result.id].name)){
                         $scope.suggestShareFriend = friends[result.id]
                     }
                 })
