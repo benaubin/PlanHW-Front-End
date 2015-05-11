@@ -42,16 +42,29 @@
                                 <div class="arrow"></div>
                                 <h3>Share:</h3>
                                 <p class="lead">Share homework with your friends!</p>
-                                <div ng-repeat="friend in student.friends" class="back-action" ng-click="share(homework,friend.student)">
+                                <div ng-repeat="friend in student.friends" class="back-action" ng-click="share(homework,friend)">
                                     <hr>
                                     <div>
-                                        <img class="pull-left pad-25r" ng-src="{{friend.student.avatar.size50}}">
-                                        <div class="pull-right" ng-show="friend.student.sent_homework">
+                                        <img class="pull-left pad-25r" ng-src="{{friend.avatar.size50}}">
+                                        <div class="pull-right" ng-show="friend.sent_homework">
                                             <i class="fa fa-check fa-3x"></i>
                                         </div>
-                                        <p class="bold bigger"> {{friend.student.name}}</p>
-                                        <p>({{friend.student.username}})</p>
+                                        <p class="bold bigger"> {{friend.name}}</p>
+                                        <p>({{friend.username}})</p>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-show="suggestShareFriend">
+                            <div class="popover left" id="share-suggest-popover">
+                                <div class="arrow"></div>
+                                <h3>Share:</h3>
+                                <p class="lead">Want to share this with...</p>
+                                <hr>
+                                <div class="action" ng-click="share(homework,suggestShareFriend)">
+                                    <img class="pull-left pad-25r" ng-src="{{suggestShareFriend.avatar.size50}}">
+                                    <p class="bold bigger"> {{suggestShareFriend.name}}</p>
+                                    <p>({{suggestShareFriend.username}})</p>
                                 </div>
                             </div>
                         </div>

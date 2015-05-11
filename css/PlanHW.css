@@ -103,6 +103,11 @@ footer.home-footer p {
     min-width: 400px;
 }
 
+#share-suggest-popover {
+    position: absolute;
+    left: -400px;
+}
+
 .signup {
     padding-bottom: 500px;
 }

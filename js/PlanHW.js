@@ -232,7 +232,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     })
     .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){    
         $scope.share = function(homework,student){
-            
             var temp_date = homework.due_date
             homework.due_date = homework.due_date.toISOString();
             $http.post(PlanHWApi+'hw?token='+$rootScope.student_token+'&friend_id='+student.id,homework)
@@ -287,12 +286,23 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 return (x === y)? 0 : x? 1 : -1;
             });
         }
+        var friends = $rootScope.student.friends
+        friends.forEach(function(friend, index){
+            if(friend.student){
+                friend2 = friend.student
+                friend2.name = friend2.name.split(' ')[0]
+                friends[index] = friend2
+            }
+        })
+        var sifter = new Sifter(friends);
+    
+        $scope.suggestShareFriend = null
         $scope.input = function(homework){
             homework.description = homework.input.match(/\((.+)\)/i)
             if(homework.description){
                 homework.description = homework.description[1]
             }
-            var date
+            var date;
             chrono.parse(homework.input).forEach(function(match){
                 date = match
             });
@@ -303,6 +313,21 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             homework.title = homework.input.replace(/\((.+)\)/i, "")
             if(date){
                 homework.title = homework.title.replace("due "+date.text,'').replace(date.text,'');
+            }
+            if(homework.input.length < 3){
+                $scope.suggestShareFriend = null
+            } else {
+                homework.input.split(' ').forEach(function(word){
+                    var results = sifter.search(word, {
+                        fields: ['username','name'],
+                        sort: [{field: 'name', direction: 'asc'},{field: 'username', direction: 'asc'}],
+                        limit: 1
+                    });
+                    var result = results.items[0]
+                    if(result && result.score >= .45 && word.length > 3){
+                        $scope.suggestShareFriend = friends[result.id]
+                    }
+                })
             }
         }
         $scope.complete = function(homework){
@@ -343,6 +368,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 })
             })
             homework.due_date = temp_date
+            $scope.suggestShareFriend = null
         }
         $scope.delete = function(homework){
             $rootScope.flashesNow.push({class: 'info', message: 'Deleting...'})
