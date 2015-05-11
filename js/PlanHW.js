@@ -98,6 +98,17 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     $rootScope.flashesNow.push({class:'danger',message:data[1][0]})
                 })
         }
+        $scope.removeFriend = function(friend){
+            $http.delete('https://api.planhw.com/friend/'+friend+'?token=' + $rootScope.student_token)
+                .success(function(data){
+                    data = data || 'Removed.'
+                    $rootScope.flashesNow.push({class:'success',message:data})
+                })
+                .error(function(data){
+                    data = data || 'Something went wrong'
+                    $rootScope.flashesNow.push({class:'danger',message:data})
+                })
+        }
         
         $scope.loadStudents = function(){
             var allStudents;
