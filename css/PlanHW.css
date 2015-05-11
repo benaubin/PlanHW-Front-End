@@ -92,12 +92,15 @@ footer.home-footer p {
     padding-left: 25px;
 }
 
-
-#confirm-popover, #share-popover {
+#confirm-popover, #share-popover, #share-suggest-popover {
     position: absolute;
     top: 50px;
     z-index: 3;
     display: block;
+}
+
+#share-popover, #share-suggest-popover {
+    min-width: 400px;
 }
 
 .signup {
