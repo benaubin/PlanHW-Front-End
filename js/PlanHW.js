@@ -388,16 +388,20 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $scope.list = view === 'list'
         }
         $scope.reload('incomplete',function(){
-            $scope.chooseView('Cards')
+            $scope.autoChooseView()
             $scope.loaded = true
         });
         $( window ).resize(function(){
-            console.log($(window).width())
+            $scope.autoChooseView()
+            $scope.$apply()
+        })
+        $scope.autoChooseView = function(){
             if(768 >= $(window).width()){
                 $scope.chooseView('Cards')
-                $scope.$apply()
+            } else if (768 < $(window).width()){
+                $scope.chooseView('List')
             }
-        })
+        }
     })
     .controller('SigninCtrl', function($scope, $signin){
         $scope.signinError = null
