@@ -270,6 +270,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $rootScope.flashes.push({class: "danger", message: "Sign in first!"})
                 $location.path('/signin')
             }}
+        function markdown(homework){
+            if(homework.homework.description){
+                homework.descHTML = marked(homework.homework.description)
+            }
+        }
         $scope.toView = function(before){
             if(before) before();
             angular.forEach($scope.hw, function(homework){
@@ -285,6 +290,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 y = y.homework.completed
                 return (x === y)? 0 : x? 1 : -1;
             });
+            angular.forEach($scope.hw, function(homework){
+                markdown(homework)
+            })
         }
         var friends = $rootScope.student.friends
         friends.forEach(function(friend, index){
@@ -345,6 +353,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $http.put(PlanHWApi+'hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
             .success(function(){
                 homework.editing = false
+                markdown(homework)
             }).error(function(data, status){
                 if(data && status){
                     angular.forEach(data['errors'], function(error){
@@ -352,15 +361,19 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     })
                 } else {
                     homework.editing = false
+                    markdown(homework)
                 }
             })
         }
         $scope.new = function(homework){
+            //Get ready to send things to the API
+            
             var temp_date = homework.due_date
             homework.due_date = homework.due_date.toISOString();
+            
+            //Send homework to the API
             $http.post(PlanHWApi+'hw?token='+$rootScope.student_token,homework)
             .success(function(){
-                $scope.reload();
                 $scope.homework = null;
             }).error(function(data){
                 angular.forEach(data['message']['errors'], function(error){
@@ -369,6 +382,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             })
             homework.due_date = temp_date
             $scope.suggestShareFriend = null
+            
+            markdown(homework)
         }
         $scope.delete = function(homework){
             $rootScope.flashesNow.push({class: 'info', message: 'Deleting...'})

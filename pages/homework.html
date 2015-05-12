@@ -107,7 +107,7 @@
                             <div class="media-body" ng-click="homework.editing = true">
                                 <div ng-hide="homework.editing">
                                     <h3 class="media-heading">{{homework.homework.title}}</h3>
-                                    <p>{{homework.homework.description}}</p>
+                                    <p ng-bind-html="homework.descHTML"></p>
                                 </div>
                                 <div ng-show="homework.editing">
                                     <input type="text" class="form-control" ng-model="homework.homework.title">
@@ -173,7 +173,7 @@
                         <div class="col-md-7">
                                 <div ng-hide="homework.editing">
                                     <p class="bold">{{homework.homework.title}}</p>
-                                    <p>{{homework.homework.description}}</p>
+                                    <p ng-bind-html="homework.descHTML"></p>
                                 </div>
                             <div ng-show="homework.editing">
                                 <input type="text" class="form-control" ng-model="homework.homework.title">
