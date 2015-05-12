@@ -270,10 +270,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $rootScope.flashes.push({class: "danger", message: "Sign in first!"})
                 $location.path('/signin')
             }}
-        function markdown(homework){
-            if(homework.homework.description){
-                homework.descHTML = marked(homework.homework.description)
-            }
+        $scope.marked = function(markdown){
+            if(markdown) return marked(markdown)
+        }
+        $scope.markdown = function(homework){
+            homework.descHTML = $scope.marked(homework.homework.description)
         }
         $scope.toView = function(before){
             if(before) before();
@@ -291,7 +292,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 return (x === y)? 0 : x? 1 : -1;
             });
             angular.forEach($scope.hw, function(homework){
-                markdown(homework)
+                $scope.markdown(homework)
             })
         }
         var friends = $rootScope.student.friends
