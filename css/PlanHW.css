@@ -40,18 +40,18 @@ footer.home-footer p {
         padding-top: 100px;
     }
     #dictionary {
-        position:absolute;
+           position:absolute;
         padding-top:300px;
     }
     #dictionary.fixed {
-        position:fixed;
+           position:fixed;
         padding-top:50px;
     }
     .navbar .container {
         padding-bottom: 50px;
     }
     section.slide#slide1 {
-        background: url('/img/screenshots/MacOnDesk.png') fixed center center no-repeat;
+             background: url('/img/screenshots/MacOnDesk.png') fixed center center no-repeat;
         background-size: cover;
 -webkit-background-size: cover;
    -moz-background-size: cover;
@@ -61,9 +61,9 @@ footer.home-footer p {
     section.slide#slide3 {
         background: url('/img/screenshots/iPhoneInHand.png') fixed center center no-repeat;
         background-size: cover;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
+-webkit-background-size: cover;
+   -moz-background-size: cover;
+     -o-background-size: cover;
     }
     #fly-card-container{
         padding-top:500px;
@@ -102,9 +102,9 @@ footer.home-footer p {
 
 #confirm-popover, #share-popover, #share-suggest-popover {
     position: absolute;
-    top: 50px;
-    z-index: 3;
-    display: block;
+         top: 50px;
+     z-index: 3;
+     display: block;
 }
 
 #share-popover, #share-suggest-popover {
@@ -113,31 +113,31 @@ footer.home-footer p {
 
 #share-suggest-popover {
     position: absolute;
-    left: -400px;
+        left: -400px;
 }
 
 .signup {
     padding-bottom: 500px;
 }
 .complete {
-    opacity: .5;
+            opacity: .5;
     text-decoration: line-through;
 }
 .konami {
-    font-family: 'Comic Sans MS' !important;
+         font-family: 'Comic Sans MS' !important;
     background-color: #FFF !important;
 }
 .action:hover {
-    color: dimgrey;
+     color: dimgrey;
     cursor: pointer;
 }
 .back-action:hover {
     background-color: #E8E8E8;
-    cursor: pointer;
+              cursor: pointer;
 }
 
 .bold {
-    font-size: 110%;
+      font-size: 110%;
     font-weight: bolder;
 }
 #settings-main {
@@ -146,9 +146,9 @@ footer.home-footer p {
 
 #hwpreview {
     background-color: white;
-    position: absolute;
-    z-index: 2;
-    border: solid 1px #EBEBEB;
+            position: absolute;
+             z-index: 2;
+              border: solid 1px #EBEBEB;
 }
 .bigger {
     font-size: 175%;
