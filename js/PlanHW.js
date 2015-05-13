@@ -237,12 +237,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
         })
     })
-    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){    
-        
-        $scope.reload('incomplete',function(){
-            $scope.autoChooseView()
-            $scope.loaded = true
-        });    
+    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){     
     
         $scope.share = function(homework,student){
             var temp_date = homework.due_date
@@ -463,6 +458,17 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $scope.chooseView('List')
             }
         }
+        
+        if($rootScope.student_token){
+            $scope.reload('incomplete',function(){
+                $scope.autoChooseView()
+                $scope.loaded = true
+            }); 
+        } else {
+            $rootScope.flashes.push({class:'danger', message: 'Please sign in.'})
+            $location.path('/signin')
+        }
+          
     })
     .controller('SigninCtrl', function($scope, $signin){
         $scope.signinError = null
