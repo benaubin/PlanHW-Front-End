@@ -246,7 +246,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
         $scope.reload = function(show, after){
             if($rootScope.sudent_id !== null){
-                $scope.hw = []
                 $http.get(PlanHWApi+'hw?token='+$rootScope.student_token)
                 .success(function(data){
                     webStorage.remove('hw')
@@ -269,7 +268,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             } else {
                 $rootScope.flashes.push({class: "danger", message: "Sign in first!"})
                 $location.path('/signin')
-            }}
+            }
+        }
+        
         $scope.marked = function(markdown){
             if(markdown) return marked(markdown)
         }
@@ -376,15 +377,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $http.post(PlanHWApi+'hw?token='+$rootScope.student_token,homework)
             .success(function(){
                 $scope.homework = null;
+                $scope.reload()
             }).error(function(data){
                 angular.forEach(data['message']['errors'], function(error){
                     $rootScope.flashesNow.push({class: data['message']['type'],message: error}); 
                 })
             })
             homework.due_date = temp_date
-            $scope.suggestShareFriend = null
-            
-            markdown(homework)
+            $scope.suggestShareFriend = null 
         }
         $scope.delete = function(homework){
             $rootScope.flashesNow.push({class: 'info', message: 'Deleting...'})
