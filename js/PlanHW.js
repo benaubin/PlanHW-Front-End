@@ -1,4 +1,9 @@
-var PlanHWApi = "http://localhost:3000/"
+if(window.location.href.match(/^.+?planhw.com/i)){
+    var PlanHWApi = "https://api.planhw.com/"
+
+} else {
+    var PlanHWApi = "http://localhost:3000/"
+}
 Offline.options = {checks: {xhr: {url: PlanHWApi}}};
 
 (function(){
@@ -108,6 +113,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     data = data || 'Something went wrong'
                     $rootScope.flashesNow.push({class:'danger',message:data})
                 })
+        }
+        $scope.show2step = function(){
+            $scope.qrURL = PlanHWApi + '/2step.qr?token=' + $rootScope.student_token
         }
         
         $scope.loadStudents = function(){
