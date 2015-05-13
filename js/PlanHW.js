@@ -1,4 +1,4 @@
-if($(location).attr('hostname').match(/^\.+.+\./i) || confirm("Use production API?")){
+if($(location).attr('hostname').match(/^.+?\.\D+?$/i) || confirm("Use production API?")){
     var PlanHWApi = "https://api.planhw.com/"
 } else {
     var PlanHWApi = "http://localhost:3000/"
