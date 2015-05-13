@@ -252,8 +252,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             })
             homework.due_date = temp_date
         }
+        
         $scope.reload = function(show, after){
-            if($rootScope.sudent_id !== null){
+            if($rootScope.student_token != null){
                 $http.get(PlanHWApi+'hw?token='+$rootScope.student_token)
                 .success(function(data){
                     webStorage.remove('hw')
@@ -306,14 +307,17 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             })
         }
         
-        var friends = $rootScope.student.friends; friends.forEach(function(friend, index){
+        if($rootScope.student_token){
+            var friends = $rootScope.student.friends
+            friends.forEach(function(friend, index){
             if(friend.student){
                 friend2 = friend.student
                 friend2.name = friend2.name.split(' ')[0]
                 friends[index] = friend2
             }
         })
-        var sifter = new Sifter(friends);
+            var sifter = new Sifter(friends);
+        }
     
         $scope.suggestShareFriend = null
         
@@ -459,15 +463,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
         }
         
-        if($rootScope.student_token){
-            $scope.reload('incomplete',function(){
-                $scope.autoChooseView()
-                $scope.loaded = true
-            }); 
-        } else {
-            $rootScope.flashes.push({class:'danger', message: 'Please sign in.'})
-            $location.path('/signin')
-        }
+        $scope.reload('incomplete',function(){
+            $scope.autoChooseView()
+            $scope.loaded = true
+        });
           
     })
     .controller('SigninCtrl', function($scope, $signin){
