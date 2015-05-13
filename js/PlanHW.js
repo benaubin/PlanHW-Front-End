@@ -355,7 +355,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $http.put(PlanHWApi+'hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
             .success(function(){
                 homework.editing = false
-                markdown(homework)
+                $scope.markdown(homework)
             }).error(function(data, status){
                 if(data && status){
                     angular.forEach(data['errors'], function(error){
