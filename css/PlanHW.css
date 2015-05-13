@@ -49,7 +49,7 @@ footer.home-footer p {
         padding-bottom: 50px;
     }
     section.slide#slide1 {
-             background: url('/img/screenshots/MacOnDesk.png') fixed center center no-repeat;
+             background: url('/img/screenshots/MacOnDesk.png') fixed center top no-repeat;
         background-size: cover;
 -webkit-background-size: cover;
    -moz-background-size: cover;
