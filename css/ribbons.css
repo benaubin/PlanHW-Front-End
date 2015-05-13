@@ -36,6 +36,16 @@
   -webkit-transform: rotate(-45deg);
 }
 
+@media screen and (max-width: 768px) {
+    .corner-ribbon.top-left{
+      top: auto;
+      bottom: 25px;
+      left: -50px;
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+    }
+}
+
 .corner-ribbon.top-right{
   top: 25px;
   right: -50px;
