@@ -1,6 +1,5 @@
-if(window.location.href.match(/^.+?planhw.com/i)){
+if($(location).attr('hostname').match(/^\.+.+\./i) || confirm("Use production API?")){
     var PlanHWApi = "https://api.planhw.com/"
-
 } else {
     var PlanHWApi = "http://localhost:3000/"
 }
@@ -115,7 +114,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 })
         }
         $scope.show2step = function(){
-            $scope.qrURL = PlanHWApi + '/2step.qr?token=' + $rootScope.student_token
+            $scope.qrURL = PlanHWApi + '2step.qr?token=' + $rootScope.student_token
         }
         
         $scope.loadStudents = function(){
@@ -239,6 +238,12 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         })
     })
     .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){    
+        
+        $scope.reload('incomplete',function(){
+            $scope.autoChooseView()
+            $scope.loaded = true
+        });    
+    
         $scope.share = function(homework,student){
             var temp_date = homework.due_date
             homework.due_date = homework.due_date.toISOString();
@@ -285,6 +290,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.markdown = function(homework){
             homework.descHTML = $scope.marked(homework.homework.description)
         }
+        
         $scope.toView = function(before){
             if(before) before();
             angular.forEach($scope.hw, function(homework){
@@ -304,8 +310,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $scope.markdown(homework)
             })
         }
-        var friends = $rootScope.student.friends
-        friends.forEach(function(friend, index){
+        
+        var friends = $rootScope.student.friends; friends.forEach(function(friend, index){
             if(friend.student){
                 friend2 = friend.student
                 friend2.name = friend2.name.split(' ')[0]
@@ -315,6 +321,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         var sifter = new Sifter(friends);
     
         $scope.suggestShareFriend = null
+        
         $scope.input = function(homework){
             homework.description = homework.input.match(/\((.+)\)/i)
             if(homework.description){
@@ -348,6 +355,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 })
             }
         }
+        
         $scope.complete = function(homework){
             homework.homework.completed = !homework.homework.completed
             $http.put(PlanHWApi + 'hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
@@ -359,6 +367,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 } else $scope.toView();
             })
         }
+        
         $scope.update = function(homework){
             $http.put(PlanHWApi+'hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
             .success(function(){
@@ -375,6 +384,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 }
             })
         }
+        
         $scope.new = function(homework){
             //Get ready to send things to the API
             
@@ -394,6 +404,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             homework.due_date = temp_date
             $scope.suggestShareFriend = null 
         }
+        
         $scope.delete = function(homework){
             $rootScope.flashesNow.push({class: 'info', message: 'Deleting...'})
             $http.delete(PlanHWApi + 'hw/'+homework.homework.id+'?token='+$rootScope.student_token)
@@ -412,6 +423,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             })
             $rootScope.flashesNow.pop()
         }
+        
         $scope.show = function(type,after){
             if(type === 'complete'){
                 $scope.showing = "Completed"
@@ -431,20 +443,19 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
             $scope.toView(after);
         }
+        
         $scope.chooseView = function(view){
             $scope.view = toTitleCase(view)
             view = view.toLowerCase();
             $scope.cards = view === 'cards'
             $scope.list = view === 'list'
         }
-        $scope.reload('incomplete',function(){
-            $scope.autoChooseView()
-            $scope.loaded = true
-        });
+        
         $( window ).resize(function(){
             $scope.autoChooseView()
             $scope.$apply()
         })
+        
         $scope.autoChooseView = function(){
             if(768 >= $(window).width()){
                 $scope.chooseView('Cards')
