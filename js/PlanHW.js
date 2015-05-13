@@ -1,4 +1,4 @@
-var PlanHWApi = "https://api.planhw.com/"
+var PlanHWApi = "http://localhost:3000/"
 Offline.options = {checks: {xhr: {url: PlanHWApi}}};
 
 (function(){
@@ -448,9 +448,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     .controller('SigninCtrl', function($scope, $signin){
         $scope.signinError = null
         $scope.signin = function(remember){
-            $signin($scope.username, $scope.password, remember)
-            $scope.username = null
-            $scope.password = null
+            $signin($scope.username, $scope.password, remember, $scope.otp)
         }
     })
     .controller('ForgotPassCtrl',function($scope, $http, $rootScope, $location){
@@ -520,8 +518,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         controller: 'SigninCtrl'
     }})
     .factory('$signin',function($rootScope, $http, $location, webStorage){
-        return function(username, password, remember) {
-        url = PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password)
+        return function(username, password, remember, otp) {
+        url = PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password)+'&auth_code='+otp
         $http.get(url)
             .success(function(data){
                 password = null;
@@ -535,9 +533,15 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 }
                 $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
                 $location.path('/homework');
+                $rootScope.showotp = false
             }).error(function(data,status){
                 if(status === 401){
-                    $rootScope.flashesNow.push({message: "Wrong username/password.", class: 'danger'})
+                    if(data === 'Please include OTP.'){
+                        $rootScope.flashesNow.push({message: 'Please include a correct one time passcode (from Google Authenicator)', class: 'info'})
+                        $rootScope.showotp = true
+                    } else {
+                        $rootScope.flashesNow.push({message: "Wrong username/password.", class: 'danger'})
+                    }
                 } else {
                     $rootScope.flashesNow.push({message: "Something went wrong.", class: 'danger'})
                 }

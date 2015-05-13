@@ -98,7 +98,7 @@ footer.home-footer p {
     padding-left: 25px;
 }
 
-#confirm-popover, #share-popover, #share-suggest-popover {
+#confirm-popover, #share-popover, #share-suggest-popover, #2step-popover {
     position: absolute;
          top: 50px;
      z-index: 3;
