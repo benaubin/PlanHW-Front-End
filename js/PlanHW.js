@@ -470,10 +470,20 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         });
           
     })
-    .controller('SigninCtrl', function($scope, $signin){
+    .controller('SigninCtrl', function($scope, $signin, $http){
         $scope.signinError = null
         $scope.signin = function(remember){
             $signin($scope.username, $scope.password, remember, $scope.otp)
+        }
+        $scope.gsignin = function(){
+            window.location.replace(
+                "https://accounts.google.com/o/oauth2/auth?" +
+                    "scope=email&" + 
+                    "state=" + encodeURIComponent('') /*Data to send to PlanHW after authenication*/ + '&' +
+                    "redirect_uri=" + encodeURIComponent(PlanHWApi+'oauth2callback') + '&' +
+                    "response_type=token" +
+                    "client_id=" + encodeURIComponent("179836333485-a9u3omrs9o0c1ik00fesa2043q0f63fe.apps.googleusercontent.com")
+            )       
         }
     })
     .controller('ForgotPassCtrl',function($scope, $http, $rootScope, $location){
