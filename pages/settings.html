@@ -99,28 +99,37 @@
                                     </div>
                                     <hr>
                                     <h2 class="text-center">2-Step Authenication</h2>
-                                    <div ng-hide="qrURL">
-                                        <p class="text-center col-md-10 col-md-offset-1">
-                                            Use your phone/tablet for extra security by requiring a random code everytime you login.
-                                        </p>
-                                        <div class="row pad-10t">
-                                            <button class="btn btn-info col-md-6 col-md-offset-3 col-xs-12" ng-click="show2step()">
-                                                Use 2-Step Authenication
-                                            </button>
+                                    <div class="hidden-xs">
+                                        <div ng-hide="qrURL">
+                                            <p class="text-center col-md-10 col-md-offset-1">
+                                                Use your phone/tablet for extra security by requiring a random code everytime you login.
+                                            </p>
+                                            <div class="row pad-10t">
+                                                <button class="btn btn-info col-md-6 col-md-offset-3 col-xs-12" ng-click="show2step()">
+                                                    Use 2-Step Authenication
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row pad-10t" ng-show="qrURL">
-                                        <div class="col-md-10 col-md-offset-1">
-                                            <img ng-src="{{qrURL}}" class="pull-left">
-                                            <div class="pad-200l pad-10t" id="qr-talk">
-                                                <div class="popover right">
-                                                    <div class="arrow"></div>
-                                                    <p class="popover-content">
-                                                        Scan me with Google Authenicator to generate One Time Passcodes.
-                                                        You'll use them to login, adding an awesome extra layer of security!
-                                                    </p>
+                                        <div class="row pad-10t" ng-show="qrURL">
+                                            <div class="col-md-10 col-md-offset-1">
+                                                <img ng-src="{{qrURL}}" class="pull-left">
+                                                <div class="pad-200l pad-10t" id="qr-talk">
+                                                    <div class="popover right">
+                                                        <div class="arrow"></div>
+                                                        <p class="popover-content">
+                                                            Scan me with Google Authenicator to generate One Time Passcodes.
+                                                            You'll use them to login, adding an awesome extra layer of security!
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="visible-xs">
+                                        <div ng-hide="qrURL">
+                                            <p class="text-center col-md-10 col-md-offset-1">
+                                                Enable 2 Step Authenication on your computer to start generating one time passcodes.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
