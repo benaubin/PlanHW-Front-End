@@ -3,16 +3,16 @@ if($(location).attr('hostname').match(/^.+?\.\D+?$/i) || confirm("Use production
 } else {
     var PlanHWApi = "http://localhost:3000/"
 }
+
 Offline.options = {checks: {xhr: {url: PlanHWApi}}};
 
+addToHomescreen();
+
 (function(){
-function toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-}
-$(function () {
+
+$(function(){
   $('[data-toggle="tooltip"]').tooltip()
 })
-addToHomescreen();
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize'])
     .config(function($routeProvider, $httpProvider) {
         
@@ -53,7 +53,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             controller: 'ForgotPassCtrl'
         })
             
-    }).controller('FlashCtrl',function($rootScope,$routeParams,$location){
+    })
+    .controller('FlashCtrl',function($rootScope,$routeParams,$location){
         var message = decodeURIComponent($routeParams.message)
         $rootScope.flashes.push({class:'info', message: message})
         var page = decodeURIComponent($routeParams.page)
@@ -581,7 +582,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $rootScope.flashesNow.push({message: "Could not refresh your info.", class: 'danger'})
                 return false;
             });
-    }});
+    }})
+;
+})();
 
-
-var kkeys = [], konami = "38,38,40,40,37,39,37,39,66,65,13";$(document).keydown(function(e){kkeys.push( e.keyCode );if (kkeys.toString().indexOf(konami)>=0){$(document).unbind('keydown',arguments.callee);$("body").addClass("konami");}});})();
+var kk=[],k="38,38,40,40,37,39,37,39,66,65,13",doc=$(document);doc.keydown(function(e){kk.push(e.keyCode);if(kk.toString().indexOf(k)>=0){doc.unbind('keydown',arguments.callee);$("body").addClass("konami");}});function toTitleCase(s){return s.replace(/\w\S*/g,function(t){return t.charAt(0).toUpperCase()+t.substr(1).toLowerCase();});}

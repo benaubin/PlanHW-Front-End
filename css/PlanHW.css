@@ -21,6 +21,10 @@ footer.home-footer p {
     color: #fff;
 }
 
+.maxh-200 {
+    max-height: 200px;
+}
+
 .a-unstyled { color: inherit; }
 .a-unstyled:link { color: inherit; }
 .a-unstyled:visited { color: inherit; }
@@ -98,11 +102,24 @@ footer.home-footer p {
     padding-left: 25px;
 }
 
-#confirm-popover, #share-popover, #share-suggest-popover, #2step-popover {
+.pad-200l {
+    padding-left: 200px;
+}
+
+#qr-talk {
+    transform: rotate(-2deg);
+    -webkit-transform: rotate(-2deg);
+}
+
+.popover {
+     display: block;
+    position: relative;
+}
+
+#confirm-popover, #share-popover, #share-suggest-popover {
     position: absolute;
          top: 50px;
      z-index: 3;
-     display: block;
 }
 
 #share-popover, #share-suggest-popover {
