@@ -82,7 +82,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $scope.schedule = section === 'schedule'
             $scope.pro = section === 'pro'
             $scope.showFriends = section === 'friends'
-            $scope.themes = section === 'themes'
             if($scope.showFriends) $scope.loadStudents()
         }
         $scope.update = function(student){
