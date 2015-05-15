@@ -52,7 +52,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             templateUrl: 'pages/forgot_pass.html',
             controller: 'ForgotPassCtrl'
         })
+        .when('/login/:token',{
+            controller: 'LoginCtrl'
+        })
             
+    })
+    .controller('LoginCtrl',function($routeParams){
+        console.log($routeParams.token)
     })
     .controller('FlashCtrl',function($rootScope,$routeParams,$location){
         var message = decodeURIComponent($routeParams.message)
@@ -475,16 +481,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.signin = function(remember){
             $signin($scope.username, $scope.password, remember, $scope.otp)
         }
-        $scope.gsignin = function(){
-            window.location.replace(
-                "https://accounts.google.com/o/oauth2/auth?" +
-                    "scope=email&" + 
-                    "state=" + encodeURIComponent('') /*Data to send to PlanHW after authenication*/ + '&' +
-                    "redirect_uri=" + encodeURIComponent(PlanHWApi+'oauth2callback') + '&' +
-                    "response_type=token" +
+        $scope.gsigninURL = 
+                "https://accounts.google.com/o/oauth2/auth?" + [
+                    "scope=" + encodeURIComponent(['profile','email'].join(' ')),
+                    "state=" + encodeURIComponent('google'),
+                    "redirect_uri=" + encodeURIComponent(PlanHWApi+'oauth2callback'),
+                    "response_type=code&",
                     "client_id=" + encodeURIComponent("179836333485-a9u3omrs9o0c1ik00fesa2043q0f63fe.apps.googleusercontent.com")
-            )       
-        }
+                ].join('&')
     })
     .controller('ForgotPassCtrl',function($scope, $http, $rootScope, $location){
         $scope.changePass = function(){
