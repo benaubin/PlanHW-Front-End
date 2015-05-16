@@ -9,10 +9,6 @@ Offline.options = {checks: {xhr: {url: PlanHWApi}}};
 addToHomescreen();
 
 (function(){
-
-$(function(){
-  $('[data-toggle="tooltip"]').tooltip()
-})
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize'])
     .config(function($routeProvider, $httpProvider) {
         
@@ -53,13 +49,21 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             controller: 'ForgotPassCtrl'
         })
         .when('/login/:token',{
+            templateUrl: 'pages/signin.html',
             controller: 'LoginCtrl'
         })
             
     })
-    .controller('LoginCtrl',function($routeParams){
-        console.log($routeParams.token)
-    })
+    .controller('LoginCtrl',function($signin, $http, $routeParams){
+        var student;
+        $http.get(PlanHWApi + 'test/login?token=' + $routeParams.token)
+            .success(function(data){
+                student = data.student
+            }).finally(function(data){
+               $signin.token($routeParams.token, student,true)    
+            }
+        
+    )})
     .controller('FlashCtrl',function($rootScope,$routeParams,$location){
         var message = decodeURIComponent($routeParams.message)
         $rootScope.flashes.push({class:'info', message: message})
@@ -123,7 +127,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.show2step = function(){
             $scope.qrURL = PlanHWApi + '2step.qr?token=' + $rootScope.student_token
         }
-        
         $scope.loadStudents = function(){
             var allStudents;
             $http.get('https://api.planhw.com/students')
@@ -144,8 +147,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                                 },
                                 option: function(item, escape) {
                                     return '<div>' +
-                                        '<span class="bold">' + escape(item.name) + '</span>' + 
-                                        '<span class="caption"> ('+ escape(item.username) +  ')</span>' +
+                                        '<p class="bold">' + escape(item.name) + '</p>' +
+                                        '<hr>' + 
+                                        '<p class="caption"> ('+ escape(item.username) +  ')</p>' +
                                     '</div>'
                                 }
                             }
@@ -479,7 +483,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     .controller('SigninCtrl', function($scope, $signin, $http){
         $scope.signinError = null
         $scope.signin = function(remember){
-            $signin($scope.username, $scope.password, remember, $scope.otp)
+            $signin.username($scope.username, $scope.password, remember, $scope.otp)
         }
         $scope.gsigninURL = 
                 "https://accounts.google.com/o/oauth2/auth?" + [
@@ -487,7 +491,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     "state=" + encodeURIComponent('google'),
                     "redirect_uri=" + encodeURIComponent(PlanHWApi+'oauth2callback'),
                     "response_type=code",
-                    "prompt=consent",
                     "client_id=" + encodeURIComponent("179836333485-a9u3omrs9o0c1ik00fesa2043q0f63fe.apps.googleusercontent.com")
                 ].join('&')
         console.log($scope.gsigninURL)
@@ -540,7 +543,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $http.post(PlanHWApi+'students/', student)
                 .success(function(){
                     $rootScope.firstSignin = true;
-                    $signin(student.username,student.password,false)
+                    $signin.username(student.username,student.password,false)
                 }).error(function(data, status){
                     $scope.signupErrored = true;
                     if(status === 422){
@@ -559,35 +562,41 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         controller: 'SigninCtrl'
     }})
     .factory('$signin',function($rootScope, $http, $location, webStorage){
-        return function(username, password, remember, otp) {
-        url = PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password)+'&auth_code='+otp
-        $http.get(url)
-            .success(function(data){
-                password = null;
-                $rootScope.student_token = data['token']
-                console.log(data)
-                $rootScope.student_id = data['student']['id']
-                $rootScope.student = data['student']
+        return {
+            username: function(username, password, remember, otp) {
+                url = PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password)+'&auth_code='+otp
+                $http.get(url)
+                    .success(function(data){
+                        password = null
+                        signinwithtoken(data['token'],data['student'],remember)
+                    }).error(function(data,status){
+                        if(status === 401){
+                            if(data === 'Please include OTP.'){
+                                $rootScope.flashesNow.push({message: 'Please include a correct one time passcode (from Google Authenicator)', class: 'info'})
+                                $rootScope.showotp = true
+                            } else {
+                                $rootScope.flashesNow.push({message: "Wrong username/password.", class: 'danger'})
+                            }
+                        } else {
+                            $rootScope.flashesNow.push({message: "Something went wrong.", class: 'danger'})
+                        }
+                    });
+                },
+            token: signinwithtoken
+        }
+            function signinwithtoken(token,student,remember){
+                $rootScope.student_token = token
+                $rootScope.student_id = student['id']
+                $rootScope.student = student
                 if(remember){
                     webStorage.remove('login_data')
-                    webStorage.add('login_data',data)
+                    webStorage.add('login_data',{student: student, token: token})
                 }
                 $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
                 $location.path('/homework');
                 $rootScope.showotp = false
-            }).error(function(data,status){
-                if(status === 401){
-                    if(data === 'Please include OTP.'){
-                        $rootScope.flashesNow.push({message: 'Please include a correct one time passcode (from Google Authenicator)', class: 'info'})
-                        $rootScope.showotp = true
-                    } else {
-                        $rootScope.flashesNow.push({message: "Wrong username/password.", class: 'danger'})
-                    }
-                } else {
-                    $rootScope.flashesNow.push({message: "Something went wrong.", class: 'danger'})
-                }
-            });
-    }})
+            }
+    })
     .factory('$refreshStudent',function($rootScope, $http){
         return function(){
             $http.get(PlanHWApi + 'students/' + $rootScope.student_id + '?token=' + $rootScope.student_token)
