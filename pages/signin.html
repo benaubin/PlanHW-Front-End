@@ -31,12 +31,16 @@
                     </div>
                 </div>
             </div>
-            <div class="pull-right">
-                <label>Remember?</label>
-                <input type="checkbox" ng-model="remember">
+            <div class="row">
+                <div class="pull-right">
+                    <label>Remember?</label>
+                    <input type="checkbox" ng-model="remember">
+                </div>
+                <p class="pull-left">
+                    <a href="#/forgotpass">Forgot?</a>
+                </p>
+                <p class="text-center"><a ng-href="{{gsigninURL}}"><i class="fa fa-google-plus-square"></i></a></p>
             </div>
-             <a ng-href="{{gsigninURL}}" class="text-center"><i class="fa fa-google-plus-square"></i></a>
-            <a href="#/forgotpass" class="pull-left">Forgot?</a>
         </form>
     </div>
 </div>
