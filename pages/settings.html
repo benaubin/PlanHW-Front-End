@@ -64,6 +64,10 @@
                                                 <i class="input-group-addon fa fa-envelope-o fa-fw"></i>
                                                 <input type="text" class="form-control" placeholder="Email" ng-model="student.email">
                                             </div>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">*<i class="fa fa-mobile"></i></span>
+                                                <input type="tel" class="form-control" placeholder="Mobile Phone Number" ng-model="student.phone">
+                                            </div>
                                         </div>
                                     </div>
                                     <h2 class="text-center">Bio</h2>
@@ -182,7 +186,10 @@
                                 </div>
                                 <div class="row">
                                     <hr>
-                                    <div class="col-xs-2 col-xs-offset-10">
+                                    <div class="col-xs-4">
+                                        <p>* Pro Only</p>
+                                    </div>
+                                    <div class="col-xs-2 col-xs-offset-6">
                                         <input type="submit" class="btn btn-success" value="Save">
                                     </div>
                                 </div>
