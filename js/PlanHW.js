@@ -129,7 +129,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
         $scope.loadStudents = function(){
             var allStudents;
-            $http.get('https://api.planhw.com/students')
+            $http.get(PlanHWApi+'students')
                 .success(function(data) {
                     data = data.students
                     data.forEach(function(student, index){
@@ -148,7 +148,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                                 option: function(item, escape) {
                                     return '<div>' +
                                         '<p class="bold">' + escape(item.name) + '</p>' +
-                                        '<hr>' + 
                                         '<p class="caption"> ('+ escape(item.username) +  ')</p>' +
                                     '</div>'
                                 }
