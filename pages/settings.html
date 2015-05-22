@@ -161,13 +161,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div ng-if="pro">
-                                    <div class="row">
-                                        <p class="text-center pad-50t small">
-                                            Want to get smart reminders and more features <sup>All Coming soon</sup>, while helping support PlanHW's development? Buy a Pro Plan for only $2.50 (paid annually at $30, normally $3/month)! 
-                                        </p>
-                                    </div>
-                                </div>
                                 <div ng-if="schedule">
                                     <div class="row">
                                         <p class="text-center pad-50t">
@@ -176,7 +169,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" ng-hide="pro">
                                     <hr>
                                     <div class="col-xs-4">
                                         <p>* Pro Only</p>
@@ -186,6 +179,68 @@
                                     </div>
                                 </div>
                             </form>
+                            <div ng-if="pro">
+                                <div class="row">
+                                    <h1 class="text-center row">Pro</h1>
+                                    <hr>
+                                    <div ng-hide="student.pro">
+                                        <p class="text-center col-sm-10 col-sm-offset-1 row" ng-hide="cvc && cc && expYear && expMonth">
+                                            Get pro for only $2.50 a month and have access to texted reminders, and many more features coming soon!
+                                        </p>
+                                        <form>
+                                            <div class="row">
+                                                <div class="col-sm-8" ng-class="{'col-sm-offset-2': !cvc,
+                                                                                 'col-sm-6': cc && !cvc,
+                                                                                 'col-sm-4 col-sm-offset-1': cvc,
+                                                                                 'col-sm-8': !cc}">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i class="fa fa-credit-card fa-fw"></i></span>
+                                                        <input type="text" ng-model="cc" placeholder="Credit/Debit Card" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <span class="col-sm-2">
+                                                    <input ng-show="cc" type="text" ng-model="cvc" placeholder="CVC" class="form-control">
+                                                </span>
+                                                <span class="col-sm-2" ng-show="cvc && cc">
+                                                    <input ng-model="expMonth" placeholder="MM" class="form-control" type="text">
+                                                </span>
+                                                <span class="col-sm-2" ng-show="cvc && cc">
+                                                    <input ng-model="expYear" placeholder="/YY" class="form-control" type="text">
+                                                </span>
+                                            </div>
+                                            <div class="row pad-50t" ng-show="cvc && cc && expYear && expMonth">
+                                                <div class="col-sm-6 text-center">
+                                                    <p class="bold">Monthly</p>
+                                                    <hr>
+                                                    <p>$3/month</p>
+                                                    <p class="small">It's simple.</p>
+                                                    <button class="btn btn-info"
+                                                            ng-click="getPro(cc,cvc,expMonth,expYear,'monthly')">
+                                                        Subscribe
+                                                    </button>
+                                                </div>
+                                                <div class="col-sm-6 text-center borderleft">
+                                                    <p class="bold">Yearly</p>
+                                                    <hr>
+                                                    <p>$2.50/month</p>
+                                                    <p class="small">($30/year - 2 free months)</p>
+                                                    <button class="btn btn-success"
+                                                            ng-click="getPro(cc,cvc,expMonth,expYear,'yearly')">
+                                                        Subscribe
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div ng-show="student.pro">
+                                        <p class="text-center col-sm-6 col-sm-offset-3">You already have pro! Awesome.</p>
+                                        <button class="btn btn-danger col-sm-4 col-sm-offset-4" ng-click="getRidOfPro()">
+                                            I don't want it.<br>
+                                            Pls get rid of it.
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
