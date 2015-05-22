@@ -58,7 +58,7 @@
                                             </div>
                                             <div class="input-group">
                                                 <span class="input-group-addon">*<i class="fa fa-mobile"></i></span>
-                                                <input type="tel" class="form-control" placeholder="Mobile Phone Number" ng-model="student.phone">
+                                                <input type="tel" class="form-control" placeholder="Mobile Phone Number" ng-model="student.phone" ng-disabled="{{!student.pro}}">
                                             </div>
                                         </div>
                                     </div>
@@ -188,7 +188,7 @@
                                             Get pro for only $2.50 a month and have access to texted reminders, and many more features coming soon!
                                         </p>
                                         <form>
-                                            <div class="row">
+                                            <div class="row" ng-hide=" paid || student.hasPaymentInfo">
                                                 <div class="col-sm-8" ng-class="{'col-sm-offset-2': !cvc,
                                                                                  'col-sm-6': cc && !cvc,
                                                                                  'col-sm-4 col-sm-offset-1': cvc,
@@ -208,14 +208,14 @@
                                                     <input ng-model="expYear" placeholder="/YY" class="form-control" type="text">
                                                 </span>
                                             </div>
-                                            <div class="row pad-50t" ng-show="cvc && cc && expYear && expMonth">
+                                            <div class="row pad-50t" ng-show="(cvc && cc && expYear && expMonth) || paid || student.hasPaymentInfo">
                                                 <div class="col-sm-6 text-center">
                                                     <p class="bold">Monthly</p>
                                                     <hr>
                                                     <p>$3/month</p>
                                                     <p class="small">It's simple.</p>
                                                     <button class="btn btn-info"
-                                                            ng-click="getPro(cc,cvc,expMonth,expYear,'monthly')">
+                                                            ng-click="getPro(cc,cvc,expMonth,expYear,'monthly',coupon)">
                                                         Subscribe
                                                     </button>
                                                 </div>
@@ -225,11 +225,17 @@
                                                     <p>$2.50/month</p>
                                                     <p class="small">($30/year - 2 free months)</p>
                                                     <button class="btn btn-success"
-                                                            ng-click="getPro(cc,cvc,expMonth,expYear,'yearly')">
+                                                            ng-click="getPro(cc,cvc,expMonth,expYear,'yearly',coupon)">
                                                         Subscribe
                                                     </button>
                                                 </div>
                                             </div>
+                                            <hr>
+                                            <div class="input-group col-sm-6 col-sm-offset-3" ng-show="showCoupon">
+                                                <input type="text" ng-model="coupon" class="form-control" ng-blur="testCoupon(coupon)">
+                                            </div>
+                                            <p ng-bind="couponInfo" class="text-center"></p>
+                                            <p class="text-center" ng-hide="showCoupon">Have a coupon? <a class="action" ng-click="showCoupon=true">Use it!</a></p>
                                         </form>
                                     </div>
                                     <div ng-show="student.pro">

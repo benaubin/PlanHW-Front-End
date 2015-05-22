@@ -73,17 +73,32 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     })
     .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$refreshStudent,$location){
         $refreshStudent()
-        $scope.getPro = function(cc,cvc,expMonth,expYear,plan){
+        $scope.getPro = function(cc,cvc,expMonth,expYear,plan,coupon){
             $scope.show('profile')
-            Stripe.card.createToken({
-                number: cc,
-                cvc: cvc,
-                exp_month: expMonth,
-                exp_year: expYear
-            }, function(status,token){
+            if(cc && cvc){
+                Stripe.card.createToken({
+                    number: cc,
+                    cvc: cvc,
+                    exp_month: expMonth,
+                    exp_year: expYear
+                }, function(status,token){
+                    $http.post(PlanHWApi+'pro',{
+                        source: token,
+                        plan: plan,
+                        token: $rootScope.student_token,
+                        coupon: coupon
+                    }).success(function(){
+                        $rootScope.flashes.push({class: 'success', message: 'Congrats! You now have PlanHW Pro!'})
+                        $rootScope.signout()
+                    }).error(function(data){
+                        $scope.show('pro')
+                        $rootScope.flashesNow.push({class:'danger', message: data.error.message})
+                    });
+                })
+            } else {
                 $http.post(PlanHWApi+'pro',{
-                    source: token,
                     plan: plan,
+                    coupon: coupon,
                     token: $rootScope.student_token
                 }).success(function(){
                     $rootScope.flashes.push({class: 'success', message: 'Congrats! You now have PlanHW Pro!'})
@@ -92,7 +107,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     $scope.show('pro')
                     $rootScope.flashesNow.push({class:'danger', message: data.error.message})
                 });
-            })
+            }
         }
         $scope.getRidOfPro = function(){
             if(confirm('Just making sure you know what you are doing -- this will get rid of your pro status on PlanHW IMMEDIATELY') && (prompt('Please confirm your username') === $rootScope.student.username)){
@@ -105,16 +120,21 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $rootScope.flashesNow.push({class:'success', message: 'Awesome - You still have pro :)'})
             }
         }
-        $http.jsonp("http://www.gravatar.com/" + md5($rootScope.student.email) + ".json?callback=JSON_CALLBACK")
+        $scope.testCoupon = function(coupon){
+            console.log('Coupon: ' + coupon)
+            $http.get(PlanHWApi+ 'coupon/'+ coupon)
+            .success(function(data){
+                $scope.couponInfo = data
+                if(data === '100% off'){
+                    $scope.paid = true
+                }
+            }).error(function(data){
+                $scope.couponInfo = data
+            })
+        }
+        $http.jsonp("http://www.gravatar.com/" + $rootScope.student.username + ".json?callback=JSON_CALLBACK")
             .success(function(data){
                 $rootScope.student.bio = data['entry'][0]['aboutMe']
-            })
-            .error(function(){
-                $http.jsonp("http://www.gravatar.com/" + $rootScope.student.username + ".json?callback=JSON_CALLBACK")
-                    .success(function(data){
-                        $rootScope.student.bio = data['entry'][0]['aboutMe']
-                    })
-                ;
             })
         ;
         $scope.show = function(section){
