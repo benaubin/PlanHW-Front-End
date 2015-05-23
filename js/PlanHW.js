@@ -228,7 +228,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $rootScope.$on('$routeChangeSuccess', function () {
             $rootScope.flashesNow = $rootScope.flashes
             $rootScope.flashes = []
-            $('.modal').modal('hide');
+            try {
+                $('.modal').modal('hide');
+            } catch(err){}
         });
         $rootScope.signout = function(){
             $rootScope.student_id = null
@@ -543,7 +545,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     "response_type=code",
                     "client_id=" + encodeURIComponent("179836333485-a9u3omrs9o0c1ik00fesa2043q0f63fe.apps.googleusercontent.com")
                 ].join('&')
-        console.log($scope.gsigninURL)
     })
     .controller('ForgotPassCtrl',function($scope, $http, $rootScope, $location){
         $scope.changePass = function(){
