@@ -312,9 +312,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             homework.due_date = temp_date
         }
         
-        $scope.reload = function(show, after){
+        $scope.reload = function(show, after, noComplete){
             if($rootScope.student_token != null){
-                $http.get(PlanHWApi+'hw?token='+$rootScope.student_token)
+                url = PlanHWApi+'hw?token='+$rootScope.student_token
+                if(noComplete)
+                    url += '&incomplete=1'
+                console.log(url)
+                $http.get(url)
                 .success(function(data){
                     webStorage.remove('hw')
                     $scope.hw = data['homeworks']
@@ -522,7 +526,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.reload('incomplete',function(){
             $scope.autoChooseView()
             $scope.loaded = true
-        });
+            $scope.reload()
+        },true);
           
     })
     .controller('SigninCtrl', function($scope, $signin, $http){
