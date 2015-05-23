@@ -121,7 +121,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
         }
         $scope.testCoupon = function(coupon){
-            console.log('Coupon: ' + coupon)
             $http.get(PlanHWApi+ 'coupon/'+ coupon)
             .success(function(data){
                 $scope.couponInfo = data
@@ -319,7 +318,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 url = PlanHWApi+'hw?token='+$rootScope.student_token
                 if(noComplete)
                     url += '&incomplete=1'
-                console.log(url)
                 $http.get(url)
                 .success(function(data){
                     webStorage.remove('hw')
@@ -548,7 +546,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     })
     .controller('ForgotPassCtrl',function($scope, $http, $rootScope, $location){
         $scope.changePass = function(){
-            console.log({password: $scope.password, password_confirmation: $scope.password_confirm})
             $http.post(PlanHWApi + 'reset_password/' + $scope.username, {password: $scope.password, password_confirmation: $scope.password_confirm})
             .success(function(data,status){
                 $rootScope.flashes.push({class: 'success', message: data})
