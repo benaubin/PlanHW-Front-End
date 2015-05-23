@@ -132,11 +132,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $scope.couponInfo = data
             })
         }
-        $http.jsonp("http://www.gravatar.com/" + $rootScope.student.username + ".json?callback=JSON_CALLBACK")
-            .success(function(data){
-                $rootScope.student.bio = data['entry'][0]['aboutMe']
-            })
-        ;
         $scope.show = function(section){
             $scope.profile = section === 'profile'
             $scope.security = section === 'security'
@@ -469,7 +464,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
         
         $scope.delete = function(homework){
-            $rootScope.flashesNow.push({class: 'info', message: 'Deleting...'})
             $http.delete(PlanHWApi + 'hw/'+homework.homework.id+'?token='+$rootScope.student_token)
             .success(function(data){
                 $scope.reload();
@@ -482,9 +476,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 } else {
                     homework = null
                 }
-                
             })
-            $rootScope.flashesNow.pop()
         }
         
         $scope.show = function(type,after){
