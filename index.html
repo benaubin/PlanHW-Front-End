@@ -80,7 +80,7 @@
             </div>
         </div>
         
-        <div class="container" ng-show="flashesNow[0]">
+        <div class="container" ng-show="flashesNow[0]" ng-cloak>
             <div ng-repeat="flash in flashesNow">
                 <div class="alert alert-{{flash.class}} alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
