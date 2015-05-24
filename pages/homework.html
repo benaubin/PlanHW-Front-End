@@ -27,12 +27,12 @@
                 </ul>
               </div>
             </div>
-            <form id="homework" ng-submit="new(homework)" >
+            <form id="homework" ng-submit="new(homework)">
                 <div class="panel panel-default">
                     <div class="panel-heading input-group">
-                        <input type="text" class="form-control" ng-model="homework.input" ng-change="input(homework)" placeholder="New Homework...">
+                        <input type="text" class="form-control" ng-model="homework.input" ng-change="input(homework)" placeholder="New Homework..." id="homework_input">
                         <span class="input-group-btn">
-                            <input type="submit" id="homework_title" value="Create" class="btn btn-default">
+                            <input type="submit" value="Create" class="btn btn-default">
                             <button ng-show="homework.input" type="button" ng-click="showShare = !showShare" class="btn btn-info">
                                 <i class="fa fa-share-square-o"></i>
                             </button>
@@ -70,10 +70,10 @@
                         </div>
                     </div>
                     <div class="panel-body" ng-show="homework.input" id="hwpreview">
-                        <h3>{{homework.title}}</h3>
+                        <h3 id="homework_title">{{homework.title}}</h3>
                         <p ng-bind-html="marked(homework.description)"></p>
                         <div class="col-xs-12">
-                            <div class="dropdown">
+                            <div class="dropdown" id="homework_due">
                                 <a class="dropdown-toggle my-toggle-select" id="dLabel" role="button" data-toggle="dropdown" data-target="#">
                                     <div class="input-group">
                                         <input type="text" class="form-control action" data-ng-model="homework.due_date">

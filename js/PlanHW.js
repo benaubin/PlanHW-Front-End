@@ -297,8 +297,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
         })
     })
-    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){     
-    
+    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){
         $scope.share = function(homework,student){
             var temp_date = homework.due_date
             homework.due_date = homework.due_date.toISOString();
@@ -526,9 +525,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.reload('incomplete',function(){
             $scope.autoChooseView()
             $scope.loaded = true
-            $scope.reload()
+            $scope.reload('incomplete',function(){
+                //For later: PlanHWTour.start();
+            })
         },true);
-          
+        
     })
     .controller('SigninCtrl', function($scope, $signin, $http){
         $scope.signinError = null
