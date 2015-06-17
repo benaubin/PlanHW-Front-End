@@ -41,45 +41,13 @@ footer.home-footer p {
     body {
         padding-top: 100px;
     }
-    #dictionary {
-           position:absolute;
-        padding-top:300px;
-    }
-    #dictionary.fixed {
-           position:fixed;
-        padding-top:50px;
-    }
     .navbar .container {
         padding-bottom: 50px;
-    }
-    section.slide#slide1 {
-             background: url('/img/screenshots/MacOnDesk.png') fixed center top no-repeat;
-        background-size: cover;
--webkit-background-size: cover;
-   -moz-background-size: cover;
-     -o-background-size: cover;
-    }
-
-    section.slide#slide3 {
-        background: url('/img/screenshots/iPhoneInHand.png') fixed center center no-repeat;
-        background-size: cover;
--webkit-background-size: cover;
-   -moz-background-size: cover;
-     -o-background-size: cover;
-    }
-    #fly-card-container{
-        padding-top:500px;
-    }
-    .fly-card {
-        padding-top:100%;
     }
 }
 @media screen and (max-width: 768px) {
     body {
         padding-top:60px;
-    }
-    .fly-card {
-        padding-top:50%;
     }
 }
 
@@ -89,6 +57,10 @@ footer.home-footer p {
 
 .pad-50t {
     padding-top: 50px;
+}
+
+.pad-100t {
+    padding-top: 100px;
 }
 
 .pad-40t {
@@ -165,6 +137,7 @@ footer.home-footer p {
              z-index: 2;
               border: solid 1px #EBEBEB;
 }
+
 .bigger {
     font-size: 175%;
 }

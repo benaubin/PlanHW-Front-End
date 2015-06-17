@@ -1,4 +1,6 @@
-if($(location).attr('hostname').match(/^.+?\.\D+?$/i) || confirm("Use production API?")){
+var alwaysUseDevelopmentMode = false,
+    alwaysUseProductionMode = true
+if(!alwaysUseProductionMode && ($(location).attr('hostname').match(/^.+?\.\D+?$/i) || alwaysUseDevelopmentMode || confirm("Use production API?"))){
     var PlanHWApi = "https://api.planhw.com/"
 } else {
     var PlanHWApi = "http://localhost:3000/"
@@ -73,6 +75,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     })
     .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$refreshStudent,$location){
         $refreshStudent()
+        $http.get(PlanHWApi+'pro').success(function(data){
+            Stripe.setPublishableKey(data)
+        })
         $scope.getPro = function(cc,cvc,expMonth,expYear,plan,coupon){
             $scope.show('profile')
             if(cc && cvc){
@@ -244,58 +249,53 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $rootScope.student_id = login_data['student']['id']
             $rootScope.student = login_data['student'] 
         }
-        $http.get(PlanHWApi+'pro').success(function(data){
-            Stripe.setPublishableKey(data)
-        })
     })
     .controller('IndexCtrl',function($scope){
-        $scope.signuplinks = true
-        var body = $('body');
-        var time = moment().add(1 + Math.floor(Math.random() * 6), 'days');
-        var premium = false;
-        $('.premium-feature').hide();
-        $scope.PremiumAction = "Show";
-        $scope.premiumToggle = function () {
-            if (premium) {
-                $scope.PremiumAction = "Show";
-                premium = false;
-                $('.premium-feature').hide('slow');
-            } else {
-                $scope.PremiumAction = "Hide";
-                premium = true;
-                $('.premium-feature').show('slow');
+        $scope.people = 'Students'
+        var changePeople = function(){
+            var People = ['People','Students','Parents','Teachers']
+            var people = People[Math.floor(Math.random() * People.length)].split('')
+            $scope.people = ''
+            $scope.$apply()
+            var i = 0;
+            var next = function(){
+                if(people[i]){
+                    $scope.people = $scope.people + people[i]
+                    $scope.$apply()
+                    i++
+                    window.setTimeout(next,50)
+                } else {
+                    window.setTimeout(changePeople,3500)
+                }
             }
-            $scope.$apply();
-        };
-        $.ajax({
-            url: 'http://api.randomuser.me/',
-            dataType: 'json'
-        }).done(function (data) {
-            $scope.teacher = toTitleCase(data['results'][0]['user']['name']['title'] + ". " + data['results'][0]['user']['name']['last']);
-            if ($scope.teacher === null) {
-                $scope.teacher = "someone"
-            }
-            $scope.$apply();
-        });
+            next()
+        }
+        
+    $scope.quotes = [
+                    {
+                       author: 'Bradley L.',
+                       text: 'This is awesome!'
+                    },
+                    {
+                       author: 'Egan W.',
+                       text: 'really nice so far'
+                    },
+                    {
+                        author: 'Mitch A.',
+                        text: 'Nice!'
+                    },
 
-        $scope.timeFull = time.format('dddd');
-        $scope.timeFromNow = time.fromNow();
-        $('.show-slide2').hide();
-        var slide2 = $('#slide2')
-        var slide3 = $('#slide3')
-        $(window).scroll(function(){
-            distance = parseInt($(window).scrollTop())
-            if(250 <= distance){
-                $('#dictionary').addClass('fixed')
-            } else {
-                $('#dictionary').removeClass('fixed')
-            }
-            if (slide2.offset().top <= distance && distance <= slide3.offset().top - 750) {
-                $('.show-slide2').show('slow')
-            } else {
-                $('.show-slide2').hide('fast')
-            }
-        })
+//                   {
+//                       author: 'Mary-Hannah D.',
+//                       text: 'PlanHW is the bomb.'
+//                   },
+//                   {
+//                       author: 'Zeke N.',
+//                       text: 'It looks really good!'
+//                   }
+               ]
+        
+        window.setTimeout(changePeople,5000)
     })
     .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){
         $scope.share = function(homework,student){

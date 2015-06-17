@@ -1,257 +1,67 @@
-<section id="slide1" class="slide">
+<section id="land">
     <div class="container">
-        <div class="hidden-xs">
-            <div class="col-md-3 col-sm-4" id="dictionary">
-                <div class="panel panel-default">
-                    <h1 class="panel-heading" id="planhw-title">PlanHW</h1>
-                    <div class="panel-body">
-                        <i><p class="small text-center">plan•eych•duhb-uhl-yoo</p></i>
-                        <p class="lead text-center">
-                            A planner built <br>
-                            <strong>correctly</strong> for<br>
-                            students.</p>
-                    </div>
-                </div>
-                <img src="/img/screenshots/iPhoneMacbook.png" width="100%" class="show-slide2"/>
-            </div>
+        <div class="col-sm-offset-7 pad-50t col-xs-offset-3">
+            <p class="textbackwhite lead">
+                <strong>PlanHW</strong><br>
+                Is Your New<br>
+                Homework Planner<br>
+                That {{people}} love.
+            </p>
         </div>
-        <div class="col-sm-4 col-md-3 col-md-offset-6 col-sm-offset-8 col-xs-12" id="fly-card-container">
-            <div class="visible-xs">
-                <div class="panel panel-default">
-                    <h1 class="panel-heading">PlanHW</h1>
-                    <div class="panel-body">
-                        <i><p class="small text-center">plan•eych•duhb-uhsl-yoo</p></i>
-                        <p class="lead text-center">A planner built <strong>correctly</strong> for students.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <p>Reminders applications were not designed for students.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <p>
-                            They remind you when you when your homework is due - not when you should work on it.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <p>
-                            Some people thought that typing in more fields made a homework planner easier to use.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <h2>They</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <h2>Were</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <h2>Wrong.</h2>
-                    </div>
-                </div>
-            </div>
+        <div class="text-center">
+            <i class="pad-100t fa fa-play fa-5x pad-25t" id="play-button" ng-click="playVideo()"></i>
         </div>
     </div>
 </section>
-<section id="slide2" class="slide">
+<section>
     <div class="container">
-        <div class="col-sm-4 col-md-3 col-md-offset-6 col-sm-offset-8 col-xs-12">
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <h2>PlanHW is different.</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <p>
-                            Instead of features for people with full time jobs, PlanHW is a planner for students, <strong>like you!</strong>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <p>
-                            Here's a few examples...
-                        </p>
-                    </div>
-                </div>
+        <h2 class="text-center">PlanHW is a better homework planner.</h2>
+        <p class="text-center">
+            Because <strong>PlanHW</strong><br>
+            Was Designed For<br>
+            Students To Love.
+        </p>
+        <h3 class="col-md-offset-1 pad-100t">How?</h3>
+        <div class="row">
+            <h2 class="text-center col-xs-12">It Understands You</h2>
+            <div class="col-md-8 col-md-offset-2 text-center">
+                <p class="col-md-6">
+                    <strong>What YOU type.</strong><br>
+                    Instead of having to learn special controlls, PlanHW understands what you type, and changes it to what you mean.
+                    It's fast. It's simple. It's that smart.<br>
+                </p>
+                <p class="col-md-6">
+                    <strong>What YOU do.</strong><br>
+                    <i>Coming Soon:</i><br>
+                    PlanHW learns your schedule automagically - and reminds you to do your homework - when you can do it best - not when it's due.
+                </p>
             </div>
         </div>
-        <div class="col-md-offset-5 col-sm-6 col-sm-offset-6 col-xs-12 pad-50t">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div align="center">
-                                <i class="glyphicon glyphicon-user fa-4x" data-250="opacity:0" data-350="opacity:1"></i>
-                             </div>
-                            <h2 class="text-center">Smart Fields</h2>
-                            <p data-200="opacity:.3" data-400="opacity:1">
-                                PlanHW is smart, and knows what you mean when <code>LA Paper due
-                                {{timeFull}}</code> is typed. You'll see that PlanHW knows
-                                {{timeFull}} is {{timeFromNow}}, and LA is your Language
-                                Arts class taught by {{teacher}}, so you can actually pass in your passing
-                                period.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div align="center">
-                                <i class="fa fa-th-list fa-4x text-center" data-250="opacity:0" data-350="opacity:1"></i>
-                            </div>
-                            <h2 class="text-center">Helpful Reminders</h2>
-                            <p data-200="opacity:.3" data-400="opacity:1">
-                                Most current reminder systems remind you... when your homework is due. "IF YOU DON'T HAVE
-                                YOUR HOMEWORK YET, SOCIETY HATES YOU!" is not the message you need when you walk into class
-                                without homework. PlanHW tells you when you should work on homework, not when it's due.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div align="center">
-                                <i class="fa fa-circle-thin fa-4x text-center" data-250="opacity:0" data-350="opacity:1"></i>
-                            </div>
-                            <h2 class="text-center">Simple</h2>
-                            <p data-200="opacity:.3" data-400="opacity:1">With a goal of quick and simple setup, anyone can use PlanHW with only a few minutes to sign 
-                                up and create your account. Link PlanHW with your existing calender or have it learn when you do
-                                your homework. You don't even have to choose when to be reminded, PlanHW does that for you!</p>
-                        </div>
-                    </div>
-                </div>    
+        <div class="row">
+            <h2 class="text-center col-xs-12">It's Simple.</h2>
+            <div class="col-md-8 col-md-offset-2 text-center">
+                <p class="col-md-6 col-md-offset-3">
+                    <strong>Fast</strong><br>
+                    Sometimes entering homework turns passing time into homework-entering-and-then-rushing-to-the-next-class time. That's stupid, and instead of
+                    making it harder to enter homework, we made it easier. Type natural language, and we'll know what you mean.
+                    <br>
+                </p>
             </div>
         </div>
-        <div class="col-sm-4 col-md-3 col-md-offset-6 col-sm-offset-8 col-xs-12">
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <p class="bold">
-                            It's pretty awesome!
-                        </p>
-                    </div>
-                </div>
+        <h3>And it works: </h3>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3" id="quotes">
+                <blockquote ng-repeat="quote in quotes track by $index" class="col-sm-6" ng-class="{'blockquote-reverse': $index%2 != 0}">
+                    <p>{{quote.text}}</p>
+                    <footer>{{quote.author}}</footer>
+                </blockquote>
             </div>
         </div>
-        <div class="col-md-8 col-md-offset-5 col-sm-8 col-sm-offset-5 col-xs-12" id="pricing">
-            <div class="panel panel-default">
-                <h3 class="panel-heading">PlanHW is Free!</h3>
-                <div class="panel-body">
-                    <p>PlanHW is free to use, and it's still better then almost any planner, but if you want, PlanHW has some other features that help support us. And instead of having 52 plans with different features, you pay just $2.50/month<sup>*</sup> for everything else PlanHW has.</p>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <tr>
-                            <th>Feature</th>
-                            <th>Free</th>
-                            <th>Pro</th>
-                        </tr>
-                        <tr>
-                            <th>Cost</th>
-                            <td>Free, Forever</td>
-                            <td>$2/Month<sup>*</sup></td>
-                        </tr>
-                        <tr>
-                            <th>Plan Homework</th>
-                            <td>√</td>
-                            <td>√</td>
-                        </tr>
-                        <tr>
-                            <th>Smart Fields</th>
-                            <td>√</td>
-                            <td>√</td>
-                        </tr>
-                        <tr class="premium-feature">
-                            <th>iOS App</th>
-                            <td>-</td>
-                            <td>√</td>
-                        </tr>
-                        <tr class="premium-feature">
-                            <th>Smart Reminders</th>
-                            <td>-</td>
-                            <td>√</td>
-                        </tr>
-                        <tr class="premium-feature">
-                            <th>PlanHW MarketPlace</th>
-                            <td>-</td>
-                            <td>√</td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <p class="text-center">
-                                    <a id="show-premium" href="" ng-click="premiumToggle()">
-                                        {{PremiumAction}} Premium Features
-                                    </a>
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <sup>* Paid annually. Normally $3.</sup>
+        <div class="pad-50t">
+            <h2>
+                <p class="text-center">So why not <a href="#/signup">sign up</a> today?</p>
+            </h2>
         </div>
-    </div>
-</section>
-<section id="slide3" class="slide">
-    <div class="container">
-        <div class="col-sm-4 col-md-3 col-md-offset-6 col-sm-offset-8 col-xs-12">
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <p>We'll repeat:</p>
-                        <h2>
-                            It's pretty awesome.
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div class="fly-card">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <p>
-                            It's <span class="bold">free</span> and it's <span class="bold">awesome</span>!
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section id="slide4" class="slide">
-    <div class="container pad-50t">
-        <h2>
-            <p class="text-center">So why not <a href="#/signup">sign up</a> today?</p>
-        </h2>
     </div>
 </section>
 <footer class="pad-50t home-footer">
@@ -269,7 +79,6 @@
         <div class="col-sm-4 col-xs-6">
             <p class="bold text-center">
                 Contact:
-            </p>
             <ul class="list-unstyled text-center">
                 <li>
                     <a href='mailto:hello@planhw.com?subject=Hey'><i class="fa fa-envelope fa-2x"></i></a>
