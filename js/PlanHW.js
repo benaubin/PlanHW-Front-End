@@ -1,5 +1,5 @@
 var alwaysUseDevelopmentMode = false,
-    alwaysUseProductionMode = true
+    alwaysUseProductionMode = false
 if(!alwaysUseProductionMode && ($(location).attr('hostname').match(/^.+?\.\D+?$/i) || alwaysUseDevelopmentMode || confirm("Use production API?"))){
     var PlanHWApi = "https://api.planhw.com/"
 } else {
