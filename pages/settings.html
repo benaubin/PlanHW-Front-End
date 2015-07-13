@@ -118,6 +118,13 @@
                                             </p>
                                         </div>
                                     </div>
+                                    <hr>
+                                    <p>
+                                        <strong>Access Token</strong><br>
+                                        Grants full access to your account for 30 days.<br>
+                                        <a class="action" ng-click="showToken = true" ng-hide="showToken">Show</a>
+                                        <code ng-show="showToken">{{student_token}}</code>
+                                    </p>
                                 </div>
                                 <div ng-if="showFriends">
                                     <div class="row">
