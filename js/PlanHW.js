@@ -269,31 +269,31 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             next()
         }
         
-    $scope.quotes = [
-                    {
-                       author: 'Bradley L.',
-                       text: 'This is awesome!'
-                    },
-                    {
-                       author: 'Egan W.',
-                       text: 'really nice so far'
-                    },
-                    {
-                        author: 'Mitch A.',
-                        text: 'Nice!'
-                    },
+            $scope.quotes = [
+                            {
+                               author: 'Bradley L.',
+                               text: 'This is awesome!'
+                            },
+                            {
+                               author: 'Egan W.',
+                               text: 'really nice so far'
+                            },
+                            {
+                                author: 'Mitch A.',
+                                text: 'Nice!'
+                            },
 
-//                   {
-//                       author: 'Mary-Hannah D.',
-//                       text: 'PlanHW is the bomb.'
-//                   },
-//                   {
-//                       author: 'Zeke N.',
-//                       text: 'It looks really good!'
-//                   }
-               ]
-        
-        window.setTimeout(changePeople,5000)
+        //                   {
+        //                       author: 'Mary-Hannah D.',
+        //                       text: 'PlanHW is the bomb.'
+        //                   },
+        //                   {
+        //                       author: 'Zeke N.',
+        //                       text: 'It looks really good!'
+        //                   }
+                       ]
+
+                window.setTimeout(changePeople,5000)
     })
     .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){
         $scope.share = function(homework,student){
