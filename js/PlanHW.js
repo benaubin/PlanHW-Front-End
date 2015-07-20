@@ -287,10 +287,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         //                       author: 'Mary-Hannah D.',
         //                       text: 'PlanHW is the bomb.'
         //                   },
-        //                   {
-        //                       author: 'Zeke N.',
-        //                       text: 'It looks really good!'
-        //                   }
+                            {
+                               author: 'Zeke N.',
+                               text: 'It looks really good!'
+                            }
                        ]
 
                 window.setTimeout(changePeople,5000)
