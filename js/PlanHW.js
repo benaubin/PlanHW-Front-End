@@ -124,7 +124,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
         }
         $scope.testCoupon = function(coupon){
-            $http.get(PlanHWApi+ 'coupon/'+ coupon)
+            $http.get(PlanHWApi+ 'coupon/'+ encodeURIComponent(coupon))
             .success(function(data){
                 $scope.couponInfo = data
                 if(data === '100% off'){
