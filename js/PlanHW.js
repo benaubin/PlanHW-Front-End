@@ -1,4 +1,4 @@
-if(($(location).attr('hostname').match(/^.+?\.\D+?$/i) || confirm("Use production API?"))){
+if(($(location).attr('hostname').match(/^.+?\.\D+?$/i) || $(location).attr('hostname').match(/dev/i) || confirm("Use production API?"))){
     var PlanHWApi = "https://api.planhw.com/"
 } else {
     var PlanHWApi = "http://localhost:3000/"
@@ -417,10 +417,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         
         $scope.complete = function(homework){
             homework.homework.completed = !homework.homework.completed
+            $scope.toView();
             $http.put(PlanHWApi + 'hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
-            .success(function(){
-                $scope.toView();
-            }).error(function(data, status){
+            .error(function(data, status){
                 if(data && status){
                     homework.homework.completed = {completed:!(homework.homework.completed)}
                 } else $scope.toView();
