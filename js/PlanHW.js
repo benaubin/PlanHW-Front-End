@@ -95,8 +95,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                         coupon: coupon
                     }).success(function(){
                         $rootScope.flashes.push({class: 'success', message: 'Congrats! You now have PlanHW Pro!'})
-                        $rootScope.signout()
-                        $location.path('/thanks')
+                        $rootScope.signout('/thanks')
                     }).error(function(data){
                         $scope.show('pro')
                         $rootScope.flashesNow.push({class:'danger', message: data.error.message})
@@ -238,11 +237,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $('.modal').modal('hide');
             } catch(err){}
         });
-        $rootScope.signout = function(){
+        $rootScope.signout = function(location){
             $rootScope.student_id = null
             $rootScope.student_token = null
             $rootScope.student = null
-            $location.path('/')
+            $location.path(location || '/')
             webStorage.remove('login_data')
         }
         var login_data = webStorage.get('login_data') 
