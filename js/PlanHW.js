@@ -29,6 +29,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             templateUrl: 'pages/signin.html',
             controller: 'SigninCtrl'
         })
+        .when('/thanks',{
+            templateUrl: 'pages/thanks.html'
+        })
         .when('/homework',{
             templateUrl: 'pages/homework.html',
             controller: 'HWCtrl'
@@ -93,6 +96,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     }).success(function(){
                         $rootScope.flashes.push({class: 'success', message: 'Congrats! You now have PlanHW Pro!'})
                         $rootScope.signout()
+                        $location.path('/thanks')
                     }).error(function(data){
                         $scope.show('pro')
                         $rootScope.flashesNow.push({class:'danger', message: data.error.message})
