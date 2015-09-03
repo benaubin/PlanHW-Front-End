@@ -30,6 +30,16 @@
                                 <input class="form-control" type="password" ng-model="password" placeholder="Password"/>
                             </div>
                         </div>
+                        <div class="col-xs-12" ng-show="tokenlogin">
+                            <div class="input-group">
+                                <input class="form-control" ng-model="token" placeholder="Access Token"/>
+                                <span class="input-group-btn">
+                                    <button type="button" ng-click="signinwithtokennostudent(token)" class="btn btn-info">
+                                        Login
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-offset-3 col-sm-6 pad-10t" ng-show="showotp">
@@ -41,7 +51,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="#/forgotpass" class="pull-left">Forgot?</a>
+                    <div class="pull-left">
+                        <ul class="list-unstyled text-center"> 
+                            <li><a href="#/forgotpass">Forgot?</a></li>
+                            <li><a ng-click="tokenlogin=true" ng-hide="tokenlogin">Token Login</a></li>
+                        </ul>
+                    </div>
                     <div class="pull-right">
                         <label>Remember?</label>
                         <input type="checkbox" ng-model="remember">

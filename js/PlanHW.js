@@ -227,7 +227,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 ;
             })
     })
-    .run(function($rootScope, $location, webStorage, $http){
+    .run(function($rootScope, $location, webStorage, $http, $signin){
         $rootScope.flashes = []
         $rootScope.flashesNow = []
         $rootScope.$on('$routeChangeSuccess', function () {
@@ -237,6 +237,12 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $('.modal').modal('hide');
             } catch(err){}
         });
+        $rootScope.signinwithtokennostudent = function(token){
+            $http.get(PlanHWApi + 'test/login?token=' + token)
+            .success(function(data){
+                $signin.token(token, data.student, true)    
+            });
+        }
         $rootScope.signout = function(location){
             $rootScope.student_id = null
             $rootScope.student_token = null
