@@ -56,7 +56,7 @@
                                     </div>
                                 </div>
                                 <div ng-hide="student.pro">
-                                    <p class="col-md-10 col-md-offset-1">Hey {{student.name}}! It looks like you might want to share this assisment with your friends on PlanHW. Although sharing assignments is a pro-only feature, you can get it <a href="#/settings">here</a> for less then $1.25 with the coupon "friends".</p>
+                                    <p class="col-md-10 col-md-offset-1">Hey {{student.name}}! It looks like you might want to share this assisment with your friends on PlanHW. Although sharing assignments is a pro-only feature, you can get it <a href="#/settings">here</a> for only $3 a month.</p>
                                 </div>
                             </div>
                         </div>
@@ -104,20 +104,20 @@
     </div>
     <div ng-show="cards">
         <div ng-repeat="homework in hw">
-            <div class="col-md-4 col-sm-6 col-xs-12" ng-show="homework.show">
+            <div class="col-xs-6" ng-show="homework.show">
                 <div class="panel panel-default" ng-class="{'complete': homework.homework.completed}">
                     <div class="panel-body">
-                        <div class="media">
-                            <div class="media-left">
-                                <a class="action" ng-click="complete(homework)">
-                                    <i ng-show="homework.homework.completed" class="fa fa-check-square-o fa-3x fa-fw"></i>
-                                    <i ng-hide="homework.homework.completed" class="fa fa-square-o fa-3x fa-fw"></i>
-                                    <span class="sr-only">Toggle Complete</span>
-                                </a>
-                            </div>
-                            <div class="media-body" ng-click="homework.editing = true">
+                        <div class="pull-left">
+                            <a class="action" ng-click="complete(homework)">
+                                <i ng-show="homework.homework.completed" class="fa fa-check-square-o fa-3x fa-fw"></i>
+                                <i ng-hide="homework.homework.completed" class="fa fa-square-o fa-3x fa-fw"></i>
+                                <span class="sr-only">Toggle Complete</span>
+                            </a>
+                        </div>
+                        <div ng-click="homework.editing = true">
+                            <div class="col-md-7">
                                 <div ng-hide="homework.editing">
-                                    <h3 class="media-heading">{{homework.homework.title}}</h3>
+                                    <p class="bold">{{homework.homework.title}}</p>
                                     <p ng-bind-html="homework.descHTML"></p>
                                 </div>
                                 <div ng-show="homework.editing">
@@ -128,20 +128,22 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr>
-                            <p align="center">Due: <strong>{{homework.due_date}}</strong></p>
                         </div>
-                        <div align="right">
+                        <div class="pull-right">
                             <i class="fa fa-pencil fa-lg action" ng-click="homework.editing = true" ng-hide="homework.editing"></i>
+                            <br>
                             <i class="fa fa-trash-o fa-lg action" ng-click="delete(homework)"></i>
+                            <br>
                             <i class="fa fa-check fa-lg action" ng-click="update(homework)" ng-show="homework.editing"></i>
+                        </div>
+                        <div class="col-xs-12 text-center">
+                            <p>Due: <strong>{{homework.due_date}}</strong></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
     <div ng-show="list">
         <div>
             <div class="col-md-2 col-sm-3 col-offset-1 col-xs-12">
