@@ -257,8 +257,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $rootScope.student = login_data['student'] 
         }
     })
-    .controller('IndexCtrl',function($scope){
+    .controller('IndexCtrl',function($scope, $homeworkInput){
         $scope.people = 'Students'
+        $scope.homework = {input: 'Math Problems due next Tuesday (system of equations)'}
+        $homeworkInput($scope.homework)
+        $scope.hwinput = $homeworkInput;
         var changePeople = function(){
             var People = ['People','Students','Parents','Teachers']
             var people = People[Math.floor(Math.random() * People.length)].split('')
@@ -304,7 +307,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
 
                 window.setTimeout(changePeople,5000)
     })
-    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage){
+    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage, $homeworkInput){
         $scope.share = function(homework,student){
             var temp_date = homework.due_date
             homework.due_date = homework.due_date.toISOString();
@@ -379,50 +382,20 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         if($rootScope.student_token){
             var friends = $rootScope.student.friends
             friends.forEach(function(friend, index){
-            if(friend.student){
-                friend2 = friend.student
-                friend2.name = friend2.name.split(' ')[0]
-                friends[index] = friend2
-            }
-        })
+                if(friend.student){
+                    friend2 = friend.student
+                    friend2.name = friend2.name.split(' ')[0]
+                    friends[index] = friend2
+                }
+            })
             var sifter = new Sifter(friends);
         }
     
         $scope.suggestShareFriend = null
         
         $scope.input = function(homework){
-            homework.description = homework.input.match(/\((.+)\)/i)
-            if(homework.description){
-                homework.description = homework.description[1]
-            }
-            var date;
-            chrono.parse(homework.input).forEach(function(match){
-                date = match
-            });
-            homework.due_date = moment(chrono.parseDate(homework.input));
-            if(!homework.due_date.isValid()){                 
-                homework.due_date = moment().add('1','d')
-            }
-            homework.title = homework.input.replace(/\((.+)\)/i, "")
-            if(date){
-                homework.title = homework.title.replace("due "+date.text,'').replace(date.text,'');
-            }
-            if(homework.input.length < 3){
-                $scope.suggestShareFriend = null
-            } else {
-                homework.input.split(' ').forEach(function(word){
-                    var results = sifter.search(word, {
-                        fields: ['username','name'],
-                        sort: [{field: 'name', direction: 'asc'},{field: 'username', direction: 'asc'}],
-                        limit: 1
-                    });
-                    var result = results.items[0]
-                    if(result && result.score >= .45 && (word.length > 3 || word === friends[result.id].name)){
-                        $scope.suggestShareFriend = friends[result.id]
-                    }
-                })
-            }
-        }
+            return $homeworkInput(homework, sifter)
+        };
         
         $scope.complete = function(homework){
             homework.homework.completed = !homework.homework.completed
@@ -663,5 +636,41 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 return false;
             });
     }})
-;
-})();
+    .service('$homeworkInput',function(){
+        return function(homework, sifter){
+            homework.description = homework.input.match(/\((.+)\)/i)
+            if(homework.description){
+                homework.description = homework.description[1]
+            }
+            var date;
+            chrono.parse(homework.input).forEach(function(match){
+                date = match
+            });
+            homework.due_date = moment(chrono.parseDate(homework.input));
+            if(!homework.due_date.isValid()){                 
+                homework.due_date = moment().add('1','d')
+            }
+            homework.title = homework.input.replace(/\((.+)\)/i, "")
+            if(date){
+                homework.title = homework.title.replace("due "+date.text,'').replace(date.text,'');
+            }
+            if(sifter){
+                if(homework.input.length < 3){
+                    $scope.suggestShareFriend = null
+                } else {
+                    homework.input.split(' ').forEach(function(word){
+                        var results = sifter.search(word, {
+                            fields: ['username','name'],
+                            sort: [{field: 'name', direction: 'asc'},{field: 'username', direction: 'asc'}],
+                            limit: 1
+                        });
+                        var result = results.items[0]
+                        if(result && result.score >= .45 && (word.length > 3 || word === friends[result.id].name)){
+                            $scope.suggestShareFriend = friends[result.id]
+                        }
+                    })
+                }
+            }
+        }
+    })
+;})();
