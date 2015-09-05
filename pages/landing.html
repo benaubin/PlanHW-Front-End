@@ -9,7 +9,12 @@
             </p>
         </div>
         <div class="text-center">
-            <i class="pad-100t fa fa-play fa-5x pad-25t" id="play-button" ng-click="playVideo()"></i>
+            <i data-toggle="tooltip" data-placement="top" title="A video is coming soon!" class="pad-100t fa fa-play fa-5x pad-25t" id="play-button" ng-click="playVideo()"></i>
+            <script>
+            $(function () {
+              $('[data-toggle="tooltip"]').tooltip()
+            })
+            </script>
         </div>
     </div>
 </section>
