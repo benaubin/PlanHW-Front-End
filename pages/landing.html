@@ -16,7 +16,7 @@
 <section>
     <div class="container">
         <h2 class="text-center">PlanHW is a better homework planner.</h2>
-        <p class="text-center">
+        <p class="text-center lead big">
             Because <strong>PlanHW</strong><br>
             Was Designed For<br>
             Students To Love.
@@ -24,29 +24,76 @@
         <h3 class="col-md-offset-1 pad-100t">How?</h3>
         <div class="row">
             <h2 class="text-center col-xs-12">It Understands You</h2>
-            <div class="col-md-8 col-md-offset-2 text-center">
-                <p class="col-md-6">
+            <div class="row col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                <p class="pull-right text-right lead feature center-text-xs">
                     <strong>What YOU type.</strong><br>
-                    Exactly how you talk to a human, PlanHW understands<br>
-                    natural language - so you can tell it about a homework<br>
+                    Exactly how you talk to a human,
+                    PlanHW understand natural language -
+                    so you can tell it about a homework
                     assignment without doing anything different.
                 </p>
-                <p class="col-md-6">
+                <form class="col-md-5 col-sm-6 col-xs-10 col-xs-offset-1 col-sm-offset-0">
+                    <div class="panel panel-default center-text-xs">
+                        <div class="panel-heading">
+                            <input type="text" class="form-control" ng-model="homework.input" ng-change="hwinput(homework)" placeholder="New Homework...">
+                        </div>
+                        <div class="panel-body" id="samplehwpreview">
+                            <h3 id="homework_title">{{homework.title}}</h3>
+                            <p ng-bind-html="marked(homework.description)"></p>
+                            <div class="input-group">
+                                <input type="text" class="form-control action" data-ng-model="homework.due_date" disabled>
+                                <span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
+                            </div>      
+                            <label>Description</label>
+                            <textarea class="form-control" ng-model="homework.description"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <hr>
+            <div class="row col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                <p class="pull-left text-left lead feature center-text-xs">
                     <strong>What YOU do.</strong><br>
                     <i>Coming Soon:</i><br>
-                    PlanHW learns your schedule automagically - and reminds you to do your homework - when you can do it best - not when it's due.
+                    After telling PlanHW when you work on
+                    homework, PlanHW learns how long
+                    differnt assingments take <strong>you</strong> to do,
+                    and sends you reminders with a list
+                    of what you should do. Automaticly.
                 </p>
+                <div class="col-md-6 col-sm-6 col-xs-10 col-xs-offset-1 col-sm-offset-0">
+                    <img src="img/emailed-reminder.png" width="100%">
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <h2 class="text-center col-xs-12">It's Simple.</h2>
-            <div class="col-md-8 col-md-offset-2 text-center">
-                <p class="col-md-6 col-md-offset-3">
-                    <strong>Fast</strong><br>
+            <hr>
+            <div class="row col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                <p class="pull-right text-right lead feature center-text-xs">
+                    <strong>Assignments YOU get.</strong><br>
+                    <i>Coming Soon:</i><br>
+                    If you enter the same assignment alot, like
+                    Math Packet due in 2 days, then PlanHW will
+                    know that a Math Packet is due in two days.
+                    And you don't have to do anything.
+                </p>
+                <div class="col-md-6 col-sm-6 col-xs-10 col-xs-offset-1 col-sm-offset-0">
+                    <img src="img/example-homework.png" width="100%">
+                </div>
+            </div>
+            <hr>
+            <div class="row col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                <p class="pull-left text-left lead feature center-text-xs">
+                    <strong>That YOU have a life.</strong><br>
                     Sometimes entering homework turns passing time into homework-entering-and-then-rushing-to-the-next-class time. That's stupid, and instead of
                     making it harder to enter homework, we made it easier. You don't even need to take your hands off the keyboard.
-                    <br>
-                </p>
+                </p> 
+                <div class="col-md-6 col-sm-6 col-xs-10 col-xs-offset-1">
+                    <div class="panel panel-success">
+                        <h3 class="panel-heading">You are done!</h3>
+                        <div class="panel-body">
+                            <p>Great job, Ben! You finished all your homework here, now go do things and be awesome!</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <h3>And it works: </h3>

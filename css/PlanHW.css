@@ -44,10 +44,17 @@ footer.home-footer p {
     .navbar .container {
         padding-bottom: 50px;
     }
+    .feature {
+        width: 40%;
+    }
 }
 @media screen and (max-width: 768px) {
     body {
         padding-top:60px;
+    }
+    center-text-xs {
+        float: none;
+        text-align: center !important;
     }
 }
 
@@ -137,12 +144,27 @@ footer.home-footer p {
              z-index: 2;
               border: solid 1px #EBEBEB;
 }
+#samplehwpreview {
+    background-color: white;
+              border: solid 1px #EBEBEB;
+}
 
 .bigger {
     font-size: 175%;
 }
 .tabbed {
     padding-left:2em
+}
+p.big {
+    font-size: 200%;
+}
+
+.feature {
+      word-wrap: normal;
+-webkit-hyphens: none;
+   -moz-hyphens: none;
+        hyphens: none;
+}
 
 #land {
     background: url('/img/screenshots/MacOnDesk.jpg') fixed center center no-repeat;
