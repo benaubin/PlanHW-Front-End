@@ -61,9 +61,9 @@
                 <div class="navbar-right">
                     <ul class="nav navbar-nav nav-pills">
                         <li class="bold visible-xs planhw-branding"><a href="#/">PlanHW</a></li>
-                        <li ng-hide="student_token"><a href="#/signup">Sign Up</a></li>
-                        <li ng-hide="student_token"><a href="#/signin" onclick="event.preventDefault();" data-toggle="modal" data-target="#signin-popup">Sign In</a></li>
-                        <li ng-show="student_token"><a href="#/homework">Homework</a></li>
+                        <li ng-hide="student.authenicated"><a href="#/signup">Sign Up</a></li>
+                        <li ng-hide="student.authenicated"><a href="#/signin" onclick="event.preventDefault();" data-toggle="modal" data-target="#signin-popup">Sign In</a></li>
+                        <li ng-show="student.authenicated"><a href="#/homework">Homework</a></li>
                         <li ng-show="student">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="" role="button" aria-expanded="false">
                                 {{student.username}} <span class="caret"></span>
