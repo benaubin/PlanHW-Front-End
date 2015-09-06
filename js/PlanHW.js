@@ -10,7 +10,7 @@ addToHomescreen();
 
 (function(){
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize'])
-    .config(function($routeProvider, $httpProvider) {
+    .config(function($routeProvider) {
         
         $routeProvider
         
