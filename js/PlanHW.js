@@ -373,13 +373,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             })
         }
         $scope.gsigninURL = 
-                "https://accounts.google.com/o/oauth2/auth?" + [
-                    "scope=" + encodeURIComponent(['openid','email'].join(' ')),
-                    "state=" + encodeURIComponent('google'),
-                    "redirect_uri=" + encodeURIComponent(PlanHWApi+'oauth2callback'),
-                    "response_type=code",
-                    "client_id=" + encodeURIComponent("179836333485-a9u3omrs9o0c1ik00fesa2043q0f63fe.apps.googleusercontent.com")
-                ].join('&')
+                "https://accounts.google.com/o/oauth2/auth?" + $httpParamSerializer({
+                        scope: ['openid email'].join(' '),
+                        state: 'google',
+                        redirect_uri: PlanHWApi + 'oauth2callback',
+                        response_type: 'code',
+                        client_id: "179836333485-a9u3omrs9o0c1ik00fesa2043q0f63fe.apps.googleusercontent.com"
+                    })
     })
     .controller('ForgotPassCtrl',function($scope, $http, $rootScope, $location){
         $scope.changePass = function(){
