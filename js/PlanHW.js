@@ -242,11 +242,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $rootScope.student = Student.build(student)
         }
     })
-    .controller('IndexCtrl',function($scope, $homeworkInput){
+    .controller('IndexCtrl',function($scope, Homework){
         $scope.people = 'Students'
-        $scope.homework = {input: 'Math Problems due next Tuesday (system of equations)'}
-        $homeworkInput($scope.homework)
-        $scope.hwinput = $homeworkInput;
+        $scope.hwinput = Homework.Build.Input;
+        $scope.homework = $scope.hwinput("Math Problems due next Tuesday (system of equations)")
         var changePeople = function(){
             var People = ['People','Students','Parents','Teachers']
             var people = People[Math.floor(Math.random() * People.length)].split('')

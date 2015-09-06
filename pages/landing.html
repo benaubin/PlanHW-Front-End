@@ -41,13 +41,13 @@
                 <form class="col-md-5 col-sm-6 col-xs-10 col-xs-offset-1 col-sm-offset-0">
                     <div class="panel panel-default center-text-xs">
                         <div class="panel-heading">
-                            <input type="text" class="form-control" ng-model="homework.input" ng-change="hwinput(homework)" placeholder="New Homework...">
+                            <input type="text" class="form-control" ng-model="homework.input" ng-change="homework = hwinput(homework.input)" placeholder="New Homework...">
                         </div>
                         <div class="panel-body" id="samplehwpreview">
                             <h3 id="homework_title">{{homework.title}}</h3>
                             <p ng-bind-html="marked(homework.description)"></p>
                             <div class="input-group">
-                                <input type="text" class="form-control action" data-ng-model="homework.due_date" disabled>
+                                <input type="text" class="form-control action" data-ng-model="homework.dueDate" disabled>
                                 <span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
                             </div>      
                             <label>Description</label>
