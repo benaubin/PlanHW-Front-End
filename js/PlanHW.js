@@ -566,7 +566,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 webStorage.remove('student')
                 webStorage.add('student', {token: token, student: data})
             }
-            return new Student(token, data.id, data.username, data.name, data.admin, data.avatar.default, data.pro, data.friends)
+            return new Student(token, data.id, data.username, data.name, data.admin, data.pro, data.avatar.default, data.friends)
         };
         Student.build.token = function(token, remember){
             return PlanHWRequest.get('test/login', {token: token}).then(function(res){
