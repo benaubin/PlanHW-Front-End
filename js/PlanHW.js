@@ -71,9 +71,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     })
     .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$refreshStudent,$location){
         $refreshStudent();
-        $http.get(PlanHWApi+'pro').success(function(data){
-            Stripe.setPublishableKey(data)
-        })
         $scope.getPro = function(cc,cvc,expMonth,expYear,plan,coupon){
             $scope.show('profile')
             if(cc && cvc){
@@ -216,7 +213,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 })
             });
     })
-    .run(function($rootScope, $location, webStorage, $http, Student){
+    .run(function($rootScope, PlanHWRequest, $location, webStorage, Student){
         $rootScope.flashes = []
         $rootScope.flashesNow = []
         $rootScope.$on('$routeChangeSuccess', function () {
@@ -231,6 +228,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $location.path(location || '/')
             webStorage.remove('student')
         }
+        PlanHWRequest.get('pro').then(function(res){
+            Stripe.setPublishableKey(res.data)
+        })
         if(webStorage.has('student')){
             console.log(webStorage.get('student'))
             student = webStorage.get('student')
