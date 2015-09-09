@@ -494,8 +494,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             request.get = function(path, data){
                 return request(path, 'GET', null, data)
             }.bind(this)
-            request.post = function(path, data){
-                return this.request(path, 'POST', data)
+            request.post = function(path, data, params){
+                return this.request(path, 'POST', data, params)
             }.bind(this)
             request.put = function(path, data){
                 return this.request(path, 'PUT', data)
