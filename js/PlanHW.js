@@ -286,7 +286,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
 
                 window.setTimeout(changePeople,5000)
     })
-    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage, Student, Homework){
+    .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework){
         $scope.share = function(homework,student){
             homework.create(false, student).then(function(){
                 $rootScope.flashesNow.push({class: 'success', message: 'Sent to ' + student.name});
