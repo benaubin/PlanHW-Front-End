@@ -23,7 +23,7 @@
                                     <div ng-repeat="friend in student.friends" class="back-action" ng-click="share(homework,friend)">
                                         <hr>
                                         <div>
-                                            <img class="pull-left pad-25r" ng-src="{{friend.avatar.size50}}">
+                                            <img class="pull-left pad-25r" ng-src="{{friend.avatar(50)}}">
                                             <div class="pull-right" ng-show="friend.sent_homework">
                                                 <i class="fa fa-check fa-3x"></i>
                                             </div>
