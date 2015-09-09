@@ -288,17 +288,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     })
     .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage, Student, Homework){
         $scope.share = function(homework,student){
-            var temp_date = homework.due_date
-            homework.due_date = homework.due_date.toISOString();
-            $http.post(PlanHWApi+'hw?token='+$rootScope.student_token+'&friend_id='+student.id,homework)
-            .success(function(){
-                $rootScope.flashesNow.push({class: 'success',message: 'Sent to ' + student.name});
-            }).error(function(data){
+            homework.create(false, student).then(function(){
+                $rootScope.flashesNow.push({class: 'success', message: 'Sent to ' + student.name});
+            }, function(data){
                 angular.forEach(data['message']['errors'], function(error){
                     $rootScope.flashesNow.push({class: data['message']['type'],message: error}); 
                 })
             })
-            homework.due_date = temp_date
         }
         
         $scope.reload = function(noComplete){
