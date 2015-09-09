@@ -29,6 +29,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             templateUrl: 'pages/signin.html',
             controller: 'SigninCtrl'
         })
+        .when('/profile',{
+            templateUrl: 'pages/student.html',
+            controller: 'ProfileCtrl'
+        })
         .when('/thanks',{
             templateUrl: 'pages/thanks.html'
         })
@@ -38,10 +42,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         })
         .when('/tos',{
             templateUrl: 'pages/tos.html'
-        })
-        .when('/profile/:id',{
-            templateUrl: 'pages/student.html',
-            controller: 'ProfileCtrl'
         })
         .when('/settings',{
             templateUrl: 'pages/settings.html',
@@ -205,22 +205,16 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.show('profile');
 
     })
-    .controller('ProfileCtrl',function($rootScope,$scope,$routeParams,$sce){
-        $http.get(PlanHWApi + 'students/' + $routeParams.id)
-            .success(function(data){
-                $scope.student = data.student
-                $http.jsonp("http://www.gravatar.com/" + md5($scope.student.email) + ".json?callback=JSON_CALLBACK")
-                    .success(function(data){
-                        $scope.bio = data['entry'][0]['aboutMe']
-                    })
-                    .error(function(){
-                            $http.jsonp("http://www.gravatar.com/" + $scope.student.username + ".json?callback=JSON_CALLBACK")
-                        .success(function(data){
-                            $scope.bio = data['entry'][0]['aboutMe']
-                        })
-                    })
-                ;
-            })
+    .controller('ProfileCtrl',function($rootScope,$sce,$http){
+        $http.jsonp("http://www.gravatar.com/" + md5($rootScope.student.email) + ".json?callback=JSON_CALLBACK")
+            .then(function(data){
+                $rootScope.student.bio = data.data['entry'][0]['aboutMe']
+            }, function(){
+                $http.jsonp("http://www.gravatar.com/" + $rootScope.student.username + ".json?callback=JSON_CALLBACK")
+                .then(function(data){
+                    $rootScope.student.bio = data.data['entry'][0]['aboutMe']
+                })
+            });
     })
     .run(function($rootScope, $location, webStorage, $http, Student){
         $rootScope.flashes = []
