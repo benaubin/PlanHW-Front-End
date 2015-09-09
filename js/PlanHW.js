@@ -684,14 +684,18 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         //Send homework object to the server.
         //This function returns a promise with the homework object that the server returned, or error messages.
         //If `add` is true, then the homework object will be added to the student it belongs to.
-        Homework.prototype.create = function(add){
+        Homework.prototype.create = function(add, shareFriend){
+            var params = {}
+            if(shareFriend){
+                params['friend_id'] = shareFriend.id
+            }
             return this.student.request.post('hw', {
                 title: this.title.trim(),
                 description: this.description || "",
                 due_date: this.moment().toISOString()
-            }).then(function(res){
+            }, params).then(function(res){
                 if(add) this.student.homework.shift();
-                var homework = BuildHomework(res.data.homework, this.student)
+                var homework = BuildHomework(res.data.homework, shareFriend || this.student)
                 if(add) this.student.homework.unshift(homework);
                 return homework;
             }.bind(this), function(data){
