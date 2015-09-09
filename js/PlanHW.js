@@ -69,10 +69,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         if(page === 'root') page = ''
         $location.path('/' + page)
     })
-    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$refreshStudent,$location){
-        $refreshStudent();
+    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$location){
         $scope.getPro = function(cc,cvc,expMonth,expYear,plan,coupon){
-            $scope.show('profile')
             if(cc && cvc){
                 Stripe.card.createToken({
                     number: cc,
@@ -87,7 +85,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                         coupon: coupon
                     }).success(function(){
                         $rootScope.flashes.push({class: 'success', message: 'Congrats! You now have PlanHW Pro!'})
-                        $rootScope.signout('/thanks')
+                        $rootScope.signout.pro = true;
                     }).error(function(data){
                         $scope.show('pro')
                         $rootScope.flashesNow.push({class:'danger', message: data.error.message})
@@ -100,7 +98,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     token: $rootScope.student_token
                 }).success(function(){
                     $rootScope.flashes.push({class: 'success', message: 'Congrats! You now have PlanHW Pro!'})
-                    $rootScope.signout()
+                    $rootScope.signout.pro = true;
                 }).error(function(data){
                     $scope.show('pro')
                     $rootScope.flashesNow.push({class:'danger', message: data.error.message})
@@ -112,7 +110,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $http.delete(PlanHWApi+'pro?token=' + $rootScope.student_token)
                 .success(function(){
                     $rootScope.flashes.push({class: 'danger', message: ':( - We got rid of your pro membership.'})
-                    $rootScope.signout()
+                    $rootScope.student.pro = false;
                 });
             } else {
                 $rootScope.flashesNow.push({class:'success', message: 'Awesome - You still have pro :)'})
