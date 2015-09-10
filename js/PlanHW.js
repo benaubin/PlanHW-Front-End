@@ -10,7 +10,7 @@ addToHomescreen();
 
 (function(){
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize'])
-    .config(function($routeProvider, $httpProvider) {
+    .config(function($routeProvider) {
         
         $routeProvider
         
@@ -29,6 +29,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             templateUrl: 'pages/signin.html',
             controller: 'SigninCtrl'
         })
+        .when('/profile',{
+            templateUrl: 'pages/student.html',
+            controller: 'ProfileCtrl'
+        })
         .when('/thanks',{
             templateUrl: 'pages/thanks.html'
         })
@@ -38,10 +42,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         })
         .when('/tos',{
             templateUrl: 'pages/tos.html'
-        })
-        .when('/profile/:id',{
-            templateUrl: 'pages/student.html',
-            controller: 'ProfileCtrl'
         })
         .when('/settings',{
             templateUrl: 'pages/settings.html',
@@ -57,16 +57,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         })
             
     })
-    .controller('LoginCtrl',function($signin, $http, $routeParams){
-        var student;
-        $http.get(PlanHWApi + 'test/login?token=' + $routeParams.token)
-            .success(function(data){
-                student = data.student
-            }).finally(function(data){
-               $signin.token($routeParams.token, student,true)    
-            }
-        
-    )})
+    .controller('LoginCtrl',function(Student, $rootScope, $routeParams){
+        Student.build.token($routeParams.token, true).then(function(student){
+            $rootScope.student = student
+        });
+    })
     .controller('FlashCtrl',function($rootScope,$routeParams,$location){
         var message = decodeURIComponent($routeParams.message)
         $rootScope.flashes.push({class:'info', message: message})
@@ -74,13 +69,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         if(page === 'root') page = ''
         $location.path('/' + page)
     })
-    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$refreshStudent,$location){
-        $refreshStudent()
-        $http.get(PlanHWApi+'pro').success(function(data){
-            Stripe.setPublishableKey(data)
-        })
+    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$location){
         $scope.getPro = function(cc,cvc,expMonth,expYear,plan,coupon){
-            $scope.show('profile')
             if(cc && cvc){
                 Stripe.card.createToken({
                     number: cc,
@@ -95,7 +85,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                         coupon: coupon
                     }).success(function(){
                         $rootScope.flashes.push({class: 'success', message: 'Congrats! You now have PlanHW Pro!'})
-                        $rootScope.signout('/thanks')
+                        $rootScope.signout.pro = true;
                     }).error(function(data){
                         $scope.show('pro')
                         $rootScope.flashesNow.push({class:'danger', message: data.error.message})
@@ -108,7 +98,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     token: $rootScope.student_token
                 }).success(function(){
                     $rootScope.flashes.push({class: 'success', message: 'Congrats! You now have PlanHW Pro!'})
-                    $rootScope.signout()
+                    $rootScope.signout.pro = true;
                 }).error(function(data){
                     $scope.show('pro')
                     $rootScope.flashesNow.push({class:'danger', message: data.error.message})
@@ -120,7 +110,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $http.delete(PlanHWApi+'pro?token=' + $rootScope.student_token)
                 .success(function(){
                     $rootScope.flashes.push({class: 'danger', message: ':( - We got rid of your pro membership.'})
-                    $rootScope.signout()
+                    $rootScope.student.pro = false;
                 });
             } else {
                 $rootScope.flashesNow.push({class:'success', message: 'Awesome - You still have pro :)'})
@@ -210,24 +200,18 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.show('profile');
 
     })
-    .controller('ProfileCtrl',function($rootScope,$scope,$routeParams,$http,$sce){
-        $http.get(PlanHWApi + 'students/' + $routeParams.id)
-            .success(function(data){
-                $scope.student = data.student
-                $http.jsonp("http://www.gravatar.com/" + md5($scope.student.email) + ".json?callback=JSON_CALLBACK")
-                    .success(function(data){
-                        $scope.bio = data['entry'][0]['aboutMe']
-                    })
-                    .error(function(){
-                            $http.jsonp("http://www.gravatar.com/" + $scope.student.username + ".json?callback=JSON_CALLBACK")
-                        .success(function(data){
-                            $scope.bio = data['entry'][0]['aboutMe']
-                        })
-                    })
-                ;
-            })
+    .controller('ProfileCtrl',function($rootScope,$sce,$http){
+        $http.jsonp("http://www.gravatar.com/" + md5($rootScope.student.email) + ".json?callback=JSON_CALLBACK")
+            .then(function(data){
+                $rootScope.student.bio = data.data['entry'][0]['aboutMe']
+            }, function(){
+                $http.jsonp("http://www.gravatar.com/" + $rootScope.student.username + ".json?callback=JSON_CALLBACK")
+                .then(function(data){
+                    $rootScope.student.bio = data.data['entry'][0]['aboutMe']
+                })
+            });
     })
-    .run(function($rootScope, $location, webStorage, $http, $signin){
+    .run(function($rootScope, PlanHWRequest, $location, webStorage, Student){
         $rootScope.flashes = []
         $rootScope.flashesNow = []
         $rootScope.$on('$routeChangeSuccess', function () {
@@ -237,31 +221,24 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $('.modal').modal('hide');
             } catch(err){}
         });
-        $rootScope.signinwithtokennostudent = function(token){
-            $http.get(PlanHWApi + 'test/login?token=' + token)
-            .success(function(data){
-                $signin.token(token, data.student, true)    
-            });
-        }
         $rootScope.signout = function(location){
-            $rootScope.student_id = null
-            $rootScope.student_token = null
             $rootScope.student = null
             $location.path(location || '/')
-            webStorage.remove('login_data')
+            webStorage.remove('student')
         }
-        var login_data = webStorage.get('login_data') 
-        if(login_data){
-            $rootScope.student_token = login_data['token']
-            $rootScope.student_id = login_data['student']['id']
-            $rootScope.student = login_data['student'] 
+        PlanHWRequest.get('pro').then(function(res){
+            Stripe.setPublishableKey(res.data)
+        })
+        if(webStorage.has('student')){
+            console.log(webStorage.get('student'))
+            student = webStorage.get('student')
+            $rootScope.student = Student.build(student.student, student.token)
         }
     })
-    .controller('IndexCtrl',function($scope, $homeworkInput){
+    .controller('IndexCtrl',function($scope, Homework){
         $scope.people = 'Students'
-        $scope.homework = {input: 'Math Problems due next Tuesday (system of equations)'}
-        $homeworkInput($scope.homework)
-        $scope.hwinput = $homeworkInput;
+        $scope.hwinput = Homework.Build.Input;
+        $scope.homework = $scope.hwinput("Math Problems due next Tuesday (system of equations)")
         var changePeople = function(){
             var People = ['People','Students','Parents','Teachers']
             var people = People[Math.floor(Math.random() * People.length)].split('')
@@ -307,222 +284,90 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
 
                 window.setTimeout(changePeople,5000)
     })
-    .controller('HWCtrl',function($scope, $rootScope, $http, $location, webStorage, $homeworkInput){
+    .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework){
         $scope.share = function(homework,student){
-            var temp_date = homework.due_date
-            homework.due_date = homework.due_date.toISOString();
-            $http.post(PlanHWApi+'hw?token='+$rootScope.student_token+'&friend_id='+student.id,homework)
-            .success(function(){
-                $rootScope.flashesNow.push({class: 'success',message: 'Sent to ' + student.name});
-            }).error(function(data){
+            homework.create(false, student).then(function(){
+                $rootScope.flashesNow.push({class: 'success', message: 'Sent to ' + student.name});
+            }, function(data){
                 angular.forEach(data['message']['errors'], function(error){
                     $rootScope.flashesNow.push({class: data['message']['type'],message: error}); 
                 })
             })
-            homework.due_date = temp_date
         }
         
-        $scope.reload = function(show, after, noComplete){
-            if($rootScope.student_token != null){
-                url = PlanHWApi+'hw?token='+$rootScope.student_token
-                if(noComplete)
-                    url += '&incomplete=1'
-                $http.get(url)
-                .success(function(data){
-                    webStorage.remove('hw')
-                    $scope.hw = data['homeworks']
-                    if(webStorage.get('login_data')) webStorage.add('hw',$scope.hw)
-                }).error(function(data,status){
-                    if(webStorage.get('hw')){
-                        $scope.hw = webStorage.get('hw') 
-                    } else {
-                        $rootScope.flashes.push({class:'danger', message: 'Please sign in.'})
-                        $location.path('/signin')
-                    }
-                }).finally(function(){
-                    if(show){
-                        $scope.show(show, after)
-                    } else {
-                        $scope.toView()
-                    }
-                })
-            } else {
-                $rootScope.flashes.push({class: "danger", message: "Sign in first!"})
-                $location.path('/signin')
-            }
-        }
-        
-        $scope.marked = function(markdown){
-            if(markdown) return marked(markdown)
-        }
-        $scope.markdown = function(homework){
-            homework.descHTML = $scope.marked(homework.homework.description)
-        }
-        
-        $scope.toView = function(before){
-            if(before) before();
-            angular.forEach($scope.hw, function(homework){
-                homework.due_date = moment(homework.homework.due_date).calendar()
-                if(homework.homework.completed){
-                    homework.show = $scope.showComplete
-                } else {
-                    homework.show = $scope.showIncomplete
-                }
-            })
-            $scope.hw = $scope.hw.sort(function(x, y) {
-                x = x.homework.completed
-                y = y.homework.completed
-                return (x === y)? 0 : x? 1 : -1;
-            });
-            angular.forEach($scope.hw, function(homework){
-                $scope.markdown(homework)
+        $scope.reload = function(noComplete){
+            return $rootScope.student.refreshHomework(!noComplete).then(function(homework){
+                
+            }, function(error){
+                $rootScope.flashes.push({class: "danger", message: error.message})
+                $location.path('/')
             })
         }
-        
-        if($rootScope.student_token){
-            var friends = $rootScope.student.friends
-            friends.forEach(function(friend, index){
-                if(friend.student){
-                    friend2 = friend.student
-                    friend2.name = friend2.name.split(' ')[0]
-                    friends[index] = friend2
-                }
-            })
-            var sifter = new Sifter(friends);
-        }
-    
         $scope.suggestShareFriend = null
-        
         $scope.input = function(homework){
-            return $homeworkInput(homework, sifter)
+            $scope.homework = Homework.Build.Input(homework.input, $rootScope.student)
+            $scope.suggestShareFriend = homework.shareSuggest
         };
-        
-        $scope.complete = function(homework){
-            homework.homework.completed = !homework.homework.completed
-            $scope.toView();
-            $http.put(PlanHWApi + 'hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
-            .error(function(data, status){
-                if(data && status){
-                    homework.homework.completed = {completed:!(homework.homework.completed)}
-                } else $scope.toView();
-            })
-        }
-        
-        $scope.update = function(homework){
-            $http.put(PlanHWApi+'hw/'+homework.homework.id+'?token='+$rootScope.student_token,homework.homework)
-            .success(function(){
-                homework.editing = false
-                $scope.markdown(homework)
-            }).error(function(data, status){
-                if(data && status){
-                    angular.forEach(data['errors'], function(error){
-                        $rootScope.flashesNow.push({class: 'warning',message: error}); 
-                    })
-                } else {
-                    homework.editing = false
-                    markdown(homework)
-                }
-            })
-        }
-        
         $scope.new = function(homework){
-            //Get ready to send things to the API
-            
-            var temp_date = homework.due_date
-            homework.due_date = homework.due_date.toISOString();
-            
-            //Send homework to the API
-            $http.post(PlanHWApi+'hw?token='+$rootScope.student_token,homework)
-            .success(function(){
-                $scope.homework = null;
-                $scope.reload()
-            }).error(function(data){
-                angular.forEach(data['message']['errors'], function(error){
-                    $rootScope.flashesNow.push({class: data['message']['type'],message: error}); 
-                })
-            })
-            homework.due_date = temp_date
-            $scope.suggestShareFriend = null 
-        }
-        
-        $scope.delete = function(homework){
-            $http.delete(PlanHWApi + 'hw/'+homework.homework.id+'?token='+$rootScope.student_token)
-            .success(function(data){
-                $scope.reload();
-            }).error(function(data, status){
-                if(data && status){
-                    $rootScope.flashesNow.push({class: 'danger', message:'Something went wrong in deleting your homework.'})
-                    console.log('Something went wrong in deleting homework with id of ' + homework.homework.id)
-                    console.log('Got ' + status + ' response:')
-                    console.log(data)
+            homework.create(true).then(function(newHomework){
+                if(newHomework.error){
+                    //TODO: do something
                 } else {
-                    homework = null
+                    $scope.homework = null
                 }
             })
         }
         
-        $scope.show = function(type,after){
-            if(type === 'complete'){
-                $scope.showing = "Completed"
-                $scope.showComplete = true
-                $scope.showIncomplete = false
-                $scope.showAll = false
-            } else if (type === 'all'){
-                $scope.showing = "Everything"
-                $scope.showComplete = true
-                $scope.showIncomplete = true
-                $scope.showAll = true
-            } else {
-                $scope.showing = null
-                $scope.showComplete = false
-                $scope.showIncomplete = true
-                $scope.showAll = false
-            }
-            $scope.toView(after);
+        $scope.show = function(type){
+            $scope.showComplete = type == 'complete' || type == 'all'
+            $scope.showIncomplete = type == 'incomplete' || type == 'all'
         }
-        
-        $scope.chooseView = function(view){
-            $scope.view = toTitleCase(view)
-            view = view.toLowerCase();
-            $scope.cards = view === 'cards'
-            $scope.list = view === 'list'
-        }
-        
-        $( window ).resize(function(){
-            $scope.autoChooseView()
-            $scope.$apply()
-        })
-        
-        $scope.autoChooseView = function(){
-            if(768 >= $(window).width()){
-                $scope.chooseView('Cards')
-            } else if (768 < $(window).width()){
-                $scope.chooseView('List')
-            }
-        }
-        
-        $scope.reload('incomplete',function(){
-            $scope.autoChooseView()
+        $scope.reload(true).then(function(){
+            $scope.show('incomplete')
             $scope.loaded = true
-            $scope.reload('incomplete',function(){
-                //For later: PlanHWTour.start();
-            })
-        },true);
+        }).then(function(){
+            $scope.reload(false)
+        });
         
     })
-    .controller('SigninCtrl', function($scope, $signin, $http){
+    .controller('SigninCtrl', function($scope, Student, $rootScope, $location, $httpParamSerializer){
         $scope.signinError = null
         $scope.signin = function(remember){
-            $signin.username($scope.username, $scope.password, remember, $scope.otp)
+            Student.build.login($scope.username, $scope.password, remember, $scope.otp).then(function(data){
+                if(data.error){
+                    $rootScope.flashesNow.push({message: data.message, class: 'danger'})
+                    switch(data.error){
+                        case 'incorrect_otp':
+                            $scope.showotp = true
+                            break;
+                        default:
+                            $scope.password = null
+                            break;
+                    }
+                } else {
+                    $scope.password = null
+                    $scope.showotp = false
+                    $rootScope.student = data.student
+                    $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
+                    $location.path('/homework');
+                }
+            })
+        }
+        $scope.signinToken = function(token){
+            Student.build.token(token, true).then(function(student){
+                $rootScope.student = student
+                $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
+                $location.path('/homework');
+            })
         }
         $scope.gsigninURL = 
-                "https://accounts.google.com/o/oauth2/auth?" + [
-                    "scope=" + encodeURIComponent(['openid','email'].join(' ')),
-                    "state=" + encodeURIComponent('google'),
-                    "redirect_uri=" + encodeURIComponent(PlanHWApi+'oauth2callback'),
-                    "response_type=code",
-                    "client_id=" + encodeURIComponent("179836333485-a9u3omrs9o0c1ik00fesa2043q0f63fe.apps.googleusercontent.com")
-                ].join('&')
+                "https://accounts.google.com/o/oauth2/auth?" + $httpParamSerializer({
+                        scope: ['openid email'].join(' '),
+                        state: 'google',
+                        redirect_uri: PlanHWApi + 'oauth2callback',
+                        response_type: 'code',
+                        client_id: "179836333485-a9u3omrs9o0c1ik00fesa2043q0f63fe.apps.googleusercontent.com"
+                    })
     })
     .controller('ForgotPassCtrl',function($scope, $http, $rootScope, $location){
         $scope.changePass = function(){
@@ -589,88 +434,301 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         templateUrl: '/directives/signin_popup.html',
         controller: 'SigninCtrl'
     }})
-    .factory('$signin',function($rootScope, $http, $location, webStorage){
-        return {
-            username: function(username, password, remember, otp) {
-                url = PlanHWApi+'login?username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password)+'&auth_code='+otp
-                $http.get(url)
-                    .success(function(data){
-                        password = null
-                        signinwithtoken(data['token'],data['student'],remember)
-                    }).error(function(data,status){
-                        if(status === 401){
-                            if(data === 'Please include OTP.'){
-                                $rootScope.flashesNow.push({message: 'Please include a correct one time passcode (from Google Authenicator)', class: 'info'})
-                                $rootScope.showotp = true
-                            } else {
-                                $rootScope.flashesNow.push({message: "Wrong username/password.", class: 'danger'})
-                            }
-                        } else {
-                            $rootScope.flashesNow.push({message: "Something went wrong.", class: 'danger'})
-                        }
-                    });
-                },
-            token: signinwithtoken
-        }
-            function signinwithtoken(token,student,remember){
-                $rootScope.student_token = token
-                $rootScope.student_id = student['id']
-                $rootScope.student = student
-                if(remember){
-                    webStorage.remove('login_data')
-                    webStorage.add('login_data',{student: student, token: token})
+
+    // When sending an authenicated request, we reccomend using a Student's `request` method, as it will automaticly send the `token` param.
+    .factory('PlanHWRequest', function($http, $q){
+        var requestSender = function(path, method, data, params){
+            return $q(function(resolve, reject){
+                var req = {
+                    method: method,
+                    url: PlanHWApi + path
                 }
-                $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
-                $location.path('/homework');
-                $rootScope.showotp = false
-            }
-    })
-    .factory('$refreshStudent',function($rootScope, $http){
-        return function(){
-            $http.get(PlanHWApi + 'test/login?token=' + $rootScope.student_token)
-            .success(function(data){
-                $rootScope.student = data.student
-                return true;
-            }).error(function(data,status){
-                $rootScope.flashesNow.push({message: "Could not refresh your info.", class: 'danger'})
-                return false;
+                req.params = params;
+                req.data = data;
+                $http(req).then(function(res){
+                    resolve(res)
+                }, function(res){
+                    reject(res)
+                });
             });
-    }})
-    .service('$homeworkInput',function(){
-        return function(homework, sifter){
-            homework.description = homework.input.match(/\((.+)\)/i)
-            if(homework.description){
-                homework.description = homework.description[1]
+        }
+        requestSender.get = function(path, data){
+            return requestSender(path, 'GET', null, data)
+        }
+        requestSender.post = function(path, data){
+            return requestSender(path, 'POST', data)
+        }
+        return requestSender;
+    })
+    // All students are stored with this object
+    .factory('Student', function(PlanHWRequest, webStorage, Homework, $q){
+        var Student = function(token, id, username, name, admin, pro, avatarUrl, friends){
+            this.authenicated = !!token;
+            if(this.authenicated){
+                this.token = token
             }
+            this.username = username
+            this.id = id
+            this.name = name
+            this.firstName = this.name.split(' ')[0]
+            this.admin = admin
+            this.pro = pro
+            this.avatarUrl = avatarUrl
+            this.friends = friends
+            
+            this.avatar = function(size){
+                 return this.avatarUrl + "&s=" + ((size)? size : '250')
+            }
+            
+            var request = function(path, method, data, params){
+                params = params || {}
+                params.token = this.token;
+                return PlanHWRequest(path, method, data, params);
+            }.bind(this)
+            request.get = function(path, data){
+                return request(path, 'GET', null, data)
+            }.bind(this)
+            request.post = function(path, data, params){
+                return this.request(path, 'POST', data, params)
+            }.bind(this)
+            request.put = function(path, data){
+                return this.request(path, 'PUT', data)
+            }.bind(this)
+            request.delete = function(path, data){
+                return this.request(path, 'DELETE', data)
+            }.bind(this)
+            this.request = request
+            
+            if(this.friends){
+                this.friends = this.friends.map(function(friend){
+                    return Student.build(friend.student, false, false)
+                })
+                this.friends.sifter = new Sifter(friends);
+            }
+            if(this.authenicated){
+                this.request.get('test/login').then(function(res){
+                    this.hasPaymentInfo = res.data.student.hasPaymentInfo
+                }.bind(this))
+            }
+            this.doneWithHomework = true;
+            this.refreshHomework = function(complete){
+                return $q(function(resolve, reject){
+                    $q(function(resolve, reject){
+                        if(this.authenicated){
+                            this.request.get('hw', {
+                                incomplete: (complete)? 0 : 1
+                            }).then(function(res){
+                                var homework = res.data.homeworks;
+                                webStorage.remove('hw')
+                                if(webStorage.has('student')) webStorage.add('hw', homework)
+                                resolve(homework)
+                            }, function(res){
+                                if(webStorage.get('hw')){
+                                    console.warn("You are offline - using stored copy of homework.")
+                                    resolve(webStorage.get('hw'))
+                                } else {
+                                    reject({error: 'offline', message: 'You are offline.'})
+                                }
+                            })
+                        } else {
+                            reject({error: 'not_authenicated', message: 'Please login first.'})
+                        }
+                    }.bind(this)).then(function(homework){
+                        this.homework = homework.map(function(homework){
+                            homework = Homework.Build(homework.homework, this)
+                            if(!homework.completed) this.doneWithHomework = false
+                            return homework
+                        }, this).sort(function(x, y) {
+                            x = x.completed
+                            y = y.completed
+                            return (x === y)? 0 : x? 1 : -1;
+                        })
+                        resolve(this.homework)
+                    }.bind(this), function(data){
+                        if(data.error == 'not_authenicated'){
+                            this.token = null;
+                            this.authenicated = false;
+                        }
+                        reject(data)
+                    }.bind(this))
+                }.bind(this))
+            }
+            
+        }
+        Student.build = function(data, token, remember){
+            if(remember){
+                webStorage.remove('student')
+                webStorage.add('student', {token: token, student: data})
+            }
+            return new Student(token, data.id, data.username, data.name, data.admin, data.pro, data.avatar.default, data.friends)
+        };
+        Student.build.token = function(token, remember){
+            return PlanHWRequest.get('test/login', {token: token}).then(function(res){
+                data = res.data;
+                return Student.build(data.student, token, remember);
+            })
+        };
+        Student.build.id = function(id){
+            return PlanHWRequest.get('students/' + id).then(function(res){
+                data = res.data;
+                return Student.build(data.student)
+            })
+        };
+        Student.build.login = function(username, password, remember, otp){
+            return PlanHWRequest.get('login', {
+                username: username,
+                password: password,
+                auth_code: otp
+            }).then(function(res){
+                data = res.data;
+                return {error: false, student: Student.build(res.data.student, res.data.token, remember)};
+            }, function(res){
+                data = res.data
+                if(res.status == 401){
+                    if(data === 'Please include OTP.'){
+                        return {error: 'incorrect_otp', message: 'Please include a correct one time passcode (from Google Authenicator)'}
+                    } else {
+                        return {error: 'incorrect_login', message: 'Wrong username/password'}
+                    }
+                } else {
+                    return {error: 'unknown_error', message: 'Failed to login.'}
+                }
+            })
+        }
+    
+        return Student;
+    })
+    .factory('Homework',function($q){
+        var Homework = function(student, id, completed, title, description, due_date, created_at, updated_at){
+            this.id = id;
+            this.completed = completed;
+            this.title = title;
+            this.dueDate = moment(due_date).toISOString();
+            this.createdAt = created_at;
+            this.student = student;
+            this.deleted = false;
+            
+            this.moment = function(){
+                return moment(this.dueDate);
+            }
+            this.dueDateWords = function(){
+                return this.moment().calendar();
+            }
+            
+            this.updateDescription = function(description){
+                this.description = description || this.description || "";
+                this.descHTML = marked(this.description)
+            }
+            
+            this.updateDescription(description)
+        }
+        var BuildHomework = function(data, student){
+            return new Homework(student, data.id, data.completed, data.title, data.description, data.due_date, data.created_at, data.updated_at)
+        }
+        Homework.Build = BuildHomework;
+        Homework.Build.Input = function(input, student){
+            var homework = new Homework(student)
+            homework.completed = false;
+            homework.input = input;
+            homework.updateDescription((homework.input.match(/\((.+)\)/i))? homework.input.match(/\((.+)\)/i)[1] : "")
             var date;
             chrono.parse(homework.input).forEach(function(match){
                 date = match
             });
-            homework.due_date = moment(chrono.parseDate(homework.input));
-            if(!homework.due_date.isValid()){                 
-                homework.due_date = moment().add('1','d')
+            homework.dueDate = moment(chrono.parseDate(homework.input));
+            if(!homework.dueDate.isValid()){                 
+                homework.dueDate = moment().add('1','d')
             }
             homework.title = homework.input.replace(/\((.+)\)/i, "")
             if(date){
                 homework.title = homework.title.replace("due "+date.text,'').replace(date.text,'');
             }
-            if(sifter){
+            if(student && student.friends && student.friends.sifter){
+                var sifter = student.friends.sifter
                 if(homework.input.length < 3){
-                    $scope.suggestShareFriend = null
+                    homework.shareSuggest = null
                 } else {
                     homework.input.split(' ').forEach(function(word){
                         var results = sifter.search(word, {
-                            fields: ['username','name'],
+                            fields: ['username','firstName'],
                             sort: [{field: 'name', direction: 'asc'},{field: 'username', direction: 'asc'}],
                             limit: 1
                         });
                         var result = results.items[0]
-                        if(result && result.score >= .45 && (word.length > 3 || word === friends[result.id].name)){
-                            $scope.suggestShareFriend = friends[result.id]
+                        if(result && result.score >= .45 && (word.length > 3 || word === student.friends[result.id].firstName)){
+                            homework.shareSuggest = friends[result.id]
                         }
                     })
                 }
             }
+            return homework
         }
+        
+        //Deletes a homework from the server, and sets the local deleted variable to true - you can still recreate it.
+        Homework.prototype.delete = function(){
+            this.deleted = true;
+            return this.student.request.delete('hw/'+this.id).then(function(){
+                this.deleted = true;
+            }.bind(this),function(data){
+                //something went wrong - do something
+                this.deleted = false;
+                this.editing = false;
+            })
+        }
+        //Send homework object to the server.
+        //This function returns a promise with the homework object that the server returned, or error messages.
+        //If `add` is true, then the homework object will be added to the student it belongs to.
+        Homework.prototype.create = function(add, shareFriend){
+            var params = {}
+            if(shareFriend){
+                params['friend_id'] = shareFriend.id
+            }
+            return this.student.request.post('hw', {
+                title: this.title.trim(),
+                description: this.description || "",
+                due_date: this.moment().toISOString()
+            }, params).then(function(res){
+                if(add) this.student.homework.shift();
+                var homework = BuildHomework(res.data.homework, shareFriend || this.student)
+                if(add) this.student.homework.unshift(homework);
+                return homework;
+            }.bind(this), function(data){
+                if(add) this.student.homework.shift();
+                return {error: true, type: data['message']['type'], errors: data['message']['errors']}
+            })
+        }
+        //Tells the api to create a homework object based on this one (title, description, and due date).
+        //Then, it changes the id of this one to match the new homework object, and falsifies the editing and deleted properties.
+        Homework.prototype.recreate = function(){
+            this.create().then(function(homework){
+                this.id = homework.id;
+                this.deleted = false;
+                this.editing = false;
+            }.bind(this))
+        }
+        //Turns off editing, and then sends a request to the server to update title,
+        //description, and completed to its current properties.
+        //Aliases: `update`
+        Homework.prototype.save = function(changedDueDate){
+            this.editing = false;
+            var updateData = {
+                title: this.title.trim(),
+                description: this.description,
+                completed: this.completed
+            }
+            this.student.request.put('hw/'+this.id, updateData).then(function(res){
+            }, function(res){
+                this.editing = true;
+                return {error: true, message: res.data}
+            })
+        }
+        //Alias for `save`
+        Homework.prototype.update = Homework.prototype.save;
+        //Toggles the `completed` attribute, and calls the `save` function.
+        Homework.prototype.complete = function(){
+            this.completed = !this.completed
+            this.save();
+        }
+        return Homework
     })
 ;})();

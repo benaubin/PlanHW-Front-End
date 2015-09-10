@@ -1,11 +1,31 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-3">
-            <h1 align="center">{{student.name}}</h1>
-            <div align="center"><img ng-src="{{student.avatar.size125}}"></div>
+            <h1 class="text-center">{{student.name}}</h1>
+            <p class="text-center">
+                <span class="label label-success" ng-show="student.pro">Pro</span>
+                <span class="label label-danger" ng-show="student.admin">Admin</span>
+            </p>
+            <div class="text-center col-xs-12">
+                <img ng-src="{{student.avatar(125)}}">
+            </div>
         </div>
-        <div class="col-md-offset-1 col-sm-8">
-            <p class="pad-50t"><span ng-bind-html="bio"></span><br>(Bio Provided by <a href="http://en.gravatar.com">Gravatar</a>)</p>
+        <div class="col-md-offset-1 col-sm-8" ng-show="student.bio">
+            <p class="pad-50t"><span ng-bind-html="student.bio"></span><br>(Bio Provided by <a href="http://en.gravatar.com">Gravatar</a>)</p>
+        </div>
+    </div>
+    <div class="row pad-50t">
+        <h2>Friends</h2>
+        <div class="col-md-4" ng-repeat="student in student.friends">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <img class="pull-left" ng-src="{{student.avatar(50)}}">
+                    &nbsp;&nbsp;
+                    <span class="label label-success" ng-show="student.pro">Pro</span>
+                    <span class="label label-danger" ng-show="student.admin">Admin</span><br>
+                    <h4>&nbsp;&nbsp;{{student.name}}</h4>
+                </div>
+            </div>
         </div>
     </div>
 </div>
