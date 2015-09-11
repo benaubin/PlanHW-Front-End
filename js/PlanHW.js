@@ -69,7 +69,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         if(page === 'root') page = ''
         $location.path('/' + page)
     })
-    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$location){
+    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$location, PlanHWRequest){
         $scope.getPro = function(cc,cvc,expMonth,expYear,plan,coupon){
             if(cc && cvc){
                 Stripe.card.createToken({
@@ -107,8 +107,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
         $scope.getRidOfPro = function(){
             if(confirm('Just making sure you know what you are doing -- this will get rid of your pro status on PlanHW IMMEDIATELY') && (prompt('Please confirm your username') === $rootScope.student.username)){
-                $http.delete(PlanHWApi+'pro?token=' + $rootScope.student_token)
-                .success(function(){
+                Student.request.delete(pro).then(function(){
                     $rootScope.flashes.push({class: 'danger', message: ':( - We got rid of your pro membership.'})
                     $rootScope.student.pro = false;
                 });
@@ -117,15 +116,16 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
         }
         $scope.testCoupon = function(coupon){
-            $http.get(PlanHWApi+ 'coupon/'+ encodeURIComponent(coupon))
-            .success(function(data){
+            PlanHWRequest.get('coupon/'+ encodeURIComponent(coupon)).then(function(data){
+                res.data = data
                 $scope.couponInfo = data
                 if(data === '100% off'){
                     $scope.paid = true
                 }
-            }).error(function(data){
-                $scope.couponInfo = data
-            })
+            }, function(data){
+                $scope.couponInfo = res.data
+                $scope.paid = false
+            });
         }
         $scope.show = function(section){
             $scope.profile = section === 'profile'
@@ -135,20 +135,16 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $scope.showFriends = section === 'friends'
             if($scope.showFriends) $scope.loadStudents()
         }
-        $scope.update = function(student){
-            $http.put(PlanHWApi + 'students?token=' + $rootScope.student_token, student)
-                .success(function(data){
-                    student.password = null, student.password_confirm = null
-                    $refreshStudent()
-                })
-            ;
+        $scope.update = function(){
+            $rootScope.student.update().then(function(){
+                $rootScope.student.password = null, $rootScope.student.password_confirm = null;
+                $rootScope.flashesNow.push({class: 'success', message: 'Saved!'})
+            });
         }
         $scope.friendRequest = function(friend){
             $http.get('https://api.planhw.com/friend/'+friend+'?token=' + $rootScope.student_token)
-                .success(function(data){
-                    data = data || 'Sent friend request!'
-                    $rootScope.flashesNow.push({class:'success',message:data})
-                })
+            $rootScope.student.get('friend/'+friend)
+
                 .error(function(data){
                     data[1][0] = data[1][0] || 'Something went wrong'
                     $rootScope.flashesNow.push({class:'danger',message:data[1][0]})
@@ -555,7 +551,29 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     }.bind(this))
                 }.bind(this))
             }
-            
+            this.update = function(){
+                return this.request.put('students', this.raw()).then(function(){
+                    if(webStorage.get('student')){
+                        webStorage.remove('student')
+                        webStorage.add('student', {token: token, student: data})
+                    }
+                    return true;
+                }, function(){
+                    return false;
+                });
+            }
+            this.raw = function(){
+                return {
+                    token: this.token,
+                    username: this.username,
+                    name: this.name,
+                    password: this.password,
+                    password_confirm: this.password_confirm,
+                    id: this.id,
+                    pro: this.pro,
+                    admin: this.admin
+                }
+            }
         }
         Student.build = function(data, token, remember){
             if(remember){
