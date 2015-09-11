@@ -398,7 +398,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         replace: true,
         scope: {},
         template: '<div ng-include="\'directives/signup_form.html\'"></div>',
-        controller: function($scope, $http, $rootScope, $location, $signin){
+        controller: function($scope, $http, $rootScope, $location, PlanHWRequest, Student){
             $scope.signupErrored = false;
             $scope.student = {};
             $scope.gravatarInfo = "";
@@ -413,13 +413,15 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     });
                 },
             $scope.signup = function(student){
-                $http.post(PlanHWApi+'students/', student)
-                .success(function(){
+                PlanHWRequest.post('students', student).then(function(){
                     $rootScope.firstSignin = true;
-                    $signin.username(student.username,student.password,false)
-                }).error(function(data, status){
+                    Student.build.login(student.username,student.password,false).then(function(data){
+                        $rootScope.student = data.student;
+                        $location.path('homework')
+                    })
+                },function(res){
                     $scope.signupErrored = true;
-                    if(status === 422){
+                    if(res.status === 422){
                         $scope.signupErrors = data['errors'];
                     } else {
                         $scope.signupErrors = ["Something went wrong, try again?"]
