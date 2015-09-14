@@ -138,7 +138,7 @@
                                         <div ng-repeat="friend in student.friends">
                                             <hr>
                                             <div class="pad-25l pad-25r">
-                                                <img class="pull-left pad-25r" ng-src="{{friend.avatar.size50}}">
+                                                <img class="pull-left pad-25r" ng-src="{{friend.avatar(50)}}">
                                                 <div class="pull-right">
                                                     <i class="fa fa-minus-square-o fa-2x action" ng-click="removeFriend(friend.id)"
                                                        data-toggle="tooltip" data-placement="bottom" title="Remove {{friend.name}}">
