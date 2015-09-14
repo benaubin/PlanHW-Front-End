@@ -551,10 +551,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
             this.update = function(){
                 return this.request.put('students', this.raw()).then(function(){
-                    if(webStorage.get('student')){
-                        webStorage.remove('student')
-                        webStorage.add('student', {token: token, student: data})
-                    }
                     return true;
                 }, function(){
                     return false;
