@@ -234,7 +234,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.hwinput = Homework.Build.Input;
         $scope.homework = $scope.hwinput("Math Problems due next Tuesday (system of equations)")
         var changePeople = function(){
-            var People = ['People','Students','Parents','Teachers']
+            var People = ['People','Students','Parents','Teachers','People','Students','Parents','Teachers','People','Students','Parents','Teachers','Dogs']
             var people = People[Math.floor(Math.random() * People.length)].split('')
             $scope.people = ''
             $scope.$apply()
