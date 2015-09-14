@@ -561,7 +561,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 });
             }
             this.raw = function(){
-                return {
+                var raw = {
                     token: this.token,
                     username: this.username,
                     name: this.name,
@@ -569,8 +569,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     password_confirm: this.password_confirm,
                     id: this.id,
                     pro: this.pro,
-                    admin: this.admin
+                    admin: this.admin,
+                    habitica: this.habitica
                 }
+                return raw
             }
         }
         Student.build = function(data, token, remember){
