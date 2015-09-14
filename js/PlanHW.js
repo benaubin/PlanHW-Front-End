@@ -142,24 +142,22 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             });
         }
         $scope.friendRequest = function(friend){
-            $http.get('https://api.planhw.com/friend/'+friend+'?token=' + $rootScope.student_token)
-            $rootScope.student.get('friend/'+friend)
-
-                .error(function(data){
-                    data[1][0] = data[1][0] || 'Something went wrong'
-                    $rootScope.flashesNow.push({class:'danger',message:data[1][0]})
-                })
+            $rootScope.student.get('friend/'+friend).then(function(){
+                $rootScope.flashes.push({class:'success', message: "Sent friend request."})
+            }, function(res){
+                data = res.data;
+                data[1][0] = data[1][0] || 'Something went wrong'
+                $rootScope.flashesNow.push({class:'danger',message:data[1][0]})
+            });
         }
         $scope.removeFriend = function(friend){
-            $http.delete('https://api.planhw.com/friend/'+friend+'?token=' + $rootScope.student_token)
-                .success(function(data){
-                    data = data || 'Removed.'
-                    $rootScope.flashesNow.push({class:'success',message:data})
-                })
-                .error(function(data){
-                    data = data || 'Something went wrong'
-                    $rootScope.flashesNow.push({class:'danger',message:data})
-                })
+            $rootScope.student.delete('friend/'+friend).then(function(res){
+                data = res.data || 'Removed friend.'
+                $rootScope.flashesNow.push({class:'success',message:data})
+            }, function(data){
+                data = res.data || 'Something went wrong'
+                $rootScope.flashesNow.push({class:'danger',message:data})
+            })
         }
         $scope.show2step = function(){
             $scope.qrURL = PlanHWApi + '2step.qr?token=' + $rootScope.student_token
@@ -553,17 +551,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
             this.update = function(){
                 return this.request.put('students', this.raw()).then(function(){
-                    if(webStorage.get('student')){
-                        webStorage.remove('student')
-                        webStorage.add('student', {token: token, student: data})
-                    }
                     return true;
                 }, function(){
                     return false;
                 });
             }
             this.raw = function(){
-                return {
+                var raw = {
                     token: this.token,
                     username: this.username,
                     name: this.name,
@@ -571,8 +565,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     password_confirm: this.password_confirm,
                     id: this.id,
                     pro: this.pro,
-                    admin: this.admin
+                    admin: this.admin,
+                    habitica: this.habitica
                 }
+                return raw
             }
         }
         Student.build = function(data, token, remember){
