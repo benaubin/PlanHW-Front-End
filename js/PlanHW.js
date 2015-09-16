@@ -70,6 +70,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $location.path('/' + page)
     })
     .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$location, PlanHWRequest){
+        if(!$rootScope.student){
+            $rootScope.flashes.push({class: 'danger', message: 'Please Login First'})
+            $location.path('/')
+        }
         $scope.getPro = function(cc,cvc,expMonth,expYear,plan,coupon){
             if(cc && cvc){
                 Stripe.card.createToken({
@@ -279,6 +283,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 window.setTimeout(changePeople,5000)
     })
     .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework){
+        if(!$rootScope.student){
+            $rootScope.flashes.push({class: 'danger', message: 'Please Login First'})
+            $location.path('/')
+        }
         $scope.share = function(homework,student){
             homework.create(false, student).then(function(){
                 $rootScope.flashesNow.push({class: 'success', message: 'Sent to ' + student.name});
@@ -461,7 +469,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         var Student = function(token, id, username, name, admin, pro, avatarUrl, friends){
             this.authenicated = !!token;
             if(this.authenicated){
-                this.token = token
+                this.token = token;
             }
             this.username = username
             this.id = id
