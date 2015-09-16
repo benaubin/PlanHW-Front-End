@@ -210,20 +210,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             });
     })
     .run(function($rootScope, PlanHWRequest, $location, webStorage, Student){
-        $rootScope.flashes = []
-        $rootScope.flashesNow = []
-        $rootScope.$on('$routeChangeSuccess', function () {
-            $rootScope.flashesNow = $rootScope.flashes
-            $rootScope.flashes = []
-            try {
-                $('.modal').modal('hide');
-            } catch(err){}
-        });
         $rootScope.signout = function(location){
             $rootScope.student = null
             $location.path(location || '/')
             webStorage.remove('student')
         }
+        $rootScope.$on('$routeChangeSuccess', function () {
+            try {$('.modal').modal('hide');} catch(err){}
+        })
         PlanHWRequest.get('pro').then(function(res){
             Stripe.setPublishableKey(res.data)
         })
@@ -438,7 +432,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         templateUrl: '/directives/signin_popup.html',
         controller: 'SigninCtrl'
     }})
-
     // When sending an authenicated request, we reccomend using a Student's `request` method, as it will automaticly send the `token` param.
     .factory('PlanHWRequest', function($http, $q){
         var requestSender = function(path, method, data, params){
@@ -622,6 +615,28 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     
         return Student;
     })
+    .factory('Flash',function($q, $rootScope){
+        var flashes = []
+        $rootScope.$on('$routeChangeSuccess', function () {
+            $rootScope.flashesNow = flashes;
+            flashes.forEach(function(flash){
+                flash.callback();
+            })
+            flashes = [];
+        });
+        return function(message, type, now){
+            return $q(function(resolve, reject){
+                if(now){
+                    flashes.push({message: message, class: type, callback: function(){
+                        resolve(message)
+                    }});
+                } else {
+                    $rootScope.flashesNow.push({message: message, class: type})
+                    resolve(mesage);
+                }
+            })
+        }
+    })
     .factory('Homework',function($q){
         var Homework = function(student, id, completed, title, description, due_date, created_at, updated_at){
             this.id = id;
@@ -754,5 +769,5 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.save();
         }
         return Homework
-    })
-;})();
+    });
+ })();
