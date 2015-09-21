@@ -176,12 +176,16 @@
                                                 <hr>
                                                 <p class="text-center">
                                                     Get reminders sent directly to your phone! A whole new level of <del>nagging</del> getting homework done!<br>
-                                                    Oh! And now you can use PlanHW over text messsages, too. Text 855-980-PLAN `signup [pin]` to try it!
+                                                    Oh! And now you can text PlanHW<span ng-show="student.pro"> at 855-980-PLAN</span>!
                                                     Your standard msg&amp;data rates may apply.
                                                 </p>
                                                 <div class="input-group" ng-show="student.pro">
-                                                    <span class="input-group-addon">*<i class="fa fa-mobile"></i></span>
-                                                    <input type="tel" class="form-control" placeholder="Mobile Phone Number" ng-model="student.phone" ng-disabled="{{!student.pro}}">
+                                                    <span class="input-group-addon"><i class="fa fa-mobile"></i></span>
+                                                    <input type="tel" class="form-control" placeholder="Mobile Phone Number" ng-model="student.phone">
+                                                </div>
+                                                <div class="input-group" ng-show="student.pro">
+                                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                                    <input class="form-control" placeholder="PIN (for PlanHW/Text)" ng-model="student.pin_code">
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-8 col-sm-offset-2 col-md-offset-0">
@@ -197,7 +201,7 @@
                                                         <input type="text" class="form-control" placeholder="User ID" ng-model="student.habitica.uuid" ng-disabled="{{!student.pro}}">
                                                     </div>
                                                     <div class="input-group">
-                                                        <span class="input-group-addon">*<i class="fa fa-mobile"></i></span>
+                                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                                         <input type="tel" class="form-control" placeholder="API Key" ng-model="student.habitica.key" ng-disabled="{{!student.pro}}">
                                                     </div>
                                                 </div>
