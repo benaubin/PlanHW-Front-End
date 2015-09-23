@@ -156,10 +156,15 @@
                                 </div>
                                 <div ng-if="schedule">
                                     <div class="row">
-                                        <p class="text-center pad-50t">
-                                            We will be adding ways to automaticly schedule when homework is due based on when your class schedule.
-                                            When we do, you'll be able to set your schedule here (until better systems are implimented). 
+                                        <h1 class="text-center row">Schedule</h1>
+                                        <p class="text-right pad-50t col-sm-5 col-sm-offset-2">
+                                            When do you work on homework?
                                         </p>
+                                        <div class="col-sm-3 col-xs-4 pad-40t">
+                                            <select ng-model="student.digestTime" class="form-control" name="Digest Time"
+                                                    ng-options="time as time.human for time in digestTimes.local">
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                                 <div ng-show="pro">

@@ -8,6 +8,12 @@ Offline.options = {checks: {xhr: {url: PlanHWApi}}};
 
 addToHomescreen();
 
+Array.prototype.range = function(){
+    start = this[0];
+    end = this[1] + 1;
+    return Array(end-start).join(0).split(0).map(function(val, id) {return id+start});
+};
+
 (function(){
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize'])
     .config(function($routeProvider) {
@@ -69,7 +75,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         if(page === 'root') page = ''
         $location.path('/' + page)
     })
-    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$location, PlanHWRequest){
+    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$location,PlanHWRequest,DigestTimes){
         if(!$rootScope.student){
             $rootScope.flashes.push({class: 'danger', message: 'Please Login First'})
             $location.path('/')
@@ -196,7 +202,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 });
         }
         $scope.show('profile');
-
+        $scope.digestTimes = DigestTimes
     })
     .controller('ProfileCtrl',function($rootScope,$sce,$http){
         $http.jsonp("http://www.gravatar.com/" + md5($rootScope.student.email) + ".json?callback=JSON_CALLBACK")
@@ -222,7 +228,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             Stripe.setPublishableKey(res.data)
         })
         if(webStorage.has('student')){
-            console.log(webStorage.get('student'))
             student = webStorage.get('student')
             $rootScope.student = Student.build(student.student, student.token)
         }
@@ -326,7 +331,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         });
         
     })
-    .controller('SigninCtrl', function($scope, Student, $rootScope, $location, $httpParamSerializer){
+    .controller('SigninCtrl', function($scope, Student, $rootScope, $location, $httpParamSerializer, Flash){
         $scope.signinError = null
         $scope.signin = function(remember){
             Student.build.login($scope.username, $scope.password, remember, $scope.otp).then(function(data){
@@ -344,7 +349,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     $scope.password = null
                     $scope.showotp = false
                     $rootScope.student = data.student
-                    $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
+                    Flash("Welcome back to PlanHW!", 'success')
                     $location.path('/homework');
                 }
             })
@@ -352,8 +357,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.signinToken = function(token){
             Student.build.token(token, true).then(function(student){
                 $rootScope.student = student
-                $rootScope.flashes.push({message: "Welcome back to PlanHW!", class: 'success'})
                 $location.path('/homework');
+                $rootScope.flashesNow.push({message: "Welcome back to PlanHW!", class: 'success'})
             })
         }
         $scope.gsigninURL = 
@@ -432,6 +437,36 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         templateUrl: '/directives/signin_popup.html',
         controller: 'SigninCtrl'
     }})
+    .factory('DigestTimes',function(utcDiff){
+        var digestTimes = [];
+        ([utcDiff, 23].range().concat([0,utcDiff-1].range())).forEach(function(local, utc){
+            var suffix = "AM";
+            var local_human = local;
+            if(local_human >= 12){
+                local_human = local_human - 12;
+                suffix = "PM";
+            }
+            if(local_human == 0) local_human = 12;
+            digestTimes.push({
+                utc: utc * 2,
+                local: local * 2,
+                human: local_human + ":00" + suffix
+            })
+            digestTimes.push({
+                utc: utc * 2 + 1,
+                local: local * 2 + 1,
+                human: local_human + ":30" + suffix
+            })
+        })
+        digestTimes.local = digestTimes.slice(0).sort(function(a, b) {return a.local - b.local});
+    
+        return digestTimes;
+    })
+    .factory('utcDiff', function(){
+        var utcDiff = moment().hour() - moment.utc().hour();
+        if(utcDiff < 0) utcDiff = utcDiff + 24 
+        return utcDiff
+    })
     // When sending an authenicated request, we reccomend using a Student's `request` method, as it will automaticly send the `token` param.
     .factory('PlanHWRequest', function($http, $q){
         var requestSender = function(path, method, data, params){
@@ -458,8 +493,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         return requestSender;
     })
     // All students are stored with this object
-    .factory('Student', function(PlanHWRequest, webStorage, Homework, $q){
-        var Student = function(token, id, username, name, admin, pro, avatarUrl, friends){
+    .factory('Student', function(PlanHWRequest, webStorage, Homework, $q, DigestTimes){
+        var Student = function(token, id, username, name, admin, pro, avatarUrl, friends, digestTime){
             this.authenicated = !!token;
             if(this.authenicated){
                 this.token = token;
@@ -472,6 +507,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.pro = pro
             this.avatarUrl = avatarUrl
             this.friends = friends
+            this.digestTime = DigestTimes[digestTime]
             
             this.avatar = function(size){
                  return this.avatarUrl + "&s=" + ((size)? size : '250')
@@ -558,6 +594,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 });
             }
             this.raw = function(){
+                this.digestTime = this.digestTime.utc
                 var raw = {
                     token: this.token,
                     username: this.username,
@@ -567,7 +604,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     id: this.id,
                     pro: this.pro,
                     admin: this.admin,
-                    habitica: this.habitica
+                    habitica: this.habitica,
+                    digestTime: this.digestTime
                 }
                 return raw
             }
@@ -577,7 +615,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 webStorage.remove('student')
                 webStorage.add('student', {token: token, student: data})
             }
-            return new Student(token, data.id, data.username, data.name, data.admin, data.pro, data.avatar.default, data.friends)
+            return new Student(token, data.id, data.username, data.name, data.admin, data.pro, data.avatar.default, data.friends, data.digestTime)
         };
         Student.build.token = function(token, remember){
             return PlanHWRequest.get('test/login', {token: token}).then(function(res){
