@@ -101,7 +101,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-sm-8 col-md-offset-1">
+            <div class="col-sm-8 col-md-offset-1 col-xs-12">
                 <div ng-repeat="homework in student.homework" ng-show="(showComplete && homework.completed) || (showIncomplete && !homework.completed)" ng-class="{'complete': homework.completed}">
                     <div ng-show="homework.loading">
                         loading
