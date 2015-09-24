@@ -68,16 +68,16 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $rootScope.student = student
         });
     })
-    .controller('FlashCtrl',function($rootScope,$routeParams,$location){
+    .controller('FlashCtrl',function($routeParams,$location,Flash){
         var message = decodeURIComponent($routeParams.message)
-        $rootScope.flashes.push({class:'info', message: message})
+        Flash(message, 'info')
         var page = decodeURIComponent($routeParams.page)
         if(page === 'root') page = ''
         $location.path('/' + page)
     })
-    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$location,PlanHWRequest,DigestTimes){
+    .controller('SettingsCtrl',function($rootScope,$scope,$routeParams,$http,$sce,$location,PlanHWRequest,DigestTimes,Flash){
         if(!$rootScope.student){
-            $rootScope.flashes.push({class: 'danger', message: 'Please Login First'})
+            Flash('Please Login First', 'danger')
             $location.path('/')
         }
         $scope.getPro = function(cc,cvc,expMonth,expYear,plan,coupon){
@@ -94,11 +94,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                         token: $rootScope.student_token,
                         coupon: coupon
                     }).success(function(){
-                        $rootScope.flashes.push({class: 'success', message: 'Congrats! You now have PlanHW Pro!'})
+                        Flash('Congrats! You now have PlanHW Pro!', 'success')
                         $rootScope.signout.pro = true;
                     }).error(function(data){
                         $scope.show('pro')
-                        $rootScope.flashesNow.push({class:'danger', message: data.error.message})
+                        Flash(data.error.message, 'danger', true)
                     });
                 })
             } else {
@@ -107,7 +107,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     coupon: coupon,
                     token: $rootScope.student_token
                 }).success(function(){
-                    $rootScope.flashes.push({class: 'success', message: 'Congrats! You now have PlanHW Pro!'})
+                    Flash('Congrats! You now have PlanHW Pro!', 'success')
                     $rootScope.signout.pro = true;
                 }).error(function(data){
                     $scope.show('pro')
@@ -118,7 +118,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.getRidOfPro = function(){
             if(confirm('Just making sure you know what you are doing -- this will get rid of your pro status on PlanHW IMMEDIATELY') && (prompt('Please confirm your username') === $rootScope.student.username)){
                 Student.request.delete(pro).then(function(){
-                    $rootScope.flashes.push({class: 'danger', message: ':( - We got rid of your pro membership.'})
+                    Flash(':( - We got rid of your pro membership.', 'danger')
                     $rootScope.student.pro = false;
                 });
             } else {
@@ -153,7 +153,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
         $scope.friendRequest = function(friend){
             $rootScope.student.get('friend/'+friend).then(function(){
-                $rootScope.flashes.push({class:'success', message: "Sent friend request."})
+                Flash("Sent friend request.", 'success')
             }, function(res){
                 data = res.data;
                 data[1][0] = data[1][0] || 'Something went wrong'
@@ -221,6 +221,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $location.path(location || '/')
             webStorage.remove('student')
         }
+        $rootScope.flashesNow = []
         $rootScope.$on('$routeChangeSuccess', function () {
             try {$('.modal').modal('hide');} catch(err){}
         })
@@ -281,9 +282,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
 
                 window.setTimeout(changePeople,5000)
     })
-    .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework){
+    .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework, Flash){
         if(!$rootScope.student){
-            $rootScope.flashes.push({class: 'danger', message: 'Please Login First'})
+            Flash('Please Login First', 'danger')
             $location.path('/')
         }
         $scope.share = function(homework,student){
@@ -300,7 +301,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             return $rootScope.student.refreshHomework(!noComplete).then(function(homework){
                 
             }, function(error){
-                $rootScope.flashes.push({class: "danger", message: error.message})
+                Flash(error.message, 'danger')
                 $location.path('/')
             })
         }
@@ -374,7 +375,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.changePass = function(){
             $http.post(PlanHWApi + 'reset_password/' + $scope.username, {password: $scope.password, password_confirmation: $scope.password_confirm})
             .success(function(data,status){
-                $rootScope.flashes.push({class: 'success', message: data})
+                Flash(data, 'success')
                 $location.path('/signin')
             })
             .error(function(data,status){
@@ -670,7 +671,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     }});
                 } else {
                     $rootScope.flashesNow.push({message: message, class: type})
-                    resolve(mesage);
+                    resolve(message);
                 }
             })
         }
