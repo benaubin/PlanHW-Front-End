@@ -677,7 +677,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
     })
     .factory('Homework',function($q){
-        var Homework = function(student, id, completed, title, description, due_date, created_at, updated_at){
+        var Homework = function(student, id, completed, title, description, due_date, created_at, updated_at, estimatedTime, additionalTime){
             this.id = id;
             this.completed = completed;
             this.title = title;
@@ -685,6 +685,17 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.createdAt = created_at;
             this.student = student;
             this.deleted = false;
+            this.estimatedTime = {
+                minutes: Math.floor(estimatedTime / 60),
+                seconds: Math.floor(estimatedTime % 60),
+                raw: estimatedTime
+            };
+            if(this.estimatedTime.seconds){
+                this.estimatedTime.human = this.estimatedTime.minutes + "min\n" + this.estimatedTime.seconds + "sec"
+            } else {
+                this.estimatedTime.human = this.estimatedTime.minutes + "min"
+            }
+            this.additionalTime = additionalTime;
             
             this.moment = function(){
                 return moment(this.dueDate);
@@ -701,7 +712,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.updateDescription(description)
         }
         var BuildHomework = function(data, student){
-            return new Homework(student, data.id, data.completed, data.title, data.description, data.due_date, data.created_at, data.updated_at)
+            return new Homework(student, data.id, data.completed, data.title, data.description, data.due_date, data.created_at, data.updated_at, data.estimated_time, data.additional_time)
         }
         Homework.Build = BuildHomework;
         Homework.Build.Input = function(input, student){
@@ -739,6 +750,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     })
                 }
             }
+            homework.estimatedTime = {human: "Unknown"}
             return homework
         }
         
@@ -766,12 +778,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 description: this.description || "",
                 due_date: this.moment().toISOString()
             }, params).then(function(res){
-                if(add) this.student.homework.shift();
                 var homework = BuildHomework(res.data.homework, shareFriend || this.student)
                 if(add) this.student.homework.unshift(homework);
                 return homework;
             }.bind(this), function(data){
-                if(add) this.student.homework.shift();
                 return {error: true, type: data['message']['type'], errors: data['message']['errors']}
             })
         }
