@@ -320,6 +320,26 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             })
         }
         
+        $scope.startTimer = function(homework){
+            homework.Timer = function(){
+                if(homework.timer){
+                    homework.estimatedTime.spentNow++;
+                    homework.calcTimes()
+                    $scope.$apply();
+                    window.setTimeout(homework.Timer, 1000);
+                }
+            }
+            homework.timer = true;
+            window.setTimeout(homework.Timer, 1000);
+        }
+
+        $scope.stopTimer = function(homework){
+            homework.timer = false;
+            homework.stoppingTimer = true;
+            homework.save().then(function(){
+                homework.stoppingTimer = false;
+            })
+        }
         $scope.show = function(type){
             $scope.showComplete = type == 'complete' || type == 'all'
             $scope.showIncomplete = type == 'incomplete' || type == 'all'
@@ -514,6 +534,16 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                  return this.avatarUrl + "&s=" + ((size)? size : '250')
             }
             
+            this.calcTimeLeft = function(){
+                this.timeLeft = eval(this.homework.map(function(homework){
+                     return homework.estimatedTime.left
+                }).join(' + '))
+                this.timeLeft = {
+                    seconds: Math.round(this.timeLeft % 60),
+                    minutes: Math.floor(this.timeLeft / 60)
+                }
+            }
+            
             var request = function(path, method, data, params){
                 params = params || {}
                 params.token = this.token;
@@ -577,6 +607,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                             y = y.completed
                             return (x === y)? 0 : x? 1 : -1;
                         })
+                        this.calcTimeLeft()
                         resolve(this.homework)
                     }.bind(this), function(data){
                         if(data.error == 'not_authenicated'){
@@ -677,7 +708,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
     })
     .factory('Homework',function($q){
-        var Homework = function(student, id, completed, title, description, due_date, created_at, updated_at, estimatedTime, additionalTime){
+        var Homework = function(student, id, completed, title, description, due_date, created_at, updated_at, estimatedTimeLeft, additionalTime, estimatedTime, timeSpent){
             this.id = id;
             this.completed = completed;
             this.title = title;
@@ -686,15 +717,27 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.student = student;
             this.deleted = false;
             this.estimatedTime = {
-                minutes: Math.floor(estimatedTime / 60),
-                seconds: Math.floor(estimatedTime % 60),
-                raw: estimatedTime
+                left: estimatedTimeLeft,
+                spent: timeSpent,
+                spentNow: 0,
+                raw: estimatedTime,
+                added: additionalTime || 0,
+                spent: timeSpent || 0
             };
-            if(this.estimatedTime.seconds){
-                this.estimatedTime.human = this.estimatedTime.minutes + "min\n" + this.estimatedTime.seconds + "sec"
-            } else {
-                this.estimatedTime.human = this.estimatedTime.minutes + "min"
+            
+            this.calcTimes = function(noStudentCalc){
+                this.estimatedTime.spentTotal = this.estimatedTime.spent + this.estimatedTime.spentNow
+                this.estimatedTime.left = this.estimatedTime.raw - this.estimatedTime.spentTotal + this.estimatedTime.added;
+                console.log(this.estimatedTime.added)
+                this.estimatedTime.percent = this.estimatedTime.spentTotal / (this.estimatedTime.left + this.estimatedTime.spentTotal) * 100;
+                this.estimatedTime.roundedPercent = Math.round(this.estimatedTime.percent);
+                this.estimatedTime.seconds = Math.round(this.estimatedTime.left % 60),
+                this.estimatedTime.minutes = Math.floor(this.estimatedTime.left / 60)
+                if(!noStudentCalc) this.student.calcTimeLeft()
             }
+            
+            this.calcTimes(true)
+            
             this.additionalTime = additionalTime;
             
             this.moment = function(){
@@ -712,7 +755,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.updateDescription(description)
         }
         var BuildHomework = function(data, student){
-            return new Homework(student, data.id, data.completed, data.title, data.description, data.due_date, data.created_at, data.updated_at, data.estimated_time, data.additional_time)
+            return new Homework(student, data.id, data.completed, data.title, data.description, data.due_date, data.created_at, data.updated_at, data.estimated_time_left, data.additional_time, data.estimated_time, data.time_spent)
         }
         Homework.Build = BuildHomework;
         Homework.Build.Input = function(input, student){
@@ -803,13 +846,20 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             var updateData = {
                 title: this.title.trim(),
                 description: this.description,
-                completed: this.completed
+                completed: this.completed,
+                time_spent: this.estimatedTime.spentNow
             }
-            this.student.request.put('hw/'+this.id, updateData).then(function(res){
+            return this.student.request.put('hw/'+this.id, updateData).then(function(res){
             }, function(res){
                 this.editing = true;
                 return {error: true, message: res.data}
             })
+        }
+        Homework.prototype.addTime = function(sec){
+            return this.student.request.put('hw/'+this.id, {additional_time: sec}).then(function(res){
+                this.estimatedTime.added += sec;
+                this.calcTimes();
+            }.bind(this))
         }
         //Alias for `save`
         Homework.prototype.update = Homework.prototype.save;
