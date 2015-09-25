@@ -780,6 +780,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }, params).then(function(res){
                 var homework = BuildHomework(res.data.homework, shareFriend || this.student)
                 if(add) this.student.homework.unshift(homework);
+                this.student.doneWithHomework = false
                 return homework;
             }.bind(this), function(data){
                 return {error: true, type: data['message']['type'], errors: data['message']['errors']}
