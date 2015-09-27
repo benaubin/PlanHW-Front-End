@@ -88,36 +88,36 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     exp_month: expMonth,
                     exp_year: expYear
                 }, function(status,token){
-                    $http.post(PlanHWApi+'pro',{
+                    $rootScope.student.request.post('pro',{
                         source: token,
                         plan: plan,
                         token: $rootScope.student_token,
                         coupon: coupon
-                    }).success(function(){
+                    }).then(function(){
                         Flash('Congrats! You now have PlanHW Pro!', 'success')
                         $rootScope.signout.pro = true;
-                    }).error(function(data){
+                    }, function(data){
                         $scope.show('pro')
                         Flash(data.error.message, 'danger', true)
                     });
                 })
             } else {
-                $http.post(PlanHWApi+'pro',{
+                $rootScope.student.request.post('pro',{
                     plan: plan,
                     coupon: coupon,
                     token: $rootScope.student_token
-                }).success(function(){
+                }).then(function(){
                     Flash('Congrats! You now have PlanHW Pro!', 'success')
                     $rootScope.signout.pro = true;
-                }).error(function(data){
+                }, function(data){
                     $scope.show('pro')
-                    $rootScope.flashesNow.push({class:'danger', message: data.error.message})
+                    Flash(data.error.message, 'danger', true)
                 });
             }
         }
         $scope.getRidOfPro = function(){
             if(confirm('Just making sure you know what you are doing -- this will get rid of your pro status on PlanHW IMMEDIATELY') && (prompt('Please confirm your username') === $rootScope.student.username)){
-                Student.request.delete(pro).then(function(){
+                $rootScope.student.request.delete('pro').then(function(){
                     Flash(':( - We got rid of your pro membership.', 'danger')
                     $rootScope.student.pro = false;
                 });
