@@ -73,6 +73,16 @@
                                     <datetimepicker data-ng-model="homework.due_date" data-datetimepicker-config="{ dropdownSelector: '.my-toggle-select' }"></datetimepicker>
                                 </ul>
                             </div>
+                            <div ng-init="homework.estimated_time.full = false" ng-show="student.pro">
+                                <div ng-class="{'col-xs-5': homework.estimated_time.full, 'col-md-12': !homework.estimated_time.full}">
+                                    <input type="text" class="form-control" ng-click="homework.estimated_time.full = true" ng-model="homework.estimated_time_min" 
+                                           placeholder="{{homework.estimated_time.full? 'Minutes' : 'Auto Estimate Time'}}">
+                                </div>
+                                <p class="col-xs-1 text-center pad-10t" ng-show="homework.estimated_time.full">:</p>
+                                <div class="col-xs-5" ng-show="homework.estimated_time.full">
+                                    <input type="text" class="form-control" ng-model="homework.estimated_time_sec" placeholder="Seconds">
+                                </div>
+                            </div>
                         </div>
                         <label>Description</label>
                         <textarea class="form-control" ng-model="homework.description" ng-change="homework.updateDescription()"/>

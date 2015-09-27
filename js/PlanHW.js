@@ -728,7 +728,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.calcTimes = function(noStudentCalc){
                 this.estimatedTime.spentTotal = this.estimatedTime.spent + this.estimatedTime.spentNow
                 this.estimatedTime.left = this.estimatedTime.raw - this.estimatedTime.spentTotal + this.estimatedTime.added;
-                console.log(this.estimatedTime.added)
                 this.estimatedTime.percent = this.estimatedTime.spentTotal / (this.estimatedTime.left + this.estimatedTime.spentTotal) * 100;
                 this.estimatedTime.roundedPercent = Math.round(this.estimatedTime.percent);
                 this.estimatedTime.seconds = Math.round(this.estimatedTime.left % 60),
@@ -760,6 +759,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         Homework.Build = BuildHomework;
         Homework.Build.Input = function(input, student){
             var homework = new Homework(student)
+            
             homework.completed = false;
             homework.input = input;
             homework.updateDescription((homework.input.match(/\((.+)\)/i))? homework.input.match(/\((.+)\)/i)[1] : "")
@@ -813,16 +813,27 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         //If `add` is true, then the homework object will be added to the student it belongs to.
         Homework.prototype.create = function(add, shareFriend){
             var params = {}
-            if(shareFriend){
-                params['friend_id'] = shareFriend.id
-            }
-            return this.student.request.post('hw', {
+            if(shareFriend) params['friend_id'] = shareFriend.id;
+            var hw_data = {
                 title: this.title.trim(),
                 description: this.description || "",
-                due_date: this.moment().toISOString()
-            }, params).then(function(res){
+                due_date: this.moment().toISOString(),
+                estimated_time: (this.estimated_time)? (this.estimated_time_min || 0) * 60 + (this.estimated_time_sec || 0) : false
+            }
+            return this.student.request.post('hw', hw_data, params).then(function(res){
                 var homework = BuildHomework(res.data.homework, shareFriend || this.student)
                 if(add) this.student.homework.unshift(homework);
+                
+                this.estimatedTime = {
+                    left: hw_data.estimated_time,
+                    spent: 0,
+                    spentNow: 0,
+                    raw: hw_data.estimated_time,
+                    added: 0
+                };
+                console.log(hw_data.estimated_time)
+                
+                this.calcTimes();
                 this.student.doneWithHomework = false
                 return homework;
             }.bind(this), function(data){
