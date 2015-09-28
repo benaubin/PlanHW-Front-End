@@ -513,7 +513,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     })
     // All students are stored with this object
     .factory('Student', function(PlanHWRequest, webStorage, Homework, $q, DigestTimes){
-        var Student = function(token, id, username, name, admin, pro, avatarUrl, friends, digestTime){
+        var Student = function(token, id, username, name, admin, pro, avatarUrl, friends, digestTime, stats){
             this.authenicated = !!token;
             if(this.authenicated){
                 this.token = token;
@@ -527,6 +527,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.avatarUrl = avatarUrl
             this.friends = friends
             this.digestTime = DigestTimes[digestTime]
+            
+            this.stats = stats
             
             this.avatar = function(size){
                  return this.avatarUrl + "&s=" + ((size)? size : '250')
@@ -546,6 +548,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 params = params || {}
                 params.token = this.token;
                 return PlanHWRequest(path, method, data, params);
+            
             }.bind(this)
             request.get = function(path, data){
                 return request(path, 'GET', null, data)
@@ -645,7 +648,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 webStorage.remove('student')
                 webStorage.add('student', {token: token, student: data})
             }
-            return new Student(token, data.id, data.username, data.name, data.admin, data.pro, data.avatar, data.friends, data.digestTime)
+            return new Student(token, data.id, data.username, data.name, data.admin, data.pro, data.avatar, data.friends, data.digestTime, data.stats)
         };
         Student.build.token = function(token, remember){
             return PlanHWRequest.get('test/login', {token: token}).then(function(res){
