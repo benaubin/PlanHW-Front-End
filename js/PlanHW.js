@@ -91,11 +91,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     $rootScope.student.request.post('pro',{
                         source: token,
                         plan: plan,
-                        token: $rootScope.student_token,
                         coupon: coupon
                     }).then(function(){
                         Flash('Congrats! You now have PlanHW Pro!', 'success')
-                        $rootScope.signout.pro = true;
+                        $rootScope.student.pro = true;
                     }, function(data){
                         $scope.show('pro')
                         Flash(data.error.message, 'danger', true)
@@ -104,11 +103,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             } else {
                 $rootScope.student.request.post('pro',{
                     plan: plan,
-                    coupon: coupon,
-                    token: $rootScope.student_token
+                    coupon: coupon
                 }).then(function(){
                     Flash('Congrats! You now have PlanHW Pro!', 'success')
-                    $rootScope.signout.pro = true;
+                    $rootScope.student.pro = true;
                 }, function(data){
                     $scope.show('pro')
                     Flash(data.error.message, 'danger', true)
@@ -647,7 +645,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 webStorage.remove('student')
                 webStorage.add('student', {token: token, student: data})
             }
-            return new Student(token, data.id, data.username, data.name, data.admin, data.pro, data.avatar.default, data.friends, data.digestTime)
+            return new Student(token, data.id, data.username, data.name, data.admin, data.pro, data.avatar, data.friends, data.digestTime)
         };
         Student.build.token = function(token, remember){
             return PlanHWRequest.get('test/login', {token: token}).then(function(res){
