@@ -1,11 +1,10 @@
-if(($(location).attr('hostname').match(/^.+?\.\D+?$/i) || $(location).attr('hostname').match(/dev/i) || confirm("Use production API?"))){
+var prod = false
+
+if(($(location).attr('hostname').match(/^.+?\.\D+?$/i) || $(location).attr('hostname').match(/dev/i) || prod && confirm("Use production API?"))){
     var PlanHWApi = "https://api.planhw.com/"
 } else {
     var PlanHWApi = "http://localhost:3000/"
 }
-
-Offline.options = {checks: {xhr: {url: PlanHWApi}}};
-
 addToHomescreen();
 
 Array.prototype.range = function(){
@@ -228,12 +227,12 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         })
         if(webStorage.has('student')){
             student = webStorage.get('student')
-            $rootScope.student = Student.build(student.student, student.token)
+            $rootScope.student = new Student(student.token, student.student)
         }
     })
     .controller('IndexCtrl',function($scope, Homework){
         $scope.people = 'Students'
-        $scope.hwinput = Homework.Build.Input;
+        $scope.hwinput = Homework.Input;
         $scope.homework = $scope.hwinput("Math Problems due next Tuesday (system of equations)")
         var changePeople = function(){
             var People = ['People','Students','Parents','Teachers','People','Students','Parents','Teachers','People','Students','Parents','Teachers','Dogs']
@@ -305,7 +304,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
         $scope.suggestShareFriend = null
         $scope.input = function(homework){
-            $scope.homework = Homework.Build.Input(homework.input, $rootScope.student)
+            $scope.homework = Homework.Input(homework.input, $rootScope.student)
             $scope.suggestShareFriend = homework.shareSuggest
         };
         $scope.new = function(homework){
@@ -513,22 +512,27 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     })
     // All students are stored with this object
     .factory('Student', function(PlanHWRequest, webStorage, Homework, $q, DigestTimes){
-        var Student = function(token, id, username, name, admin, pro, avatarUrl, friends, digestTime, stats){
+        var Student = function(token, data, remember){
+            if(remember){
+                webStorage.remove('student')
+                webStorage.add('student', {token: token, student: data})
+            }
+            
             this.authenicated = !!token;
             if(this.authenicated){
                 this.token = token;
             }
-            this.username = username
-            this.id = id
-            this.name = name
+            this.username = data.username
+            this.id = data.id
+            this.name = data.name
             this.firstName = this.name.split(' ')[0]
-            this.admin = admin
-            this.pro = pro
-            this.avatarUrl = avatarUrl
-            this.friends = friends
-            this.digestTime = DigestTimes[digestTime]
+            this.admin = data.admin
+            this.pro = data.pro
+            this.avatarUrl = data.avatar
+            this.friends = data.friends
+            this.digestTime = DigestTimes[data.digestTime]
             
-            this.stats = stats
+            this.stats = data.stats
             
             this.avatar = function(size){
                  return this.avatarUrl + "&s=" + ((size)? size : '250')
@@ -566,9 +570,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             
             if(this.friends){
                 this.friends = this.friends.map(function(friend){
-                    return Student.build(friend.student, false, false)
+                    return new Student(null, friend.student)
                 })
-                this.friends.sifter = new Sifter(friends);
+                this.friends.sifter = new Sifter(this.friends);
             }
             if(this.authenicated){
                 this.request.get('test/login').then(function(res){
@@ -600,7 +604,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                         }
                     }.bind(this)).then(function(homework){
                         this.homework = homework.map(function(homework){
-                            homework = Homework.Build(homework.homework, this)
+                            homework = new Homework(this, homework.homework)
                             if(!homework.completed) this.doneWithHomework = false
                             return homework
                         }, this).sort(function(x, y) {
@@ -643,23 +647,19 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 return raw
             }
         }
-        Student.build = function(data, token, remember){
-            if(remember){
-                webStorage.remove('student')
-                webStorage.add('student', {token: token, student: data})
-            }
-            return new Student(token, data.id, data.username, data.name, data.admin, data.pro, data.avatar, data.friends, data.digestTime, data.stats)
-        };
+        Student.build = function(student, token){
+            return new Student(token, student)
+        }
         Student.build.token = function(token, remember){
             return PlanHWRequest.get('test/login', {token: token}).then(function(res){
                 data = res.data;
-                return Student.build(data.student, token, remember);
+                return new Student(token, data.student, remember);
             })
         };
         Student.build.id = function(id){
             return PlanHWRequest.get('students/' + id).then(function(res){
                 data = res.data;
-                return Student.build(data.student)
+                return new Student(null, data.student)
             })
         };
         Student.build.login = function(username, password, remember, otp){
@@ -669,9 +669,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 auth_code: otp
             }).then(function(res){
                 data = res.data;
-                return {error: false, student: Student.build(res.data.student, res.data.token, remember)};
+                return {error: false, student: new Student(res.data.token, res.data.student, remember)};
             }, function(res){
-                data = res.data
+                data = res.data;
                 if(res.status == 401){
                     if(data === 'Please include OTP.'){
                         return {error: 'incorrect_otp', message: 'Please include a correct one time passcode (from Google Authenicator)'}
@@ -709,23 +709,19 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
     })
     .factory('Homework',function($q){
-        var Homework = function(student, id, completed, title, description, due_date, created_at, updated_at, estimatedTimeLeft, additionalTime, estimatedTime, timeSpent){
-            this.id = id;
-            this.completed = completed;
-            this.title = title;
-            this.dueDate = moment(due_date).toISOString();
-            this.createdAt = created_at;
+        var Homework = function(student, data){
             this.student = student;
             this.deleted = false;
-            this.estimatedTime = {
-                left: estimatedTimeLeft,
-                spent: timeSpent,
-                spentNow: 0,
-                raw: estimatedTime,
-                added: additionalTime || 0,
-                spent: timeSpent || 0
-            };
-            
+            this.moment = function(){
+                return moment(this.dueDate);
+            }
+            this.dueDateWords = function(){
+                return this.moment().calendar();
+            }
+            this.updateDescription = function(description){
+                this.description = description || this.description || "";
+                this.descHTML = marked(this.description)
+            }
             this.calcTimes = function(noStudentCalc){
                 this.estimatedTime.spentTotal = this.estimatedTime.spent + this.estimatedTime.spentNow
                 this.estimatedTime.left = this.estimatedTime.raw - this.estimatedTime.spentTotal + this.estimatedTime.added;
@@ -735,30 +731,27 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 this.estimatedTime.minutes = Math.floor(this.estimatedTime.left / 60)
                 if(!noStudentCalc) this.student.calcTimeLeft()
             }
-            
-            this.calcTimes(true)
-            
-            this.additionalTime = additionalTime;
-            
-            this.moment = function(){
-                return moment(this.dueDate);
+            if(data){
+                this.id = data.id;
+                this.completed = data.completed;
+                this.title = data.title;
+                this.dueDate = moment(data.dueDate).toISOString();
+                this.createdAt = data.createdAt;
+                
+                this.estimatedTime = {
+                    left: data.estimatedTimeLeft,
+                    spent: data.timeSpent,
+                    spentNow: 0,
+                    raw: data.estimatedTime,
+                    added: data.additionalTime || 0,
+                    spent: data.timeSpent || 0
+                };
+                
+                this.calcTimes(true)
+                this.updateDescription(data.description)
             }
-            this.dueDateWords = function(){
-                return this.moment().calendar();
-            }
-            
-            this.updateDescription = function(description){
-                this.description = description || this.description || "";
-                this.descHTML = marked(this.description)
-            }
-            
-            this.updateDescription(description)
         }
-        var BuildHomework = function(data, student){
-            return new Homework(student, data.id, data.completed, data.title, data.description, data.due_date, data.created_at, data.updated_at, data.estimated_time_left, data.additional_time, data.estimated_time, data.time_spent)
-        }
-        Homework.Build = BuildHomework;
-        Homework.Build.Input = function(input, student){
+        Homework.Input =  function(input, student){
             var homework = new Homework(student)
             
             homework.completed = false;
@@ -822,17 +815,16 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 estimated_time: (this.estimated_time)? (this.estimated_time_min || 0) * 60 + (this.estimated_time_sec || 0) : false
             }
             return this.student.request.post('hw', hw_data, params).then(function(res){
-                var homework = BuildHomework(res.data.homework, shareFriend || this.student)
+                var homework = new Homework(student, data)(res.data.homework, shareFriend || this.student)
                 if(add) this.student.homework.unshift(homework);
                 
                 this.estimatedTime = {
-                    left: hw_data.estimated_time,
+                    left: hw_data.estimatedTime,
                     spent: 0,
                     spentNow: 0,
-                    raw: hw_data.estimated_time,
+                    raw: hw_data.estimatedTime,
                     added: 0
                 };
-                console.log(hw_data.estimated_time)
                 
                 this.calcTimes();
                 this.student.doneWithHomework = false
