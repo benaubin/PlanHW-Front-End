@@ -47,7 +47,7 @@
                             </ul>
                         </div>
                         <div class="col-md-8 col-sm-10" id="settings-main">
-                            <form ng-submit="update(student)">
+                            <form ng-submit="update(student, student.stats)">
                                 <div ng-if="profile">
                                     <h2 class="text-center">Info</h2>
                                     <div class="row">
@@ -57,6 +57,21 @@
                                                 <input type="text" class="form-control" placeholder="Name" ng-model="student.name">
                                             </div>
                                         </div>
+                                    </div>
+                                    <hr class="pad-20t">
+                                    <div class="row pad-50t">
+                                        <h3 class="text-center">Homework Stats:</h3>
+                                        <div class="col-md-8 col-md-offset-2" ng-show="student.pro">
+                                            <div class="col-md-6" ng-repeat="(stat, statVal) in student.stats">
+                                                <div class="form-group">
+                                                    <label class="control-label">{{stat}}</label>
+                                                    <input type="text" class="form-control" ng-model="student.stats[stat]">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p ng-hide="student.pro">
+                                            Get pro and keep track of how long homework takes you to do.
+                                        </p>
                                     </div>
                                 </div>
                                 <div ng-if="security">

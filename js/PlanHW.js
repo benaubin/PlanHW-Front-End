@@ -228,6 +228,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         if(webStorage.has('student')){
             student = webStorage.get('student')
             $rootScope.student = new Student(student.token, student.student)
+            Student.build.token(student.token)
         }
     })
     .controller('IndexCtrl',function($scope, Homework){
@@ -625,6 +626,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
             this.update = function(){
                 return this.request.put('students', this.raw()).then(function(){
+                    student = webStorage.remove('student')
                     return true;
                 }, function(){
                     return false;
@@ -642,8 +644,17 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     pro: this.pro,
                     admin: this.admin,
                     habitica: this.habitica,
-                    digestTime: this.digestTime
+                    digestTime: this.digestTime,
+                    writing_pph: this.stats.writingPph,
+                    reading_wpm: this.stats.readingWpm,
+                    math_homework_time: this.stats.mathHomeworkTime,
+                    avg_assignment_time: this.stats.avgAssignmentTime,
+                    words_per_writing_page: this.stats.wordsPerWritingPage,
+                    words_per_reading_page: this.stats.wordsPerReadingPage,
+                    chapter_size: this.stats.chapterSize,
+                    avg_pages: this.stats.avgPages,
                 }
+                
                 return raw
             }
         }
@@ -815,7 +826,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 estimated_time: (this.estimated_time)? (this.estimated_time_min || 0) * 60 + (this.estimated_time_sec || 0) : false
             }
             return this.student.request.post('hw', hw_data, params).then(function(res){
-                var homework = new Homework(student, data)(res.data.homework, shareFriend || this.student)
+                var homework = new Homework(shareFriend || this.student, res.data.homework)
                 if(add) this.student.homework.unshift(homework);
                 
                 this.estimatedTime = {
