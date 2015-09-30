@@ -1,6 +1,4 @@
-var prod = false
-
-if(($(location).attr('hostname').match(/^.+?\.\D+?$/i) || $(location).attr('hostname').match(/dev/i) || prod && confirm("Use production API?"))){
+if(($(location).attr('hostname').match(/^.+?\.\D+?$/i) || confirm("Use production API?"))){
     var PlanHWApi = "https://api.planhw.com/"
 } else {
     var PlanHWApi = "http://localhost:3000/"
@@ -541,7 +539,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             
             this.calcTimeLeft = function(){
                 this.timeLeft = eval(this.homework.map(function(homework){
-                     return homework.estimatedTime.left
+                    return homework.completed ? 0 : homework.estimatedTime.left
                 }).join(' + '))
                 this.timeLeft = {
                     seconds: Math.round(this.timeLeft % 60),
