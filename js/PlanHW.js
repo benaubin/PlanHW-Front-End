@@ -1,4 +1,4 @@
-if(($(location).attr('hostname').match(/^.+?\.\D+?$/i) || confirm("Use production API?"))){
+if(($(location).attr('hostname').match(/^.+?\.\D+?$/i) || true || confirm("Use production API?"))){
     var PlanHWApi = "https://api.planhw.com/"
 } else {
     var PlanHWApi = "http://localhost:3000/"
@@ -13,11 +13,12 @@ Array.prototype.range = function(){
 
 (function(){
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize'])
-    .config(function($routeProvider) {
-        
+    .config(function($routeProvider, $locationProvider) {
+        $routeProvider.caseInsensitiveMatch = true;
+        $locationProvider.html5Mode(true);
+    
         $routeProvider
-        
-        .when('/',{
+        .otherwise({
             templateUrl: 'pages/landing.html',
             controller: 'IndexCtrl'
         })
@@ -58,7 +59,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             templateUrl: 'pages/signin.html',
             controller: 'LoginCtrl'
         })
-            
+        
     })
     .controller('LoginCtrl',function(Student, $rootScope, $routeParams){
         Student.build.token($routeParams.token, true).then(function(student){
@@ -211,6 +212,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             });
     })
     .run(function($rootScope, PlanHWRequest, $location, webStorage, Student){
+        if($location.path() == '/bread'){
+            $rootScope.logo = "BreadHW"
+        } else {
+            $rootScope.logo = "newsmaller"
+        }
         $rootScope.signout = function(location){
             $rootScope.student = null
             $location.path(location || '/')

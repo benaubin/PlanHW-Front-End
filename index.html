@@ -43,32 +43,34 @@
         <meta name="mobile-web-app-title" content="PlanHW">
         
         <script src="/bower_components/add-to-homescreen/src/addtohomescreen.min.js"></script>
+        <base href="/">
     </head>
     <body>
         <div class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
                     <div class="logo">
-                        <a href="/#/" class="navbar-brand hidden-xs">
-                            <img class="planhw-branding" src="img/logos/newsmaller.png" height="90px">
+                        <a href="/" class="navbar-brand hidden-xs">
+                            <img class="planhw-branding" src="img/logos/newsmaller.png" height="90px" ng-hide="logo">
+                            <img class="planhw-branding ng-cloak" ng-src="img/logos/{{logo}}.png" height="90px" ng-show="logo">
                         </a>
                     </div>
                 </div>
                 <div class="navbar-right">
                     <ul class="nav navbar-nav nav-pills">
-                        <li class="bold visible-xs planhw-branding"><a href="#/">PlanHW</a></li>
-                        <li ng-hide="student.authenicated"><a href="#/signup">Sign Up</a></li>
-                        <li ng-hide="student.authenicated"><a href="#/signin" onclick="event.preventDefault();" data-toggle="modal" data-target="#signin-popup">Sign In</a></li>
-                        <li ng-show="student.authenicated"><a href="#/homework">Homework</a></li>
-                        <li ng-show="student">
+                        <li class="bold visible-xs planhw-branding"><a href="/">PlanHW</a></li>
+                        <li ng-hide="student.authenicated"><a href="/signup">Sign Up</a></li>
+                        <li ng-hide="student.authenicated"><a href="/signin" onclick="event.preventDefault();" data-toggle="modal" data-target="#signin-popup">Sign In</a></li>
+                        <li ng-show="student.authenicated" class="ng-cloak"><a href="/homework">Homework</a></li>
+                        <li ng-show="student" class="ng-cloak">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="" role="button" aria-expanded="false">
                                 {{student.username}} <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a ng-href="#/settings">Account Settings</a></li>
-                                <li><a ng-href="#/profile">Profile</a></li>
+                                <li><a ng-href="/settings">Account Settings</a></li>
+                                <li><a ng-href="/profile">Profile</a></li>
                                 <li role="presentation" class="divider"></li>
-                                <li><a ng-click="signout()" href="#/">Sign Out</a></li>
+                                <li><a ng-click="signout()" href="/">Sign Out</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -76,7 +78,7 @@
             </div>
         </div>
         
-        <div class="container" ng-show="flashesNow[0]" ng-cloak>
+        <div class="container ng-cloak" ng-show="flashesNow[0]">
             <div ng-repeat="flash in flashesNow">
                 <div class="alert alert-{{flash.class}} alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
