@@ -9,9 +9,18 @@ Array.prototype.range = function(){
 
 (function(){
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize'])
-    .config(function($routeProvider, $locationProvider) {
+    .config(function($routeProvider, $locationProvider, $provide) {
         $routeProvider.caseInsensitiveMatch = true;
+    
+        $provide.decorator('$sniffer', function($delegate) {
+            if(window.location.hostname == '127.0.0.1'){
+                $delegate.history = false;
+            };
+            return $delegate;
+        });
+    
         $locationProvider.html5Mode(true);
+    
         $routeProvider
         .otherwise({
             templateUrl: 'pages/landing.html',
