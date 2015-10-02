@@ -1,8 +1,4 @@
-if(($(location).attr('hostname').match(/^.+?\.\D+?$/i) || true || confirm("Use production API?"))){
-    var PlanHWApi = "https://api.planhw.com/"
-} else {
-    var PlanHWApi = "http://localhost:3000/"
-}
+var PlanHWApi = "https://api.planhw.com/"
 addToHomescreen();
 
 Array.prototype.range = function(){
@@ -16,7 +12,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
     .config(function($routeProvider, $locationProvider) {
         $routeProvider.caseInsensitiveMatch = true;
         $locationProvider.html5Mode(true);
-    
         $routeProvider
         .otherwise({
             templateUrl: 'pages/landing.html',
@@ -216,6 +211,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $rootScope.logo = "BreadHW"
         } else {
             $rootScope.logo = "newsmaller"
+        }
+        if($location.path() == '/dev'){
+            PlanHWApi = "http://localhost:3000/"
         }
         $rootScope.signout = function(location){
             $rootScope.student = null
