@@ -177,7 +177,7 @@ p.big {
 -webkit-background-size: cover;
    -moz-background-size: cover;
      -o-background-size: cover;
-    min-height:85vh;
+    min-height: 75vh;
 }
 
 .textbackwhite {
@@ -197,17 +197,6 @@ p.big {
     background: white;
     box-shadow: 6px 0 0 white, -6px 0 0 white;
     font-size: 50%;
-}
-#play-button {
-    color: #fff;
-    color: black;
-    -webkit-text-fill-color: white;
-    -webkit-text-stroke-width: 2px;
-    -webkit-text-stroke-color: black;
-    opacity: .50;
-}
-#play-button:hover {
-    opacity: 1
 }
 .strike {
     text-decoration: line-through;
