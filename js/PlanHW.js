@@ -291,7 +291,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
 
                 window.setTimeout(changePeople,5000)
     })
-    .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework, Flash){
+    .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework, Flash, $interval){
         if(!$rootScope.student){
             Flash('Please Login First', 'danger')
             $location.path('/')
@@ -330,25 +330,28 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
         
         $scope.startTimer = function(homework){
-            homework.Timer = function(){
-                if(homework.timer){
-                    homework.estimatedTime.spentNow++;
-                    homework.calcTimes()
-                    $scope.$apply();
-                    window.setTimeout(homework.Timer, 1000);
-                }
-            }
-            homework.timer = true;
-            window.setTimeout(homework.Timer, 1000);
+            homework.before = new Date();
+            homework.timer = $interval(function(){
+                var elapsedTime = ((new Date()).getTime() - homework.before.getTime());
+                homework.estimatedTime.spentNow += Math.floor(elapsedTime / 1000);
+                homework.calcTimes()
+                homework.before = new Date();
+            }, 1000)
         }
-
         $scope.stopTimer = function(homework){
-            homework.timer = false;
-            homework.stoppingTimer = true;
+            $interval.cancel(homework.timer)
+            homework.timer = "stopping"
             homework.save().then(function(){
-                homework.stoppingTimer = false;
+                homework.timer = false;
             })
         }
+        $scope.timerRunning = function(homework){
+            return homework.timer && !$scope.timerStopping(homework)
+        }
+        $scope.timerStopping = function(homework){
+            return homework.timer == 'stopping'
+        }
+        
         $scope.show = function(type){
             $scope.showComplete = type == 'complete' || type == 'all'
             $scope.showIncomplete = type == 'incomplete' || type == 'all'
