@@ -51,6 +51,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         .when('/tos',{
             templateUrl: 'pages/tos.html'
         })
+        .when('/press',{
+            templateUrl: 'pages/press.html',
+            controller: 'PressCtrl'
+        })
         .when('/settings',{
             templateUrl: 'pages/settings.html',
             controller: 'SettingsCtrl'
@@ -64,6 +68,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             controller: 'LoginCtrl'
         })
         
+    })
+    .controller('PressCtrl', function($scope){
+        $scope.downloadPressKit = function(){
+            window.open("/press.zip");
+        }
     })
     .controller('LoginCtrl',function(Student, $rootScope, $routeParams){
         Student.build.token($routeParams.token, true).then(function(student){
