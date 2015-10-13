@@ -15,9 +15,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $provide.decorator('$sniffer', function($delegate) {
             if(window.location.hostname == '127.0.0.1'){
                 $delegate.history = false;
+                if(window.location.hash.match(/dev/)){
+                    $locationProvider.hashPrefix('/dev')
+                }
             };
+            
             return $delegate;
         });
+    
     
         $locationProvider.html5Mode(true);
     
@@ -230,7 +235,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         } else {
             $rootScope.logo = "newsmaller"
         }
-        if($location.path() == '/dev'){
+        if(window.location.hash.match(/dev/)){
             PlanHWApi = "http://localhost:3000/"
         }
         $rootScope.signout = function(location){
@@ -403,14 +408,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $rootScope.flashesNow.push({message: "Welcome back to PlanHW!", class: 'success'})
             })
         }
-        $scope.gsigninURL = 
-                "https://accounts.google.com/o/oauth2/auth?" + $httpParamSerializer({
-                        scope: ['openid email'].join(' '),
-                        state: 'google',
-                        redirect_uri: PlanHWApi + 'oauth2callback',
-                        response_type: 'code',
-                        client_id: "179836333485-a9u3omrs9o0c1ik00fesa2043q0f63fe.apps.googleusercontent.com"
-                    })
+        $scope.gsigninURL = PlanHWApi + 'oauth/google'
     })
     .controller('ForgotPassCtrl',function($scope, $http, $rootScope, $location){
         $scope.changePass = function(){
@@ -555,6 +553,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.avatarUrl = data.avatar
             this.friends = data.friends
             this.digestTime = DigestTimes[data.digestTime]
+            this._week = 1
+            
+            this.View = 'list'
+            this.view = function(view){
+                this.View = view;
+                this.refreshHomework();
+            }
             
             this.stats = data.stats
             
@@ -609,12 +614,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     $q(function(resolve, reject){
                         if(this.authenicated){
                             this.request.get('hw', {
-                                incomplete: (complete)? 0 : 1
+                                incomplete: (complete)? 0 : 1,
+                                week: (this.View == 'week')? this._week : 'f'
                             }).then(function(res){
                                 var homework = res.data.homeworks;
                                 webStorage.remove('hw')
                                 if(webStorage.has('student')) webStorage.add('hw', homework)
-                                resolve(homework)
+                                resolve({homework: homework, week: res.data.week})
                             }, function(res){
                                 if(webStorage.get('hw')){
                                     console.warn("You are offline - using stored copy of homework.")
@@ -626,7 +632,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                         } else {
                             reject({error: 'not_authenicated', message: 'Please login first.'})
                         }
-                    }.bind(this)).then(function(homework){
+                    }.bind(this)).then(function(data){
+                        var homework = data.homework,
+                            week = data.week
                         this.homework = homework.map(function(homework){
                             homework = new Homework(this, homework.homework)
                             if(!homework.completed) this.doneWithHomework = false
@@ -637,6 +645,15 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                             return (x === y)? 0 : x? 1 : -1;
                         })
                         this.calcTimeLeft()
+                        if(week) {
+                            this.week = week.map(function(day){
+                                day.homeworks = day.homeworks.map(function(hw){
+                                    return new Homework(this, hw.homework);
+                                });
+                                return day;
+                            });
+                            console.log(this.week)
+                        }
                         resolve(this.homework)
                     }.bind(this), function(data){
                         if(data.error == 'not_authenicated'){
@@ -749,8 +766,12 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.moment = function(){
                 return moment(this.dueDate);
             }
-            this.dueDateWords = function(){
-                return this.moment().calendar();
+            this.dueDateWords = function(onlyTime){
+                if(onlyTime){
+                    return this.moment().format("h:mm A")
+                } else {
+                    return this.moment().calendar();
+                }
             }
             this.updateDescription = function(description){
                 this.description = description || this.description || "";
