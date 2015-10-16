@@ -59,6 +59,25 @@
                                         </div>
                                     </div>
                                     <hr class="pad-20t">
+                                    <div class="row">
+                                        <div class="col-sm-8 col-sm-offset-2">
+                                            <h3 class="text-center">Habitica:</h3>
+                                            <hr>
+                                            <p class="text-center">
+                                                Habitica makes your life into a Role-Playing Game. Get points for completing homework in PlanHW.<br>
+                                                PlanHW needs your API Key in order to send you points. Find it in your <a href="https://habitica.com/#/options/settings/api" target="_blank">Habitica API settings</a>.
+                                            </p>
+                                            <div class="input-group">
+                                                <i class="input-group-addon fa fa-user fa-fw"></i>
+                                                <input type="text" class="form-control" placeholder="User ID" ng-model="student.habitica.uuid" ng-disabled="{{!student.pro}}">
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                                <input type="tel" class="form-control" placeholder="API Key" ng-model="student.habitica.key" ng-disabled="{{!student.pro}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="pad-20t">
                                     <div class="row pad-50t">
                                         <h3 class="text-center">Homework Stats:</h3>
                                         <div class="col-md-8 col-md-offset-2" ng-show="student.pro">
@@ -206,24 +225,6 @@
                                                 <div class="input-group" ng-show="student.pro">
                                                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                                     <input class="form-control" placeholder="PIN (for PlanHW/Text)" ng-model="student.pin_code">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-8 col-sm-offset-2 col-md-offset-0">
-                                                <h3 class="text-center">Habitica:</h3>
-                                                <hr>
-                                                <p class="text-center">
-                                                    Habitica makes your life into a Role-Playing Game. Get points for completing homework in PlanHW.<br>
-                                                    PlanHW needs your API Key in order to send you points. Find it in your <a href="https://habitica.com/#/options/settings/api" target="_blank">Habitica API settings</a>.
-                                                </p>
-                                                <div ng-show="student.pro">
-                                                    <div class="input-group">
-                                                        <i class="input-group-addon fa fa-user fa-fw"></i>
-                                                        <input type="text" class="form-control" placeholder="User ID" ng-model="student.habitica.uuid" ng-disabled="{{!student.pro}}">
-                                                    </div>
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                                        <input type="tel" class="form-control" placeholder="API Key" ng-model="student.habitica.key" ng-disabled="{{!student.pro}}">
-                                                    </div>
                                                 </div>
                                             </div>
                                             <hr>

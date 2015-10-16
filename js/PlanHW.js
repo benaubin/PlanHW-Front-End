@@ -229,7 +229,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 })
             });
     })
-    .run(function($rootScope, PlanHWRequest, $location, webStorage, Student){
+    .run(function($rootScope, PlanHWRequest, $location, webStorage, Student, $Kiip){
         if($location.path() == '/bread'){
             $rootScope.logo = "BreadHW"
         } else {
@@ -237,6 +237,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }
         if(window.location.hash.match(/dev/)){
             PlanHWApi = "http://localhost:3000/"
+            $Kiip.setTestMode();
         }
         $rootScope.signout = function(location){
             $rootScope.student = null
@@ -305,7 +306,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
 
                 window.setTimeout(changePeople,5000)
     })
-    .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework, Flash, $interval){
+    .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework, Flash, $interval, $Kiip){
+        $Kiip.setContainer('reward');
         if(!$rootScope.student){
             Flash('Please Login First', 'danger')
             $location.path('/')
@@ -377,6 +379,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $scope.reload(false)
         });
         
+        var actions = ['riding your bike', 'learning to code', 'taking your dog out for walk', 'going ice skating', 'playing xBox', 'checking the weather', 'to get the news', 'to annoy your siblings', 'to start a petition for a new emoji', 'selling cookies', 'telling your friends about PlanHW', 'playing soccer', 'playing football', 'playing D&D (Warning: You may never be seen outside of your house again)', 'making a random logo', 'screaming at people on the street', 'screaming at goats', 'thinking of a fun thing to do, and emailing it to hello@PlanHW.com', 'being awesome', 'learning rap', 'learning classical piano', 'a handstand', 'learning to dance', 'watching Netflix', 'watching Hulu', 'watching your cable company\'s on demand offering', 'reading a book', 'going to the Minecraft title screen until it says Minceraft', 'emailing your teacher about how you hate annoying emails', 'trolling teh forums', 'to have a Sim (from EA) do homework', 'to build a nucular bunker', 'a new sport', 'creating PlanHW lore', 'creating Fan-fic', 'to write a young adult novel', 'to teach a puppy to act like a cat', 'getting a Mac', 'starting a Ponzi scheme', 'playing Civ 3', 'to conduct foreign politics and avoid starting a nucular war', 'to genetically modify your least favorite family relitive', 'to organize your desk (if you can open it)', 'to crash the stock market', 'giving your SSN to your long lost Nigerian relative', 'to insist that the world is flat', 'pretending to be blind', 'to start a movement to get Taco Bell to make burgers and change their name to Burger Bell', 'to create good food for Mc. Donalds (this may be impossible)', 'to become a traveling salesman', 'to fix world hunger']
+        
+        $scope.newAction = function(){
+            $scope.action = actions[Math.floor(Math.random() * actions.length)]
+        }
+        $scope.newAction()
+    
     })
     .controller('SigninCtrl', function($scope, Student, $rootScope, $location, $httpParamSerializer, Flash){
         $scope.signinError = null
@@ -553,12 +562,16 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.avatarUrl = data.avatar
             this.friends = data.friends
             this.digestTime = DigestTimes[data.digestTime]
-            this._week = 1
+            this._week = 0
+            
+            this.setWeek = function(val){
+                this._week += val;
+                this.refreshHomework(true)
+            }
             
             this.View = 'list'
             this.view = function(view){
                 this.View = view;
-                this.refreshHomework();
             }
             
             this.stats = data.stats
@@ -576,6 +589,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     minutes: Math.floor(this.timeLeft / 60)
                 }
             }
+            
+            this.reward = null;
             
             var request = function(path, method, data, params){
                 params = params || {}
@@ -608,53 +623,73 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     this.hasPaymentInfo = res.data.student.hasPaymentInfo
                 }.bind(this))
             }
-            this.doneWithHomework = true;
             this.refreshHomework = function(complete){
                 return $q(function(resolve, reject){
                     $q(function(resolve, reject){
                         if(this.authenicated){
                             this.request.get('hw', {
                                 incomplete: (complete)? 0 : 1,
-                                week: (this.View == 'week')? this._week : 'f'
+                                week: this._week
                             }).then(function(res){
-                                var homework = res.data.homeworks;
-                                webStorage.remove('hw')
-                                if(webStorage.has('student')) webStorage.add('hw', homework)
-                                resolve({homework: homework, week: res.data.week})
-                            }, function(res){
-                                if(webStorage.get('hw')){
-                                    console.warn("You are offline - using stored copy of homework.")
-                                    resolve(webStorage.get('hw'))
+                                if(res.data.homeworks){
+                                    resolve(res.data)
                                 } else {
-                                    reject({error: 'offline', message: 'You are offline.'})
+                                    this.doneWithHomework = true;
+                                    resolve()
                                 }
+                            }.bind(this), function(res){
+                                reject({error: 'offline', message: 'You are offline.'})
                             })
                         } else {
                             reject({error: 'not_authenicated', message: 'Please login first.'})
                         }
                     }.bind(this)).then(function(data){
-                        var homework = data.homework,
-                            week = data.week
-                        this.homework = homework.map(function(homework){
-                            homework = new Homework(this, homework.homework)
-                            if(!homework.completed) this.doneWithHomework = false
-                            return homework
-                        }, this).sort(function(x, y) {
-                            x = x.completed
-                            y = y.completed
-                            return (x === y)? 0 : x? 1 : -1;
-                        })
-                        this.calcTimeLeft()
-                        if(week) {
-                            this.week = week.map(function(day){
-                                day.homeworks = day.homeworks.map(function(hw){
-                                    return new Homework(this, hw.homework);
-                                });
-                                return day;
-                            });
-                            console.log(this.week)
+                        if(!data){
+                            resolve()
+                            return;
                         }
+                        this.homework = data.hw; // Homework list
+                            this.week = data.week; // Week
+                              this.hw = data.homeworks; //Homework objects
+                              
+                        for(var id in this.hw){
+                            this.hw[id] = new Homework(this, this.hw[id].homework);
+                            if(!this.hw[id].completed) this.doneWithHomework = false;
+                        }
+                        
+                        this.homework = this.homework.map(function(id){
+                            return this.hw[id]
+                        }, this)
+                        
+                        this.calcTimeLeft()
+                        
+                        if(this.week) {
+                            var i = 0;
+                            var del = []
+                            this.weekRight = []
+                            this.weekLeft = [] 
+                            this.week.forEach(function(day, i){
+                                day.day.moment = moment(day.day.iso);
+                                day.isToday = day.day.moment.day() == moment().day()
+                                day.homework = day.homework.map(function(id){
+                                    return this.hw[id];
+                                }, this);
+                                if(i / 3 >= 1){
+                                    this.weekRight.push(day);
+                                    console.log("Right")
+                                    console.log(day)
+                                } else {
+                                    this.weekLeft.push(day);
+                                    console.log("Left")
+                                    console.log(day)
+                                }
+                            }, this);
+                            console.log(this.weekLeft)
+                            console.log(this.weekRight)
+                        }
+                        
                         resolve(this.homework)
+                        if(!complete) this.refreshHomework(true)
                     }.bind(this), function(data){
                         if(data.error == 'not_authenicated'){
                             this.token = null;
@@ -759,10 +794,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             })
         }
     })
-    .factory('Homework',function($q){
+    .factory('Homework',function($q, $Kiip){
         var Homework = function(student, data){
             this.student = student;
             this.deleted = false;
+            this.timer = null;
             this.moment = function(){
                 return moment(this.dueDate);
             }
@@ -882,7 +918,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 };
                 
                 this.calcTimes();
-                this.student.doneWithHomework = false
                 return homework;
             }.bind(this), function(data){
                 return {error: true, type: data['message']['type'], errors: data['message']['errors']}
@@ -924,9 +959,32 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         Homework.prototype.update = Homework.prototype.save;
         //Toggles the `completed` attribute, and calls the `save` function.
         Homework.prototype.complete = function(){
-            this.completed = !this.completed
+            if(this.completed){
+                this.student.doneWithHomework = false;
+                this.completed = false;
+            } else {
+                this.completed = true;
+                if(this.student.homework.map(function(homework){
+                    return homework.completed
+                }).includes(true)){
+                    this.student.doneWithHomework = true;
+                }
+                $Kiip.postMoment('completing_homework');
+            }
             this.save();
         }
         return Homework
+    })
+    .factory('$Kiip', function($rootScope){
+        return new Kiip("cb2287b6701a25fef68728ece8d7875f", function(unit){
+            if (unit) {
+                unit.show(function(){
+                    $rootScope.student.reward = null;
+                    $rootScope.$apply();
+                });
+                $rootScope.student.reward = unit;
+                $rootScope.$apply();
+            }
+        });
     });
  })();

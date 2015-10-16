@@ -143,6 +143,11 @@ footer.home-footer p {
     border-left: 1px solid #DEDEDE;
 }
 
+#reward-wrapper {
+    position: absolute;
+    z-index: 2;
+}
+
 #hwpreview {
     background-color: white;
             position: absolute;
