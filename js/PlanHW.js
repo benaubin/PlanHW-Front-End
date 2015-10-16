@@ -79,9 +79,10 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             window.open("/press.zip");
         }
     })
-    .controller('LoginCtrl',function(Student, $rootScope, $routeParams){
+    .controller('LoginCtrl',function(Student, $rootScope, $routeParams, $location){
         Student.build.token($routeParams.token, true).then(function(student){
-            $rootScope.student = student
+            $rootScope.student = student;
+            $location.path('/homework');
         });
     })
     .controller('FlashCtrl',function($routeParams,$location,Flash){
