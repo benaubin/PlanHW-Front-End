@@ -339,7 +339,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.new = function(homework){
             homework.create(true).then(function(newHomework){
                 if(newHomework.error){
-                    //TODO: do something
+                    Flash(newHomework.errors[0], 'danger', true)
                 } else {
                     $scope.homework = null
                 }
@@ -670,23 +670,18 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                             this.weekRight = []
                             this.weekLeft = [] 
                             this.week.forEach(function(day, i){
-                                day.day.moment = moment(day.day.iso);
-                                day.isToday = day.day.moment.day() == moment().day()
+                                day.moment = moment(day.day.iso, moment.ISO_8601)
+                                day.moment.day(day.moment.day()+1)
+                                day.isToday = day.moment.isSame(moment(), 'day')
                                 day.homework = day.homework.map(function(id){
                                     return this.hw[id];
                                 }, this);
                                 if(i / 3 >= 1){
                                     this.weekRight.push(day);
-                                    console.log("Right")
-                                    console.log(day)
                                 } else {
                                     this.weekLeft.push(day);
-                                    console.log("Left")
-                                    console.log(day)
                                 }
                             }, this);
-                            console.log(this.weekLeft)
-                            console.log(this.weekRight)
                         }
                         
                         resolve(this.homework)
@@ -785,12 +780,12 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         return function(message, type, now){
             return $q(function(resolve, reject){
                 if(now){
+                    $rootScope.flashesNow.push({message: message, class: type})
+                    resolve(message);
+                } else {
                     flashes.push({message: message, class: type, callback: function(){
                         resolve(message)
                     }});
-                } else {
-                    $rootScope.flashesNow.push({message: message, class: type})
-                    resolve(message);
                 }
             })
         }
@@ -920,8 +915,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 
                 this.calcTimes();
                 return homework;
-            }.bind(this), function(data){
-                return {error: true, type: data['message']['type'], errors: data['message']['errors']}
+            }.bind(this), function(res){
+                return {error: true, errors: res.data['errors']}
             })
         }
         //Tells the api to create a homework object based on this one (title, description, and due date).
@@ -965,9 +960,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 this.completed = false;
             } else {
                 this.completed = true;
-                if(this.student.homework.map(function(homework){
+                if(!this.student.homework.map(function(homework){
                     return homework.completed
-                }).includes(true)){
+                }).includes(false)){
                     this.student.doneWithHomework = true;
                 }
                 $Kiip.postMoment('completing_homework');
