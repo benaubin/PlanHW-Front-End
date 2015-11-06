@@ -960,9 +960,9 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 this.completed = false;
             } else {
                 this.completed = true;
-                if(!this.student.homework.map(function(homework){
+                if(this.student.homework.map(function(homework){
                     return homework.completed
-                }).includes(false)){
+                }).indexOf(false) != -1){
                     this.student.doneWithHomework = true;
                 }
                 $Kiip.postMoment('completing_homework');
