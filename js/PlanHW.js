@@ -8,7 +8,7 @@ Array.prototype.range = function(){
 };
 
 (function(){
-angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize'])
+angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize','ngAnimate'])
     .config(function($routeProvider, $locationProvider, $provide) {
         $routeProvider.caseInsensitiveMatch = true;
 
