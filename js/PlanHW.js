@@ -11,7 +11,7 @@ Array.prototype.range = function(){
 angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize'])
     .config(function($routeProvider, $locationProvider, $provide) {
         $routeProvider.caseInsensitiveMatch = true;
-    
+
         $provide.decorator('$sniffer', function($delegate) {
             if(window.location.hostname == '127.0.0.1'){
                 $delegate.history = false;
@@ -19,13 +19,13 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     $locationProvider.hashPrefix('/dev')
                 }
             };
-            
+
             return $delegate;
         });
-    
-    
+
+
         $locationProvider.html5Mode(true);
-    
+
         $routeProvider
         .otherwise({
             templateUrl: 'pages/landing.html',
@@ -72,7 +72,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             templateUrl: 'pages/signin.html',
             controller: 'LoginCtrl'
         })
-        
+
     })
     .controller('PressCtrl', function($scope){
         $scope.downloadPressKit = function(){
@@ -234,7 +234,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         if($location.path() == '/bread'){
             $rootScope.logo = "BreadHW"
         } else {
-            $rootScope.logo = "newsmaller"
+            $rootScope.logo = "check-rect"
         }
         if(window.location.hash.match(/dev/)){
             PlanHWApi = "http://localhost:3000/"
@@ -258,7 +258,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             Student.build.token(student.token)
         }
     })
-    .controller('IndexCtrl',function($scope, Homework){
+    .controller('IndexCtrl',function($scope, Homework, $rootScope){
+        if($rootScope.logo=='check-box') $rootScope.logo = 'check-rect';
         $scope.people = 'Students'
         $scope.hwinput = Homework.Input;
         $scope.homework = $scope.hwinput("Math Problems due next Tuesday (system of equations)")
@@ -280,7 +281,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
             next()
         }
-        
+
             $scope.quotes = [
                             {
                                author: 'Bradley L.',
@@ -308,6 +309,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 window.setTimeout(changePeople,5000)
     })
     .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework, Flash, $interval, $Kiip){
+        if($rootScope.logo=='check-rect') $rootScope.logo = 'check-box';
         $Kiip.setContainer('reward');
         if(!$rootScope.student){
             Flash('Please Login First', 'danger')
@@ -318,14 +320,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $rootScope.flashesNow.push({class: 'success', message: 'Sent to ' + student.name});
             }, function(data){
                 angular.forEach(data['message']['errors'], function(error){
-                    $rootScope.flashesNow.push({class: data['message']['type'],message: error}); 
+                    $rootScope.flashesNow.push({class: data['message']['type'],message: error});
                 })
             })
         }
-        
+
         $scope.reload = function(noComplete){
             return $rootScope.student.refreshHomework(!noComplete).then(function(homework){
-                
+
             }, function(error){
                 Flash(error.message, 'danger')
                 $location.path('/')
@@ -345,7 +347,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 }
             })
         }
-        
+
         $scope.startTimer = function(homework){
             homework.before = new Date();
             homework.timer = $interval(function(){
@@ -368,7 +370,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.timerStopping = function(homework){
             return homework.timer == 'stopping'
         }
-        
+
         $scope.show = function(type){
             $scope.showComplete = type == 'complete' || type == 'all'
             $scope.showIncomplete = type == 'incomplete' || type == 'all'
@@ -379,14 +381,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         }).then(function(){
             $scope.reload(false)
         });
-        
+
         var actions = ['riding your bike', 'learning to code', 'taking your dog out for walk', 'going ice skating', 'playing xBox', 'checking the weather', 'to get the news', 'to annoy your siblings', 'to start a petition for a new emoji', 'selling cookies', 'telling your friends about PlanHW', 'playing soccer', 'playing football', 'playing D&D (Warning: You may never be seen outside of your house again)', 'making a random logo', 'screaming at people on the street', 'screaming at goats', 'thinking of a fun thing to do, and emailing it to hello@PlanHW.com', 'being awesome', 'learning rap', 'learning classical piano', 'a handstand', 'learning to dance', 'watching Netflix', 'watching Hulu', 'watching your cable company\'s on demand offering', 'reading a book', 'going to the Minecraft title screen until it says Minceraft', 'emailing your teacher about how you hate annoying emails', 'trolling teh forums', 'to have a Sim (from EA) do homework', 'to build a nucular bunker', 'a new sport', 'creating PlanHW lore', 'creating Fan-fic', 'to write a young adult novel', 'to teach a puppy to act like a cat', 'getting a Mac', 'starting a Ponzi scheme', 'playing Civ 3', 'to conduct foreign politics and avoid starting a nucular war', 'to genetically modify your least favorite family relitive', 'to organize your desk (if you can open it)', 'to crash the stock market', 'giving your SSN to your long lost Nigerian relative', 'to insist that the world is flat', 'pretending to be blind', 'to start a movement to get Taco Bell to make burgers and change their name to Burger Bell', 'to create good food for Mc. Donalds (this may be impossible)', 'to become a traveling salesman', 'to fix world hunger']
-        
+
         $scope.newAction = function(){
             $scope.action = actions[Math.floor(Math.random() * actions.length)]
         }
         $scope.newAction()
-    
+
     })
     .controller('SigninCtrl', function($scope, Student, $rootScope, $location, $httpParamSerializer, Flash){
         $scope.signinError = null
@@ -509,12 +511,12 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             })
         })
         digestTimes.local = digestTimes.slice(0).sort(function(a, b) {return a.local - b.local});
-    
+
         return digestTimes;
     })
     .factory('utcDiff', function(){
         var utcDiff = moment().hour() - moment.utc().hour();
-        if(utcDiff < 0) utcDiff = utcDiff + 24 
+        if(utcDiff < 0) utcDiff = utcDiff + 24
         return utcDiff
     })
     // When sending an authenicated request, we reccomend using a Student's `request` method, as it will automaticly send the `token` param.
@@ -549,7 +551,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 webStorage.remove('student')
                 webStorage.add('student', {token: token, student: data})
             }
-            
+
             this.authenicated = !!token;
             if(this.authenicated){
                 this.token = token;
@@ -564,23 +566,23 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.friends = data.friends
             this.digestTime = DigestTimes[data.digestTime]
             this._week = 0
-            
+
             this.setWeek = function(val){
                 this._week += val;
                 this.refreshHomework(true)
             }
-            
+
             this.View = 'list'
             this.view = function(view){
                 this.View = view;
             }
-            
+
             this.stats = data.stats
-            
+
             this.avatar = function(size){
                  return this.avatarUrl + "&s=" + ((size)? size : '250')
             }
-            
+
             this.calcTimeLeft = function(){
                 this.timeLeft = eval(this.homework.map(function(homework){
                     return homework.completed ? 0 : homework.estimatedTime.left
@@ -590,14 +592,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     minutes: Math.floor(this.timeLeft / 60)
                 }
             }
-            
+
             this.reward = null;
-            
+
             var request = function(path, method, data, params){
                 params = params || {}
                 params.token = this.token;
                 return PlanHWRequest(path, method, data, params);
-            
+
             }.bind(this)
             request.get = function(path, data){
                 return request(path, 'GET', null, data)
@@ -612,7 +614,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 return this.request(path, 'DELETE', data)
             }.bind(this)
             this.request = request
-            
+
             if(this.friends){
                 this.friends = this.friends.map(function(friend){
                     return new Student(null, friend.student)
@@ -652,23 +654,23 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                         this.homework = data.hw; // Homework list
                             this.week = data.week; // Week
                               this.hw = data.homeworks; //Homework objects
-                              
+
                         for(var id in this.hw){
                             this.hw[id] = new Homework(this, this.hw[id].homework);
                             if(!this.hw[id].completed) this.doneWithHomework = false;
                         }
-                        
+
                         this.homework = this.homework.map(function(id){
                             return this.hw[id]
                         }, this)
-                        
+
                         this.calcTimeLeft()
-                        
+
                         if(this.week) {
                             var i = 0;
                             var del = []
                             this.weekRight = []
-                            this.weekLeft = [] 
+                            this.weekLeft = []
                             this.week.forEach(function(day, i){
                                 day.moment = moment(day.day.iso, moment.ISO_8601)
                                 day.moment.day(day.moment.day()+1)
@@ -683,7 +685,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                                 }
                             }, this);
                         }
-                        
+
                         resolve(this.homework)
                         if(!complete) this.refreshHomework(true)
                     }.bind(this), function(data){
@@ -725,7 +727,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     chapter_size: this.stats.chapterSize,
                     avg_pages: this.stats.avgPages,
                 }
-                
+
                 return raw
             }
         }
@@ -765,7 +767,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 }
             })
         }
-    
+
         return Student;
     })
     .factory('Flash',function($q, $rootScope){
@@ -824,7 +826,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 this.title = data.title;
                 this.dueDate = moment(data.dueDate).toISOString();
                 this.createdAt = data.createdAt;
-                
+
                 this.estimatedTime = {
                     left: data.estimatedTimeLeft,
                     spent: data.timeSpent,
@@ -833,14 +835,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     added: data.additionalTime || 0,
                     spent: data.timeSpent || 0
                 };
-                
+
                 this.calcTimes(true)
                 this.updateDescription(data.description)
             }
         }
         Homework.Input =  function(input, student){
             var homework = new Homework(student)
-            
+
             homework.completed = false;
             homework.input = input;
             homework.updateDescription((homework.input.match(/\((.+)\)/i))? homework.input.match(/\((.+)\)/i)[1] : "")
@@ -849,7 +851,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 date = match
             });
             homework.dueDate = moment(chrono.parseDate(homework.input));
-            if(!homework.dueDate.isValid()){                 
+            if(!homework.dueDate.isValid()){
                 homework.dueDate = moment().add('1','d')
             }
             homework.title = homework.input.replace(/\((.+)\)/i, "")
@@ -877,7 +879,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             homework.estimatedTime = {human: "Unknown"}
             return homework
         }
-        
+
         //Deletes a homework from the server, and sets the local deleted variable to true - you can still recreate it.
         Homework.prototype.delete = function(){
             this.deleted = true;
@@ -904,7 +906,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             return this.student.request.post('hw', hw_data, params).then(function(res){
                 var homework = new Homework(shareFriend || this.student, res.data.homework)
                 if(add) this.student.homework.unshift(homework);
-                
+
                 this.estimatedTime = {
                     left: hw_data.estimatedTime,
                     spent: 0,
@@ -912,7 +914,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     raw: hw_data.estimatedTime,
                     added: 0
                 };
-                
+
                 this.calcTimes();
                 return homework;
             }.bind(this), function(res){
