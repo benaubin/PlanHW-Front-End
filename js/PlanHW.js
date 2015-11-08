@@ -958,17 +958,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         //Toggles the `completed` attribute, and calls the `save` function.
         Homework.prototype.complete = function(){
             if(this.completed){
-                this.student.doneWithHomework = false;
                 this.completed = false;
             } else {
                 this.completed = true;
-                if(this.student.homework.map(function(homework){
-                    return homework.completed
-                }).indexOf(false) != -1){
-                    this.student.doneWithHomework = true;
-                }
                 $Kiip.postMoment('completing_homework');
             }
+            this.student.doneWithHomework = !(this.student.homework.reduce(function(notDone, homework){
+              return notDone || !homework.completed
+            }, false));
             this.save();
         }
         return Homework
