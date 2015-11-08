@@ -8,7 +8,7 @@ Array.prototype.range = function(){
 };
 
 (function(){
-angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize','ngAnimate'])
+    angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageModule','ngSanitize','ngAnimate'])
     .config(function($routeProvider, $locationProvider, $provide) {
         $routeProvider.caseInsensitiveMatch = true;
 
@@ -190,45 +190,45 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.loadStudents = function(){
             var allStudents;
             $http.get(PlanHWApi+'students')
-                .success(function(data) {
-                    data = data.students
-                    data.forEach(function(student, index){
-                        data[index] = student.student
-                    })
-                    $(function(){
-                        $('#add-friend').selectize({
-                            create: true,
-                            valueField: 'id',
-                            searchField: 'username',
-                            options: data,
-                            render: {
-                                item: function(item, escape) {
-                                    return '<div>' + escape(item.username) + '</div>'
-                                },
-                                option: function(item, escape) {
-                                    return '<div>' +
-                                        '<p class="bold">' + escape(item.name) + '</p>' +
-                                        '<p class="caption"> ('+ escape(item.username) +  ')</p>' +
-                                    '</div>'
-                                }
+            .success(function(data) {
+                data = data.students
+                data.forEach(function(student, index){
+                    data[index] = student.student
+                })
+                $(function(){
+                    $('#add-friend').selectize({
+                        create: true,
+                        valueField: 'id',
+                        searchField: 'username',
+                        options: data,
+                        render: {
+                            item: function(item, escape) {
+                                return '<div>' + escape(item.username) + '</div>'
+                            },
+                            option: function(item, escape) {
+                                return '<div>' +
+                                '<p class="bold">' + escape(item.name) + '</p>' +
+                                '<p class="caption"> ('+ escape(item.username) +  ')</p>' +
+                                '</div>'
                             }
-                        });
-                    })
-                });
+                        }
+                    });
+                })
+            });
         }
         $scope.show('profile');
         $scope.digestTimes = DigestTimes
     })
     .controller('ProfileCtrl',function($rootScope,$sce,$http){
         $http.jsonp("http://www.gravatar.com/" + md5($rootScope.student.email) + ".json?callback=JSON_CALLBACK")
+        .then(function(data){
+            $rootScope.student.bio = data.data['entry'][0]['aboutMe']
+        }, function(){
+            $http.jsonp("http://www.gravatar.com/" + $rootScope.student.username + ".json?callback=JSON_CALLBACK")
             .then(function(data){
                 $rootScope.student.bio = data.data['entry'][0]['aboutMe']
-            }, function(){
-                $http.jsonp("http://www.gravatar.com/" + $rootScope.student.username + ".json?callback=JSON_CALLBACK")
-                .then(function(data){
-                    $rootScope.student.bio = data.data['entry'][0]['aboutMe']
-                })
-            });
+            })
+        });
     })
     .run(function($rootScope, PlanHWRequest, $location, webStorage, Student, $Kiip){
         if($location.path() == '/bread'){
@@ -282,33 +282,33 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             next()
         }
 
-            $scope.quotes = [
-                            {
-                               author: 'Bradley L.',
-                               text: 'This is awesome!'
-                            },
-                            {
-                               author: 'Egan W.',
-                               text: 'really nice so far'
-                            },
-                            {
-                                author: 'Mitch A.',
-                                text: 'Nice!'
-                            },
+        $scope.quotes = [
+            {
+                author: 'Bradley L.',
+                text: 'This is awesome!'
+            },
+            {
+                author: 'Egan W.',
+                text: 'really nice so far'
+            },
+            {
+                author: 'Mitch A.',
+                text: 'Nice!'
+            },
 
-        //                   {
-        //                       author: 'Mary-Hannah D.',
-        //                       text: 'PlanHW is the bomb.'
-        //                   },
-                            {
-                               author: 'Zeke N.',
-                               text: 'It looks really good!'
-                            }
-                       ]
+            //                   {
+            //                       author: 'Mary-Hannah D.',
+            //                       text: 'PlanHW is the bomb.'
+            //                   },
+            {
+                author: 'Zeke N.',
+                text: 'It looks really good!'
+            }
+        ]
 
-                window.setTimeout(changePeople,5000)
+        window.setTimeout(changePeople,5000)
     })
-    .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework, Flash, $interval, $Kiip){
+    .controller('HWCtrl',function($scope, $rootScope, $location, webStorage, Student, Homework, Flash, $Kiip){
         if($rootScope.logo=='check-rect') $rootScope.logo = 'check-box';
         $Kiip.setContainer('reward');
         if(!$rootScope.student){
@@ -324,7 +324,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 })
             })
         }
-
         $scope.reload = function(noComplete){
             return $rootScope.student.refreshHomework(!noComplete).then(function(homework){
 
@@ -348,6 +347,28 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             })
         }
 
+        $scope.show = function(type){
+            $scope.showComplete = type == 'complete' || type == 'all'
+            $scope.showIncomplete = type == 'incomplete' || type == 'all'
+        }
+        $scope.reload(true).then(function(){
+            $scope.show('incomplete')
+            $scope.loaded = true
+        }).then(function(){
+            $scope.reload(false)
+        });
+
+        var actions = ['riding your bike', 'learning to code', 'taking your dog out for walk', 'going ice skating', 'playing xBox', 'checking the weather', 'to get the news', 'to annoy your siblings', 'to start a petition for a new emoji', 'selling cookies', 'telling your friends about PlanHW', 'playing soccer', 'playing football', 'playing D&D (Warning: You may never be seen outside of your house again)', 'making a random logo', 'screaming at people on the street', 'screaming at goats', 'thinking of a fun thing to do, and emailing it to hello@PlanHW.com', 'being awesome', 'learning rap', 'learning classical piano', 'a handstand', 'learning to dance', 'watching Netflix', 'watching Hulu', 'watching your cable company\'s on demand offering', 'reading a book', 'going to the Minecraft title screen until it says Minceraft', 'emailing your teacher about how you hate annoying emails', 'trolling teh forums', 'to have a Sim (from EA) do homework', 'to build a nucular bunker', 'a new sport', 'creating PlanHW lore', 'creating Fan-fic', 'to write a young adult novel', 'to teach a puppy to act like a cat', 'getting a Mac', 'starting a Ponzi scheme', 'playing Civ 3', 'to conduct foreign politics and avoid starting a nucular war', 'to genetically modify your least favorite family relitive', 'to organize your desk (if you can open it)', 'to crash the stock market', 'giving your SSN to your long lost Nigerian relative', 'to insist that the world is flat', 'pretending to be blind', 'to start a movement to get Taco Bell to make burgers and change their name to Burger Bell', 'to create good food for Mc. Donalds (this may be impossible)', 'to become a traveling salesman', 'to fix world hunger']
+
+        $scope.newAction = function(){
+            $scope.action = actions[Math.floor(Math.random() * actions.length)]
+        }
+        $scope.newAction()
+
+    })
+    .controller('HomeworkCtrl', function($scope, $interval){
+        $scope.homework = $scope.homework || $scope.$parent.homework;
+
         $scope.startTimer = function(homework){
             homework.before = new Date();
             homework.timer = $interval(function(){
@@ -370,25 +391,6 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
         $scope.timerStopping = function(homework){
             return homework.timer == 'stopping'
         }
-
-        $scope.show = function(type){
-            $scope.showComplete = type == 'complete' || type == 'all'
-            $scope.showIncomplete = type == 'incomplete' || type == 'all'
-        }
-        $scope.reload(true).then(function(){
-            $scope.show('incomplete')
-            $scope.loaded = true
-        }).then(function(){
-            $scope.reload(false)
-        });
-
-        var actions = ['riding your bike', 'learning to code', 'taking your dog out for walk', 'going ice skating', 'playing xBox', 'checking the weather', 'to get the news', 'to annoy your siblings', 'to start a petition for a new emoji', 'selling cookies', 'telling your friends about PlanHW', 'playing soccer', 'playing football', 'playing D&D (Warning: You may never be seen outside of your house again)', 'making a random logo', 'screaming at people on the street', 'screaming at goats', 'thinking of a fun thing to do, and emailing it to hello@PlanHW.com', 'being awesome', 'learning rap', 'learning classical piano', 'a handstand', 'learning to dance', 'watching Netflix', 'watching Hulu', 'watching your cable company\'s on demand offering', 'reading a book', 'going to the Minecraft title screen until it says Minceraft', 'emailing your teacher about how you hate annoying emails', 'trolling teh forums', 'to have a Sim (from EA) do homework', 'to build a nucular bunker', 'a new sport', 'creating PlanHW lore', 'creating Fan-fic', 'to write a young adult novel', 'to teach a puppy to act like a cat', 'getting a Mac', 'starting a Ponzi scheme', 'playing Civ 3', 'to conduct foreign politics and avoid starting a nucular war', 'to genetically modify your least favorite family relitive', 'to organize your desk (if you can open it)', 'to crash the stock market', 'giving your SSN to your long lost Nigerian relative', 'to insist that the world is flat', 'pretending to be blind', 'to start a movement to get Taco Bell to make burgers and change their name to Burger Bell', 'to create good food for Mc. Donalds (this may be impossible)', 'to become a traveling salesman', 'to fix world hunger']
-
-        $scope.newAction = function(){
-            $scope.action = actions[Math.floor(Math.random() * actions.length)]
-        }
-        $scope.newAction()
-
     })
     .controller('SigninCtrl', function($scope, Student, $rootScope, $location, $httpParamSerializer, Flash){
         $scope.signinError = null
@@ -398,11 +400,11 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                     $rootScope.flashesNow.push({message: data.message, class: 'danger'})
                     switch(data.error){
                         case 'incorrect_otp':
-                            $scope.showotp = true
-                            break;
+                        $scope.showotp = true
+                        break;
                         default:
-                            $scope.password = null
-                            break;
+                        $scope.password = null
+                        break;
                     }
                 } else {
                     $scope.password = null
@@ -434,6 +436,17 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             })
         }
     })
+    .directive('homework', function(){return{
+        restrict: 'E',
+        scope: {
+            homework: '=',
+            showComplete: '=',
+            showIncomplete: '='
+        },
+        transclude: true,
+        templateUrl: '/directives/homework.html',
+        controller: 'HomeworkCtrl'
+    }})
     .directive('gravatar', function(){return{
         restrict: 'AE',
         replace: true,
@@ -457,14 +470,14 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             $scope.gravatarInfo = "";
             $scope.gravatarUpdate = function(){
                 $http.jsonp("http://www.gravatar.com/" + md5($scope.student.email) + ".json?callback=JSON_CALLBACK")
-                    .success(function(data){
-                        $scope.student.name = data['entry'][0]['name']['givenName'];
-                        $scope.student.username = data['entry'][0]['preferredUsername'];
-                        $scope.gravatarInfo = "If you'd like to change this image, log in to Gravatar."
-                    }).error(function(data){
-                        $scope.gravatarInfo = "If you'd like to change this image, create an account at Gravatar."
-                    });
-                },
+                .success(function(data){
+                    $scope.student.name = data['entry'][0]['name']['givenName'];
+                    $scope.student.username = data['entry'][0]['preferredUsername'];
+                    $scope.gravatarInfo = "If you'd like to change this image, log in to Gravatar."
+                }).error(function(data){
+                    $scope.gravatarInfo = "If you'd like to change this image, create an account at Gravatar."
+                });
+            },
             $scope.signup = function(student){
                 PlanHWRequest.post('students', student).then(function(){
                     $rootScope.firstSignin = true;
@@ -580,7 +593,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             this.stats = data.stats
 
             this.avatar = function(size){
-                 return this.avatarUrl + "&s=" + ((size)? size : '250')
+                return this.avatarUrl + "&s=" + ((size)? size : '250')
             }
 
             this.calcTimeLeft = function(){
@@ -652,8 +665,8 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                             return;
                         }
                         this.homework = data.hw; // Homework list
-                            this.week = data.week; // Week
-                              this.hw = data.homeworks; //Homework objects
+                        this.week = data.week; // Week
+                        this.hw = data.homeworks; //Homework objects
 
                         for(var id in this.hw){
                             this.hw[id] = new Homework(this, this.hw[id].homework);
@@ -964,7 +977,7 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
                 $Kiip.postMoment('completing_homework');
             }
             this.student.doneWithHomework = !(this.student.homework.reduce(function(notDone, homework){
-              return notDone || !homework.completed
+                return notDone || !homework.completed
             }, false));
             this.save();
         }
@@ -982,4 +995,4 @@ angular.module('PlanHW', ['ngRoute','ui.bootstrap.datetimepicker','webStorageMod
             }
         });
     });
- })();
+})();

@@ -1,0 +1,78 @@
+<div class="homework" ng-animate="animate" ng-class="{'complete': homework.completed}" ng-show="($parent.showComplete && homework.completed) || ($parent.showIncomplete && !homework.completed)">
+    <div ng-show="homework.loading">
+        loading
+    </div>
+    <div class="media" ng-hide="homework.deleted">
+        <div class="media-left">
+            <p class="text-center">
+                <a class="action" ng-click="homework.complete()" ng-hide="timerRunning(homework)">
+                    <i ng-show="homework.completed" class="fa fa-check-square-o fa-2x fa-fw"></i>
+                    <i ng-hide="homework.completed" class="fa fa-square-o fa-2x fa-fw"></i>
+                    <span class="sr-only">Toggle Complete</span>
+                </a>
+                <a class="action">
+                    <i class="fa fa-clock-o fa-2x fa-spin" ng-show="timerRunning(homework)" ng-click="stopTimer(homework)"></i>
+                </a>
+            </p>
+            <div ng-show="student.pro">
+                <p class="text-center" ng-show="student.pro">
+                    {{homework.estimatedTime.minutes}}min
+                    <span ng-show="homework.estimatedTime.seconds">{{homework.estimatedTime.seconds}}sec</span><br>
+                    <i class="fa fa-clock-o fa-2x action" ng-hide="homework.timer || homework.stoppingTimer" ng-click="startTimer(homework)"></i>
+                    <i class="fa fa-cog fa-2x fa-spin" ng-show="timerStopping(homework)"></i>
+                </p>
+            </div>
+        </div>
+        <div class="media-body">
+            <div class="col-md-7" ng-click="homework.editing = true">
+                <div ng-hide="homework.editing">
+                    <p class="bold">{{homework.title}}</p>
+                    <p ng-bind-html="homework.descHTML"></p>
+                </div>
+                <div ng-show="homework.editing">
+                    <input type="text" class="form-control" ng-model="homework.title">
+                    <div class="panel-body">
+                        <label>Description</label>
+                        <textarea class="form-control" ng-model="homework.description" ng-change="homework.updateDescription()"/>
+                    </div>
+                </div>
+                <div class="row" ng-show="student.pro">
+                    <div class="col-md-6" ng-show="homework.editing">
+                        <button class="btn btn-info" ng-click="homework.addTime(120)">+2min</button>
+                        <button class="btn btn-info" ng-click="homework.addTime(300)">+5min</button>
+                    </div>
+                    <div ng-class="{'col-md-6': homework.editing, 'col-md-12': homework.editing}">
+                        <p class="text-center" ng-show="homework.editing">
+                            {{homework.estimatedTime.raw / 60}}min
+                            <span ng-show="homework.estimatedTime.added > 0">+ {{homework.estimatedTime.added / 60}}min</span>
+                        </p>
+                        <div class="text-center">
+                            {{homework.estimatedTime.roundedPercent}}%
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{homework.estimatedTime.percent}}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="pull-right">
+                    <i class="fa fa-pencil fa-lg action" ng-click="homework.editing = true" ng-hide="homework.editing"></i>
+                    <br>
+                    <i class="fa fa-trash-o fa-lg action" ng-click="homework.delete()"></i>
+                    <br>
+                    <i class="fa fa-check fa-lg action" ng-click="homework.update()" ng-show="homework.editing"></i>
+                </div>
+                <br>
+                <br>
+                <div class="pull-right">
+                    <p>Due: <strong>{{homework.dueDateWords()}}</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p ng-show="homework.deleted">
+        Deleted <a ng-click="homework.recreate()" class="action">(recreate)</a>
+    </p>
+    <hr>
+</div>
