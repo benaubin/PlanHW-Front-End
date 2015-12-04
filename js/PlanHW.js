@@ -13,7 +13,7 @@ Array.prototype.range = function(){
         $routeProvider.caseInsensitiveMatch = true;
 
         $provide.decorator('$sniffer', function($delegate) {
-            if(window.location.hostname == '127.0.0.1'){
+            if(window.location.hostname == '127.0.0.1' || 'localhost'){
                 $delegate.history = false;
                 if(window.location.hash.match(/dev/)){
                     $locationProvider.hashPrefix('/dev')
@@ -884,7 +884,7 @@ Array.prototype.range = function(){
                         });
                         var result = results.items[0]
                         if(result && result.score >= .45 && (word.length > 3 || word === student.friends[result.id].firstName)){
-                            homework.shareSuggest = friends[result.id]
+                            homework.shareSuggest = student.friends[result.id]
                         }
                     })
                 }

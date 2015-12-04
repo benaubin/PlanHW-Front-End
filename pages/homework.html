@@ -155,7 +155,7 @@
 
         <div class="col-sm-8 col-md-offset-1 col-xs-12 homework-view-container" ng-class="[showComplete, {'onlyIncomplete': !showComplete && showIncomplete}]">
             <div id="hw-list" ng-show="student.View == 'list'">
-                <homework ng-repeat="homework in student.homework track by $index"></homework>
+                <homework ng-repeat="homework in student.homework track by homework.id"></homework>
             </div>
             <div id="hw-week" ng-show="student.View == 'week'" class="row">
                 <div class="row">
