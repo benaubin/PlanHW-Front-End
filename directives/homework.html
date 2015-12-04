@@ -14,8 +14,8 @@
                     <i class="fa fa-clock-o fa-2x fa-spin" ng-show="timerRunning(homework)" ng-click="stopTimer(homework)"></i>
                 </a>
             </p>
-            <div ng-show="student.pro">
-                <p class="text-center" ng-show="student.pro">
+            <div ng-show="homework.student.pro">
+                <p class="text-center">
                     {{homework.estimatedTime.minutes}}min
                     <span ng-show="homework.estimatedTime.seconds">{{homework.estimatedTime.seconds}}sec</span><br>
                     <i class="fa fa-clock-o fa-2x action" ng-hide="homework.timer || homework.stoppingTimer" ng-click="startTimer(homework)"></i>
@@ -36,7 +36,7 @@
                         <textarea class="form-control" ng-model="homework.description" ng-change="homework.updateDescription()"/>
                     </div>
                 </div>
-                <div class="row" ng-show="student.pro">
+                <div class="row" ng-show="homework.student.pro">
                     <div class="col-md-6" ng-show="homework.editing">
                         <button class="btn btn-info" ng-click="homework.addTime(120)">+2min</button>
                         <button class="btn btn-info" ng-click="homework.addTime(300)">+5min</button>
