@@ -9,7 +9,7 @@
             <form id="homework" ng-submit="new(homework)">
                 <div class="panel panel-default">
                     <div class="panel-heading input-group">
-                        <input type="text" class="form-control" ng-model="homework.input" ng-change="input(homework)" placeholder="New Homework..." id="homework_input" autocomplete='off'>
+                        <input type="text" class="form-control" ng-model="homework.input" ng-change="input(homework)" placeholder="New Homework..." id="homework_input" autocomplete='off' autofocus="true">
                         <span class="input-group-btn">
                             <input type="submit" value="Create" class="btn btn-default">
                             <button ng-show="homework.input" type="button" ng-click="showShare = !showShare" class="btn btn-info">
