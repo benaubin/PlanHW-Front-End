@@ -441,7 +441,8 @@ Array.prototype.range = function(){
         scope: {
             homework: '=',
             showComplete: '=',
-            showIncomplete: '='
+            showIncomplete: '=',
+            textOnly: '='
         },
         transclude: true,
         templateUrl: '/directives/homework.html',

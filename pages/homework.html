@@ -132,6 +132,9 @@
                     <li class="action" ng-class="{active: student.View == 'week'}" ng-click="student.View = 'week'" role="presentation">
                         <a ng-click="show('incomplete')" role="menuitem" tabindex="-1">Week</a>
                     </li>
+                    <li class="action" ng-class="{active: textOnly}" ng-click="textOnly = !textOnly" ng-init="textOnly = false">
+                      <a role="menuitem" tabindex="-1">Text Only</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -155,7 +158,7 @@
 
         <div class="col-sm-8 col-md-offset-1 col-xs-12 homework-view-container" ng-class="[showComplete, {'onlyIncomplete': !showComplete && showIncomplete}]">
             <div id="hw-list" ng-show="student.View == 'list'">
-                <homework ng-repeat="homework in student.homework track by homework.id"></homework>
+                <homework ng-repeat="homework in student.homework track by homework.id" text-only="textOnly"></homework>
             </div>
             <div id="hw-week" ng-show="student.View == 'week'" class="row">
                 <div class="row">
@@ -178,7 +181,7 @@
                         <div class="panel" ng-class="{'panel-success': day.isToday, 'panel-default': !day.isToday}">
                             <h5 class="text-center panel-heading">{{day.day.weekday}}</h5>
                             <div class="panel-body">
-                                <homework ng-repeat="homework in day.homework track by $index"></homework>
+                                <homework ng-repeat="homework in day.homework track by $index" text-only="textOnly"></homework>
                             </div>
                         </div>
                     </div>
