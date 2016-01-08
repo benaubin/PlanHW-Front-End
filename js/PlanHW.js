@@ -167,7 +167,7 @@ Array.prototype.range = function(){
             });
         }
         $scope.friendRequest = function(friend){
-            $rootScope.student.get('friend/'+friend).then(function(){
+            $rootScope.student.request.get('friend/'+friend).then(function(){
                 Flash("Sent friend request.", 'success')
             }, function(res){
                 data = res.data;
@@ -185,7 +185,7 @@ Array.prototype.range = function(){
             })
         }
         $scope.show2step = function(){
-            $scope.qrURL = PlanHWApi + '2step.qr?token=' + $rootScope.student_token
+            $scope.qrURL = PlanHWApi + '2step.qr?token=' + $rootScope.student.token
         }
         $scope.loadStudents = function(){
             var allStudents;
